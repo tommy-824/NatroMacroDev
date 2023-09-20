@@ -133,6 +133,7 @@ timers.beesmas.values[9] := {"varname": "GummyBeacon", "name": "Gummy Beacon", "
 
 Loop, Files, patterns\*.ahk
 	patternlist .= ((A_Index = 1) ? "" : "|") StrReplace(A_LoopFileName, ".ahk")
+patternlist .= "|Stationary"
 
 settings := {}
 settings["webhook"] := {"enum": 1, "type": "str", "section": "Status", "regex":"i)^https:\/\/(canary\.|ptb\.)?(discord|discordapp)\.com\/api\/webhooks\/([\d]+)\/([a-z0-9_-]+)$"}

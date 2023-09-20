@@ -1453,7 +1453,7 @@ if FileExist(A_ScriptDir "\settings\field_config.ini") ; update default values w
 	nm_LoadFieldDefaults()
 
 loop 3 {
-	if (!InStr(patternlist, FieldPattern%A_Index%))
+	if (!InStr(patternlist "Stationary|", FieldPattern%A_Index%))
 		nm_FieldDefaults(A_Index)
 }
 
