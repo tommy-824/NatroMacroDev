@@ -8,7 +8,7 @@ Natro Macro is free software: you can redistribute it and/or modify it under the
 
 Natro Macro is distributed in the hope that it will be useful. This does not give you the right to steal sections from our code, distribute it under your own name, then slander the macro.
 
-You should have received a copy of the GNU General Public License along with Natro Macro. If not, see https://www.gnu.org/licenses/.
+You should have received a copy of the license along with Natro Macro. If not, see https://www.gnu.org/licenses/gpl-3.0.html.
 */
 
 ;Compiler directives:
