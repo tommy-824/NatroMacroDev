@@ -6,9 +6,9 @@ This file is part of Natro Macro. Our source code will always be open and availa
 
 Natro Macro is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-Natro Macro is distributed in the hope that it will be useful. This does not give you the right to steal sections from our code, distribute it under your own name, then slander the macro. 
+Natro Macro is distributed in the hope that it will be useful. This does not give you the right to steal sections from our code, distribute it under your own name, then slander the macro.
 
-You should have received a copy of the GNU General Public License along with Natro Macro. If not, see https://www.gnu.org/licenses/. 
+You should have received a copy of the license along with Natro Macro. If not, please redownload from an official source.
 */
 
 ;Enhancement Version 0.2.0
