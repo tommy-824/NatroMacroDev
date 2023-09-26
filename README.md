@@ -38,7 +38,7 @@ If Natro Macro helped you, let us know by giving it a ⭐ on Github!
 
 ## ⌨️ Contributing
 
-Natro Macro is an open-source project. We greatly appreciate all contributions, whether you are helping us fix bugs or suggesting new features to the development team. If you want to get started, give our [Contributing Guidelines](./CONTRIBUTING.md) a read.
+Natro Macro is an open-source project. We greatly appreciate all contributions, whether you are helping us fix bugs or suggesting new features to the development team. If you want to get started, give our [Contributing Guidelines][contributing-link] a read.
 
 - Bugs: If you find an issue or run into an error message while using the macro, please create a [bug report][bug-report-link].
 - Suggestions: If you have an idea for a feature that you'd like to see in the macro, please submit a [suggestion][suggestion-link].
@@ -61,6 +61,7 @@ This project is licensed under [GNU GPL v3.0](./LICENSE.md).
 [discord-shield]: https://img.shields.io/discord/1012610056921038868?style=flat-square&logo=discord&logoColor=white&label=discord&labelColor=black&color=5865F2
 [discord-link]: https://discord.gg/natromacro
 [latest-release-link]: https://github.com/NatroTeam/NatroMacro/releases/latest
+[contributing-link]: https://github.com/NatroTeam/.github/blob/main/CONTRIBUTING.md
 [bug-report-link]: https://github.com/NatroTeam/NatroMacro/issues/new?assignees=&labels=bug%2Cneeds+triage&projects=&template=bug.yml
 [suggestion-link]: https://github.com/NatroTeam/NatroMacro/issues/new?assignees=&labels=suggestion%2Cneeds+triage&projects=&template=suggestion.yml
 [github-profile-link]: http://github.com/NatroTeam
