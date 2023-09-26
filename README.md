@@ -28,7 +28,7 @@ An open-source Bee Swarm Simulator macro written in AutoHotkey!
 
 __Join our official [Discord server][discord-link]!__ This is where you can connect with the community, get immediate pings for macro updates, and download custom patterns, paths, and themes.
 
-If Natro Macro helped you, let us know by giving it a ⭐ on GitHub!
+If Natro Macro helped you, let us know by giving it a ⭐ $\color{yellow}{\textsf{Star}}$ on GitHub!
 
 <a href="https://github.com/NatroTeam/NatroMacro/stargazers">
   <picture>
