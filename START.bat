@@ -5,7 +5,7 @@ cd %~dp0
 :: IF script and executable exist, run the macro
 if exist "submacros\AutoHotkeyU32.exe" (
 	if exist "submacros\natro_macro.ahk" (
-		start "" "submacros\AutoHotkeyU32.exe" "submacros\natro_macro.ahk"
+		start "" "%~dp0submacros\AutoHotkeyU32.exe" "%~dp0submacros\natro_macro.ahk"
 		exit
 	)
 )
@@ -41,7 +41,7 @@ if defined grandparent (
 				
 				<nul set /p "=%green%Press any key to start Natro Macro...%reset%"
 				pause >nul
-				start "" "%%a\!folder!\submacros\AutoHotkeyU32.exe" "%%a\!folder!\submacros\natro_macro.ahk"
+				start "" "%USERPROFILE%\%%a\!folder!\submacros\AutoHotkeyU32.exe" "%USERPROFILE%\%%a\!folder!\submacros\natro_macro.ahk"
 				exit
 			)
 		)
