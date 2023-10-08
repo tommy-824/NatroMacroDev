@@ -227,7 +227,7 @@ nm_import() ; at every start of macro, import patterns
 			}
 			`)""
 
-			exec := ComObjCreate(""WScript.Shell"").Exec(A_AhkPath "" /script /iLib nul /ErrorStdOut *""), exec.StdIn.Write(script), exec.StdIn.Close()
+			exec := ComObjCreate(""WScript.Shell"").Exec("""""""" A_AhkPath """""" /script /iLib nul /ErrorStdOut *""), exec.StdIn.Write(script), exec.StdIn.Close()
 			if (stdout := exec.StdErr.ReadAll())
 				FileAppend, % stdout, **
 
@@ -242,7 +242,7 @@ nm_import() ; at every start of macro, import patterns
 			}
 			)"
 
-			exec := ComObjCreate("WScript.Shell").Exec(exe_path64 " /script /ErrorStdOut *"), exec.StdIn.Write(script), exec.StdIn.Close()
+			exec := ComObjCreate("WScript.Shell").Exec("""" exe_path64 """ /script /ErrorStdOut *"), exec.StdIn.Write(script), exec.StdIn.Close()
 			if (stdout := exec.StdErr.ReadAll())
 			{
 				msgbox, 0x40010, Unable to Import Pattern!, % "Unable to import '" StrReplace(A_LoopFileName, ".ahk") "' pattern! Click 'OK' to continue loading the macro without this pattern installed, otherwise fix the error and reload the macro.`r`n`r`nThe error found on loading is stated below:`r`n" stdout, 60
@@ -3442,7 +3442,7 @@ nm_LoadingProgress(){
 	)"
 
 	shell := ComObjCreate("WScript.Shell")
-    exec := shell.Exec(exe_path32 " /script /f *")
+    exec := shell.Exec("""" exe_path32 """ /script /f *")
     exec.StdIn.Write(script), exec.StdIn.Close()
 
 	return exec.ProcessID
@@ -3854,7 +3854,7 @@ nm_testButton(){ ;~~ lines 3464 and 3465 have the same change as 14156
 	`)""
 
 	shell := ComObjCreate(""WScript.Shell"")
-    exec := shell.Exec(""" exe_path64 " /script /f *"")
+    exec := shell.Exec("""""""" A_AhkPath """""" /script /f *"")
     exec.StdIn.Write(script), exec.StdIn.Close()
 	ExitApp
 
@@ -3870,7 +3870,7 @@ nm_testButton(){ ;~~ lines 3464 and 3465 have the same change as 14156
 	)"
 
 	shell := ComObjCreate("WScript.Shell")
-    exec := shell.Exec(exe_path64 " /script /f *")
+    exec := shell.Exec("""" exe_path64 """ /script /f *")
     exec.StdIn.Write(script), exec.StdIn.Close()
 }
 nm_setState(newState){
@@ -7022,7 +7022,7 @@ nm_WebhookGUI(){
 	)"
 
 	shell := ComObjCreate("WScript.Shell")
-    exec := shell.Exec(exe_path64 " /script /f *")
+    exec := shell.Exec("""" exe_path64 """ /script /f *")
     exec.StdIn.Write(script), exec.StdIn.Close()
 
 	return (WGUIPID := exec.ProcessID)
@@ -13018,7 +13018,7 @@ nm_BitterberryFeeder()
 	)"
 
 	shell := ComObjCreate("WScript.Shell")
-    exec := shell.Exec(exe_path64 " /script /f *")
+    exec := shell.Exec("""" exe_path64 """ /script /f *")
     exec.StdIn.Write(script), exec.StdIn.Close()
 }
 nm_BasicEggHatcher()
@@ -13160,7 +13160,7 @@ nm_BasicEggHatcher()
 	)"
 
 	shell := ComObjCreate("WScript.Shell")
-    exec := shell.Exec(exe_path64 " /script /f *")
+    exec := shell.Exec("""" exe_path64 """ /script /f *")
     exec.StdIn.Write(script), exec.StdIn.Close()
 }
 nm_GenerateBeeList()
@@ -13883,7 +13883,7 @@ nm_createWalk(movement, name:="") ; this function generates the 'walk' code and 
 	}
 
 	shell := ComObjCreate("WScript.Shell")
-    exec := shell.Exec(exe_path64 " /script /f *")
+    exec := shell.Exec("""" exe_path64 """ /script /f *")
     exec.StdIn.Write(script), exec.StdIn.Close()
 
 	WinWait, % "ahk_class AutoHotkey ahk_pid " exec.ProcessID, , 2
