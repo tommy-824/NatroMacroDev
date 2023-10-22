@@ -31,7 +31,8 @@ The only official sources are:
 <br>
 
 <!-- shields -->
-[![][github-release-shield]][github-release-link]
+[![][latest-release-shield]][latest-release-link]
+[![][downloads-shield]][downloads-link]
 [![][discord-shield]][discord-link]
 [![][roblox-shield]][roblox-link]
 <br>
@@ -42,9 +43,9 @@ An open-source Bee Swarm Simulator macro written in AutoHotkey!
 
 ## ⚙️ Installation
 
-1. Download the latest version from [here][latest-release-link]
-2. Right click Natro_Macro_vX.X.X.zip and click 'Extract All...'
-3. Open the extracted folder and run 'START.bat'
+1. Download `Natro_Macro_vX.X.X.zip` from the [latest version][latest-release-link]
+2. Open `Natro_Macro_vX.X.X.zip` and double-click the folder inside
+3. Double-click `START.bat` and wait for the macro to load
 
 
 ## 🫂 Community
@@ -79,13 +80,14 @@ This project is licensed under [GNU GPL v3.0](./LICENSE.md)
 </details>
 
 <!-- links -->
-[github-release-shield]: https://img.shields.io/github/v/release/NatroTeam/NatroMacro?style=flat-square&logo=github&logoColor=white&labelColor=black&color=2674DA
-[github-release-link]: https://github.com/NatroTeam/NatroMacro/releases
-[roblox-shield]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgroups.roblox.com%2Fv1%2Fgroups%2F16490149&query=%24.memberCount&suffix=%20members&style=flat-square&logo=roblox&logoColor=white&label=roblox&labelColor=black&color=EC2F2D
-[roblox-link]: https://www.roblox.com/groups/16490149/Natro-Macro
-[discord-shield]: https://img.shields.io/discord/1012610056921038868?style=flat-square&logo=discord&logoColor=white&label=discord&labelColor=black&color=5865F2
-[discord-link]: https://discord.gg/natromacro
+[latest-release-shield]: https://img.shields.io/github/v/release/NatroTeam/NatroMacro?logo=github&logoColor=white&labelColor=black&color=6E5494
 [latest-release-link]: https://github.com/NatroTeam/NatroMacro/releases/latest
+[downloads-shield]: https://img.shields.io/github/downloads/NatroTeam/NatroMacro/total?label=downloads&labelColor=black&color=006400&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBzaGFwZS1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiIgaW1hZ2UtcmVuZGVyaW5nPSJvcHRpbWl6ZVF1YWxpdHkiIGZpbGwtcnVsZT0iZXZlbm9kZCIgeG1sbnM6dj0iaHR0cHM6Ly92ZWN0YS5pby9uYW5vIj48cGF0aCBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik01MTIgMjU2YzAgNzAuNjctMjguNjYgMTM0LjY4LTc0Ljk5IDE4MS4wMVMzMjYuNjcgNTEyIDI1NiA1MTJjLTcwLjY4IDAtMTM0LjY5LTI4LjY2LTE4MS4wMS03NC45OUMyOC42NiAzOTAuNjggMCAzMjYuNjcgMCAyNTZjMC03MC42OCAyOC42Ni0xMzQuNjkgNzQuOTktMTgxLjAxQzEyMS4zMSAyOC42NiAxODUuMzIgMCAyNTYgMGM3MC42NyAwIDEzNC42OCAyOC42NiAxODEuMDEgNzQuOTlDNDgzLjM0IDEyMS4zMSA1MTIgMTg1LjMyIDUxMiAyNTZ6bS0yMDQuMjktMjEuOTd2LTY3LjA0YzAtNy41My02LjE5LTEzLjcyLTEzLjczLTEzLjcyaC03NS45NmMtNy41MyAwLTEzLjcyIDYuMTctMTMuNzIgMTMuNzJ2NjcuMDNoLTQyLjg0Yy0xNi41IDAtMjQuNzggMTkuNjQtMTMuODYgMzEuNTRsOTQuNzQgMTEwLjU3YzcuNDQgOSAyMS4wMyA5LjAxIDI4LjY2LjM3bDkzLjcxLTExMS4zMWMxMC42OS0xMi4yNyAxLjY0LTMxLjE0LTE0LjE5LTMxLjE2aC00Mi44MXptMTA1LjUyIDE3OS4yYzQwLjIyLTQwLjI0IDY1LjExLTk1Ljg0IDY1LjExLTE1Ny4yMyAwLTYxLjQtMjQuODktMTE3LTY1LjExLTE1Ny4yM0MzNzIuOTkgNTguNTQgMzE3LjM5IDMzLjY2IDI1NiAzMy42NmMtNjEuNCAwLTExNyAyNC44OC0xNTcuMjMgNjUuMTFTMzMuNjYgMTk0LjYgMzMuNjYgMjU2YzAgNjEuMzkgMjQuODggMTE2Ljk5IDY1LjExIDE1Ny4yM0MxMzkgNDUzLjQ1IDE5NC42IDQ3OC4zNCAyNTYgNDc4LjM0YzYxLjM5IDAgMTE2Ljk5LTI0Ljg5IDE1Ny4yMy02NS4xMXoiLz48L3N2Zz4=
+[downloads-link]: https://github.com/NatroTeam/NatroMacro/releases
+[roblox-shield]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgroups.roblox.com%2Fv1%2Fgroups%2F16490149&query=%24.memberCount&suffix=%20members&logo=roblox&logoColor=white&label=roblox&labelColor=black&color=EC2F2D
+[roblox-link]: https://www.roblox.com/groups/16490149/Natro-Macro
+[discord-shield]: https://img.shields.io/discord/1012610056921038868?logo=discord&logoColor=white&label=discord&labelColor=black&color=5865F2
+[discord-link]: https://discord.gg/natromacro
 [contributing-link]: https://github.com/NatroTeam/.github/blob/main/CONTRIBUTING.md
 [bug-report-link]: https://github.com/NatroTeam/NatroMacro/issues/new?assignees=&labels=bug%2Cneeds+triage&projects=&template=bug.yml
 [suggestion-link]: https://github.com/NatroTeam/NatroMacro/issues/new?assignees=&labels=suggestion%2Cneeds+triage&projects=&template=suggestion.yml
