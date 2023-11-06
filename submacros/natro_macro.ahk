@@ -2020,7 +2020,7 @@ Gui, Add, Button, x75 y260 w65 h20 -Wrap vPauseButton gpause, % " Pause (" Pause
 Gui, Add, Button, x145 y260 w65 h20 -Wrap vStopButton gstop, % " Stop (" StopHotkey ")"
 
 ;ADD TABS
-Gui, Add, Tab, x0 y-1 w502 h240 -Wrap hwndhTab vTab gnm_TabSelect, Gather|Collect/Kill|Boost|Quest|Planters|Status|Settings|Misc|Contributors
+Gui, Add, Tab, x0 y-1 w502 h240 -Wrap hwndhTab vTab gnm_TabSelect, % "Gather|Collect/Kill|Boost|Quest|Planters|Status|Settings|Misc|Contributors" ((BuffDetectReset = 1) ? "|Advanced" : "")
 SendMessage, 0x1331, 0, 20, , ahk_id %hTab% ; set minimum tab width
 Gui, Font, w700 Underline
 Gui, Add, Text, x0 y25 w126 +center +BackgroundTrans,Gathering
@@ -3506,7 +3506,10 @@ nm_showAdvancedSettings(){
 	if (t2 - t1 < 50000000)
 	{
 		if (++i >= 7)
+		{
+			GuiControl, , Tab, Advanced
 			nm_AdvancedGUI(1), i := 0
+		}
 	}
 	else
 		i := 1, t1 := t2
@@ -3514,7 +3517,6 @@ nm_showAdvancedSettings(){
 nm_AdvancedGUI(init:=0){
 	global
 	local hBM
-	GuiControl, , Tab, Advanced
 	Gui, Tab, Advanced
 	Gui, Font, s8 cDefault Norm, Tahoma
 	Gui, Font, w700
