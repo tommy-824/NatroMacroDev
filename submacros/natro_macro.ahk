@@ -3392,7 +3392,7 @@ nm_BeesmasHandler(req)
 	{
 		switch Trim(req.responseText, " `t`r`n")
 		{
-			case 0:
+			case 1:
 			beesmasActive := 1
 
 			GuiControl, , BeesmasGroupBox, Beesmas (Active)
