@@ -92,6 +92,7 @@ OnMessage(0x5555, "nm_backgroundEvent", 255)
 OnMessage(0x5556, "nm_sendHeartbeat")
 OnMessage(0x5557, "nm_ForceReconnect")
 OnMessage(0x5558, "nm_AmuletPrompt")
+OnMessage(0x5559, "nm_UpdateGUI")
 
 ;run, test.ahk
 pToken := Gdip_Startup()
@@ -109,7 +110,7 @@ If (!FileExist("settings")) ; make sure the settings folder exists
 	}
 }
 
-VersionID := "0.9.6"
+VersionID := "0.9.7T1"
 currentWalk := {"pid":"", "name":""} ; stores "pid" (script process ID) and "name" (pattern/movement name)
 
 ;initial load warnings
@@ -582,7 +583,40 @@ config["Collect"] := {"ClockCheck":1
 	, "StingerCloverCheck":1
 	, "StingerDailyBonusCheck":0
 	, "NightLastDetected":1
-	, "VBLastKilled":1}
+	, "VBLastKilled":1
+	, "MondoSecs":30}
+
+config["Shrine"] := {"ShrineCheck":0
+	, "LastShrine":1
+	, "ShrineAmount1":1
+	, "ShrineAmount2":1
+	, "ShrineItem1":"None"
+	, "ShrineItem2":"None"
+	, "ShrineIndex1":"Infinite"
+	, "ShrineIndex2":"Infinite"
+	, "ShrineRot":1}
+
+config["Blender"] := {"BlenderRot":1
+	, "BlenderCheck":1
+	, "TimerInterval":0
+	, "BlenderItem1":"None"
+	, "BlenderItem2":"None"
+	, "BlenderItem3":"None"
+	, "BlenderAmount1":0
+	, "BlenderAmount2":0
+	, "BlenderAmount3":0
+	, "BlenderIndex1":"Infinite"
+	, "BlenderIndex2":"Infinite"
+	, "BlenderIndex3":"Infinite"
+	, "BlenderTime1":0
+	, "BlenderTime2":0
+	, "BlenderTime3":0
+	, "BlenderEnd": 0
+	, "LastBlenderRot":1
+	, "BlenderCount1": 0
+	, "BlenderCount2": 0
+	, "BlenderCount3": 0}
+	
 
 config["Boost"] := {"FieldBoostStacks":0
 	, "FieldBooster1":"None"
@@ -618,7 +652,6 @@ config["Boost"] := {"FieldBoostStacks":0
 	, "LastEnzymes":1
 	, "LastGlitter":1
 	, "LastSnowflake":1
-	, "LastWindShrine":1
 	, "LastMicroConverter":1
 	, "LastGuid":1
 	, "AutoFieldBoostActive":0
@@ -1659,7 +1692,7 @@ sprinklerImages := ["saturator"]
 state:="Startup"
 objective:="UI"
 DailyReconnect:=0
-for k,v in ["PWindShrine","PWindShrineDonate","PWindShrineDonateNum","PWindShrineBooster","PWindShineBoostedField","PMondoGuid","PFieldBoosted","PFieldGuidExtend","PFieldGuidExtendMins","PFieldBoostExtend","PFieldBoostBypass","PPopStarExtend"]
+for k,v in ["PMondoGuid","PFieldBoosted","PFieldGuidExtend","PFieldGuidExtendMins","PFieldBoostExtend","PFieldBoostBypass","PPopStarExtend"]
 	%v%:=0
 PFieldDriftSteps:=15
 #include *i %A_ScriptDir%\..\settings\personal.ahk
@@ -1690,7 +1723,7 @@ run, "%exe_path64%" /script "submacros\Status.ahk" "%discordMode%" "%discordChec
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; GDIP BITMAPS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-bitmaps := {}
+bitmaps := {}, shrine := {}, hBitmapsSBT := {}
 #Include %A_ScriptDir%\..\nm_image_assets
 #Include general\bitmaps.ahk
 #Include gui\bitmaps.ahk
@@ -1700,6 +1733,10 @@ bitmaps := {}
 #Include collect\bitmaps.ahk
 #Include inventory\bitmaps.ahk
 #Include reconnect\bitmaps.ahk
+
+hBitmapsSB := {}
+for x,y in hBitmapsSBT
+	hBitmapsSB[x] := Gdip_CreateHBITMAPFromBitmap(y), Gdip_DisposeImage(y)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; SYSTEM TRAY
@@ -1901,23 +1938,34 @@ Gui, Add, Button, x82 y240 w10 h15 vcurrentFieldUp gnm_currentFieldUp Disabled, 
 Gui, Add, Button, x165 y240 w10 h15 vcurrentFieldDown gnm_currentFieldDown Disabled, >
 Gui, Add, Text, x92 y240 w73 +center +BackgroundTrans +border vCurrentField,%CurrentField%
 Gui, Add, Text, x220 y240 w275 +left +BackgroundTrans vstate hwndhwndstate +border, %state%: %objective%
-Gui, Add, Text, x435 y264 gnm_showAdvancedSettings vVersionText, v%versionID%
+Gui, Add, Text, x435 y263 gnm_showAdvancedSettings vVersionText, v%versionID%
 GuiControlGet, pos, Pos, VersionText
 ; shift elements to left if macro version is not latest
 if (outdated_flag = 1)
 {
 	hBM := Gdip_CreateHBITMAPFromBitmap(bitmaps["warninggui"])
-	Gui, Add, Picture, % "+BackgroundTrans x482 y264 w14 h14 gnm_AutoUpdateGUI vImageUpdateLink", HBITMAP:*%hBM%
+	Gui, Add, Picture, % "+BackgroundTrans x484 y263 w14 h14 gnm_AutoUpdateGUI vImageUpdateLink", HBITMAP:*%hBM%
 	DllCall("DeleteObject", "ptr", hBM)
-	posW += 16
+	posW += 15
 }
-GuiControl, Move, VersionText, % "x" 494-posW
+GuiControl, Move, VersionText, % "x" 495-posW
 hBM := Gdip_CreateHBITMAPFromBitmap(bitmaps["githubgui"])
-Gui, Add, Picture, % "+BackgroundTrans x" 494-posW-23 " y262 w18 h18 vImageGitHubLink", HBITMAP:*%hBM%
+Gui, Add, Picture, % "+BackgroundTrans x" 495-posW-20 " y262 w16 h16 vImageGitHubLink", HBITMAP:*%hBM%
 DllCall("DeleteObject", "ptr", hBM)
+Gui, Font, s8 w700
+w := 255-posW-12
 pBM := Gdip_BitmapConvertGray(bitmaps["discordgui"]), hBM := Gdip_CreateHBITMAPFromBitmap(pBM)
-Gui, Add, Picture, % "+BackgroundTrans x" 494-posW-48 " y263 w21 h16 vImageDiscordLink", HBITMAP:*%hBM%
+Gui, Add, Picture, % "+BackgroundTrans x" 215 " y262 w21 h16 vImageDiscordLink", HBITMAP:*%hBM%
 Gdip_DisposeImage(pBM), DllCall("DeleteObject", "ptr", hBM)
+Gui, Add, Text, % "x" 215+27 " y256 +Center vTextDiscordLink", Join`nDiscord
+pBM := Gdip_BitmapConvertGray(bitmaps["robloxgui"]), hBM := Gdip_CreateHBITMAPFromBitmap(pBM)
+Gui, Add, Picture, % "+BackgroundTrans x" 205+w//3+w//8.4 " y262 w16 h16 vImageRobloxLink", HBITMAP:*%hBM%
+Gdip_DisposeImage(pBM), DllCall("DeleteObject", "ptr", hBM)
+Gui, Add, Text, % "x" 205+w//3+w//8.4+22 " y256 +Center vTextRobloxLink", Join`nGroup
+pBM := Gdip_BitmapConvertGray(bitmaps["paypalgui"]), hBM := Gdip_CreateHBITMAPFromBitmap(pBM)
+Gui, Add, Picture, % "+BackgroundTrans x" 195+2*w//3+w//5.4 " y262 w14 h16 vImageDonateLink", HBITMAP:*%hBM%
+Gdip_DisposeImage(pBM), DllCall("DeleteObject", "ptr", hBM)
+Gui, Add, Text, % "x" 195+2*w//3+w//5.4+20 " y263 vTextDonateLink", Donate
 Gui, Font, s8 cDefault Norm, Tahoma
 ;control buttons
 Gui, Add, Button, x5 y260 w65 h20 -Wrap vStartButton gstart Disabled, % " Start (" StartHotkey ")"
@@ -2257,20 +2305,23 @@ Gui, Add, Button, x4 y21 w246 h18 hwndhcollect gnm_CollectKillButton Disabled, C
 Gui, Add, Button, x250 y21 w246 h18 hwndhkill gnm_CollectKillButton, Kill
 ;collect
 Gui, Font, w700
-Gui, Add, GroupBox, x10 y42 w115 h109 vCollectGroupBox, Collect
+Gui, Add, GroupBox, x10 y42 w115 h129 vCollectGroupBox, Collect
 Gui, Font, s8 cDefault Norm, Tahoma
 Gui, Add, Checkbox, x15 y57 +BackgroundTrans vClockCheck gnm_saveCollect Checked%ClockCheck% Disabled, Clock (tickets)
-Gui, Add, Checkbox, x15 y76 w52 +BackgroundTrans vMondoBuffCheck gnm_saveCollect Checked%MondoBuffCheck% Disabled, Mondo
-MondoActionList := ["Buff", "Kill"], PMondoGuid ? MondoActionList.Push("Tag", "Guid")
-Gui, Add, Text, xp+66 yp w30 vMondoAction +Center +BackgroundTrans,%MondoAction%
-Gui, Add, Button, xp-12 yp-1 w12 h16 gnm_MondoAction hwndhMALeft Disabled, <
-Gui, Add, Button, xp+41 yp w12 h16 gnm_MondoAction hwndhMARight Disabled, >
-Gui, Add, Checkbox, x15 y95 w35 +BackgroundTrans vAntPassCheck gnm_saveCollect Checked%AntPassCheck% Disabled, Ant
-Gui, Add, Text, xp+47 yp w49 vAntPassAction +Center +BackgroundTrans,%AntPassAction%
+Gui, Add, Checkbox, x15 y76 w23 +BackgroundTrans vMondoBuffCheck gnm_saveCollect Checked%MondoBuffCheck% Disabled, Mondo
+MondoActionList := ["Buff", "Kill", "Manual"], PMondoGuid ? MondoActionList.Push("Tag", "Guid")
+Gui, Add, Text, x76 y76 w35 vMondoAction +Center +BackgroundTrans,%MondoAction%
+Gui, Add, Button, xp-14 yp-1 w12 h16 gnm_MondoAction hwndhMALeft Disabled, <
+Gui, Add, Button, xp+49 yp w12 h16 gnm_MondoAction hwndhMARight Disabled, >
+Gui, Add, Text, x45 y90 w110 vMondoPointText +left +BackgroundTrans, \___
+Gui, Add, Edit, % "x68 y93 w28 h18 number Limit3 +BackgroundTrans vMondoSecs gnm_SaveConfig" ((MondoAction = "Manual") ? "" : " Disabled") , %MondoSecs%
+Gui, Add, Text, x98 y95 vMondoSecsText, Secs
+Gui, Add, Checkbox, x15 y115 w35 +BackgroundTrans vAntPassCheck gnm_saveCollect Checked%AntPassCheck% Disabled, Ant
+Gui, Add, Text,x62 y115 w49 vAntPassAction +Center +BackgroundTrans,%AntPassAction%
 Gui, Add, Button, xp-12 yp-1 w12 h16 gnm_AntPassAction hwndhAPALeft Disabled, <
 Gui, Add, Button, xp+60 yp w12 h16 gnm_AntPassAction hwndhAPARight Disabled, >
-Gui, Add, Checkbox, x15 y114 +BackgroundTrans vRoboPassCheck gnm_saveCollect Checked%RoboPassCheck% Disabled, Robo Pass
-Gui, Add, Checkbox, x15 y133 +BackgroundTrans vHoneystormCheck gnm_saveCollect Checked%HoneystormCheck% Disabled, Honeystorm
+Gui, Add, Checkbox, x15 y134 +BackgroundTrans vRoboPassCheck gnm_saveCollect Checked%RoboPassCheck% Disabled, Robo Pass
+Gui, Add, Checkbox, x15 y153 +BackgroundTrans vHoneystormCheck gnm_saveCollect Checked%HoneystormCheck% Disabled, Honeystorm
 ;dispensers
 Gui, Font, w700
 Gui, Add, GroupBox, x130 y42 w170 h109 vDispensersGroupBox, Dispensers
@@ -2285,24 +2336,71 @@ Gui, Add, Checkbox, x225 yp+19 +BackgroundTrans vGlueDisCheck gnm_saveCollect Ch
 ;beesmas
 beesmasActive := 0
 Gui, Font, w700
-Gui, Add, GroupBox, x10 y153 w290 h84 vBeesmasGroupBox, Beesmas (Inactive)
+Gui, Add, GroupBox, x205 y153 w290 h78 vBeesmasGroupBox, Beesmas (Inactive)
 Gui, Font, s8 cDefault Norm, Tahoma
 hBM := Gdip_CreateHBITMAPFromBitmap(bitmaps["warninggui"])
-Gui, Add, Picture, +BackgroundTrans x136 y153 w14 h14 gBeesmasActiveFail vBeesmasFailImage, HBITMAP:*%hBM%
+Gui, Add, Picture, +BackgroundTrans  x267 y150 w14 h14 gBeesmasActiveFail vBeesmasFailImage, HBITMAP:*%hBM%
 DllCall("DeleteObject", "ptr", hBM)
-Gui, Add, Picture, +BackgroundTrans x122 y150 w20 h20 vBeesmasImage
-Gui, Add, Checkbox, x156 y153 +BackgroundTrans gnm_saveCollect hwndhBeesmas1 Disabled, Allow Gather Interrupt
-Gui, Add, Checkbox, x15 y170 +BackgroundTrans gnm_saveCollect hwndhBeesmas2 Disabled, Stockings
-Gui, Add, Checkbox, x15 yp+17 +BackgroundTrans gnm_saveCollect hwndhBeesmas3 Disabled, Honey Wreath
-Gui, Add, Checkbox, x15 yp+17 +BackgroundTrans gnm_saveCollect hwndhBeesmas4 Disabled, Feast
-Gui, Add, Checkbox, x15 yp+17 +BackgroundTrans gnm_saveCollect hwndhBeesmas5 Disabled, Robo Party De-level
-Gui, Add, Checkbox, x108 y170 +BackgroundTrans gnm_saveCollect hwndhBeesmas6 Disabled, Gingerbread
-Gui, Add, Checkbox, x108 yp+17 +BackgroundTrans gnm_saveCollect hwndhBeesmas7 Disabled, Snow Machine
-Gui, Add, Checkbox, x108 yp+17 +BackgroundTrans gnm_saveCollect hwndhBeesmas8 Disabled, Candles
-Gui, Add, Checkbox, x201 y170 +BackgroundTrans gnm_saveCollect hwndhBeesmas9 Disabled, Samovar
-Gui, Add, Checkbox, x201 yp+17 +BackgroundTrans gnm_saveCollect hwndhBeesmas10 Disabled, Lid Art
-Gui, Add, Checkbox, x201 yp+17 +BackgroundTrans gnm_saveCollect hwndhBeesmas11 Disabled, Gummy Beacon
+Gui, Add, Picture, +BackgroundTrans x267 y150 w20 h20 vBeesmasImage
+Gui, Add, Checkbox, x332 y154 +BackgroundTrans gnm_saveCollect hwndhBeesmas1 Disabled, Allow Gather Interrupt
+Gui, Add, Checkbox, x208 y167 +BackgroundTrans gnm_saveCollect hwndhBeesmas2 Disabled, Stockings
+Gui, Add, Checkbox, x208 yp+16 +BackgroundTrans gnm_saveCollect hwndhBeesmas3 Disabled, Honey Wreath
+Gui, Add, Checkbox, x208 yp+16 +BackgroundTrans gnm_saveCollect hwndhBeesmas4 Disabled, Feast
+Gui, Add, Checkbox, x208 yp+16 +BackgroundTrans gnm_saveCollect hwndhBeesmas5 Disabled, Robo Party De-level
+Gui, Add, Checkbox, x298 y167 +BackgroundTrans gnm_saveCollect hwndhBeesmas6 Disabled, Gingerbread
+Gui, Add, Checkbox, x298 yp+16 +BackgroundTrans gnm_saveCollect hwndhBeesmas7 Disabled, Snow Machine
+Gui, Add, Checkbox, x298 yp+16 +BackgroundTrans gnm_saveCollect hwndhBeesmas8 Disabled, Candles
+Gui, Add, Checkbox, x391 y167 +BackgroundTrans gnm_saveCollect hwndhBeesmas9 Disabled, Samovar
+Gui, Add, Checkbox, x391 yp+16 +BackgroundTrans gnm_saveCollect hwndhBeesmas10 Disabled, Lid Art
+Gui, Add, Checkbox, x391 yp+16 +BackgroundTrans gnm_saveCollect hwndhBeesmas11 Disabled, Gummy Beacon
 try AsyncHttpRequest("GET", "https://raw.githubusercontent.com/NatroTeam/.github/main/data/beesmas.txt", "nm_BeesmasHandler", {"accept": "application/vnd.github.v3.raw"})
+;Blender
+Gui, Font, w700
+Gui, Add, GroupBox, x305 y42 w190 h109 vBlenderGroupBox, Blender
+Gui, Font, s8 cDefault Norm, Tahoma
+loop 3 {
+	xCoords := 256 + (60 * A_index)
+	Gui, Add, Button, x%xCoords% y130 w40 h15 vBlenderAdd%A_index% hwndhBlenderClear%A_index% gnm_setBlenderData, % (BlenderItem%A_index% = "None") ? "Add" : "Clear"
+	Gui, add, picture, x%xCoords% y80 h40 w40 hwndhBlenderItem%A_index%Picture vBlenderItem%A_index%Picture +BackgroundTrans +0xE
+	if (BlenderItem%A_index% != "None")
+		SetImage(hBlenderItem%A_Index%Picture, hBitmapsSB[BlenderItem%A_index%])
+	xCoords := 266 + (58 * A_index), Width := 6*StrLen(BlenderAmount%A_index%)
+	Gui, Add, Text, x%xCoords% y60 w%Width% vBlenderAmount%A_index% +Center, % BlenderAmount%A_index%
+	
+	GuiControlGet, pos, Pos, BlenderAmount%A_index%
+	
+	xcoord := PosW + PosX + 12, LeftCurlB := PosX - 5, RightCurlB := PosX + PosW + 1
+	
+	Gui, Add, Text, x%xcoord% y60 vBlenderIndex%A_index%, % (BlenderIndex%A_index% := (BlenderIndex%A_index% = "Infinite") ? "∞" : BlenderIndex%A_index%)
+	Gui, Add, Text, x%LeftCurlB% y60 vLeftCurlB%A_index%, % "("
+	Gui, Add, Text, x%RightCurlB% y60 vRightCurlB%A_index%, % ")"
+	GuiControlGet, pos, Pos, BlenderIndex%A_index%
+	
+	LeftBracketB := PosX - 5, RightBracketB := PosX + PosW + 1
+	
+	Gui, Add, Text, x%LeftBracketB% y60 vLeftBracketB%A_index%, % "["
+	Gui, Add, Text, x%RightBracketB% y60 vRightBracketB%A_index%, % "]"
+}
+BlenderAdd := 1 ;setup BlenderAdd for later use in the GUI
+
+Gui, Add, edit, x427 y125 w50 vBlenderAmount Hidden Number Limit3, 0
+Gui, Add, Text, x435 y106 vBlenderAmountText Hidden, Amount
+Gui, Add, Text, x435 y50 h13 vBlenderRepeatText Hidden, Repeat
+Gui, Font, w700 underline
+Gui, Add, Text, x332 y58 w80 vblendertitle1 Hidden, Add Item
+Gui, Font, s8 cDefault Norm, Tahoma
+Gui, Add, Text, x307 y74 w103 h1 vblenderline1 Hidden 0x7
+Gui, Add, Text, x409 y50 w1 h100 vblenderline2 Hidden 0x7
+Gui, Add, Text, x410 y64 w83 h1 vblenderline3 Hidden 0x7
+Gui, Add, Text, x410 y121 w83 h1 vblenderline4 Hidden 0x7
+Gui, Add, edit, x427 y84 w51 vBlenderIndex Hidden Number Limit3, 0
+Gui, Add, checkbox, x427 y69 w60 vBlenderIndexOption gnm_BlenderIndexOption Hidden, Infinite
+Gui, Add, Picture, x336 y80 w40 h40 hwndhAddBlenderItem vBlenderItem Hidden +0xE
+Gui, Font, s8 cDefault Bold, Tahoma
+Gui, Add, Button, x312 y95 w18 h18 vBlenderLeft hwndhfblenderleft gba_AddBlenderItemButton Hidden, <
+Gui, Add, Button, x385 y95 w18 h18 vBlenderRight hwndhfblenderright gba_AddBlenderItemButton Hidden, >
+Gui, Font, s8 cDefault Norm, Tahoma
+Gui, Add, Button, x318 y125 w80 h16 +Center gba_AddBlenderItem vBlenderAddSlot Hidden, 
 
 ;KILL
 ;bugrun
@@ -2425,6 +2523,49 @@ Gui, Add, Text, xp+3 y+0 w12 vFieldBoosterMins +Center, %FieldBoosterMins%
 Gui, Add, UpDown, xp+14 yp-1 h16 -16 Range0-12 vFieldBoosterMinsUpDown gnm_FieldBoosterMins Disabled, % FieldBoosterMins//5
 Gui, Add, Text, xp+20 yp+1 w100 left +BackgroundTrans, Mins
 Gui, Add, CheckBox, x20 y62 +center vBoostChaserCheck gnm_BoostChaserCheck Checked%BoostChaserCheck% Disabled, Gather in`nBoosted Field
+Gui, Font, w700
+;shrine
+Gui, Add, GroupBox, x305 y125 w190 h109, Shrine
+Gui, Font, s8 cDefault Norm, Tahoma
+loop 2 {
+	xCoords := 230 + (100 * A_Index)
+	Gui, add, picture, x%xcoords% y163 h50 w50 hwndhShrineItem%A_Index%Picture vShrineItem%A_Index%Picture +BackgroundTrans +0xE
+	Gui, Add, Button, x%xCoords% y213 w35 h13 vShrineAdd%A_Index% hwndhShrineClear%A_Index% gba_setShrineData, % (ShrineItem%A_Index% = "None") ? "Add" : "Clear"
+	if (ShrineItem%A_index% != "None")
+		SetImage(hShrineItem%A_Index%Picture, hBitmapsSB[ShrineItem%A_index%])
+	xCoords := 240 + (98 * A_index), Width := 6*StrLen(ShrineAmount%A_index%)
+	Gui, Add, Text, x%xCoords% y143 w%Width% vShrineAmount%A_index% +Center, % ShrineAmount%A_index%
+	GuiControlGet, pos, Pos, ShrineAmount%A_index%
+
+	xCoords := PosW + PosX + 12, LeftCurlS := PosX - 5, RightCurlS := PosX + PosW + 1
+	Gui, Add, Text, x%xCoords% y143 vShrineIndex%A_index%, % (ShrineIndex%A_index% := (ShrineIndex%A_index% = "Infinite") ? "∞" : ShrineIndex%A_index%)
+	Gui, Add, Text, x%LeftCurlS% y143 vLeftCurlS%A_index%, % "("
+	Gui, Add, Text, x%RightCurlS% y143 vRightCurlS%A_index%, % ")"
+	GuiControlGet, pos, Pos, ShrineIndex%A_index%
+    
+	LeftBracketS := PosX - 5, RightBracketS := PosX + PosW + 1
+	Gui, Add, Text, x%LeftBracketS% y143 vLeftBracketS%A_index%, % "["
+	Gui, Add, Text, x%RightBracketS% y143 vRightBracketS%A_index%, % "]"
+}
+ShrineAdd := 1
+
+Gui, Add, edit, x427 y208 w50 vShrineAmount Hidden Number limit3, 0
+Gui, Add, Text, x435 y189 vShrineAmountText Hidden, Amount
+Gui, Add, Text, x435 y133 vShrineRepeatText Hidden, Repeat
+Gui, Font, w700 underline
+Gui, Add, Text, x332 y141 w80 vshrinetitle1 Hidden, Add Item
+Gui, Font, s8 cDefault Norm, Tahoma
+Gui, Add, Text, x307 y157 w103 h1 vShrineline1 Hidden 0x7
+Gui, Add, Text, x409 y133 w1 h100 vShrineline2 Hidden 0x7
+Gui, Add, Text, x410 y147 w83 h1 vShrineline3 Hidden 0x7
+Gui, Add, Text, x410 y204 w83 h1 vShrineline4 Hidden 0x7
+Gui, Add, edit, x427 y167 w51  vShrineIndex Hidden Disabled Number, 0
+Gui, Add, Checkbox, x427 y152 w60 vShrineIndexOption gnm_ShrineIndexOption Hidden, Infinite
+Gui, Add, Picture, x336 y163 w40 h40 hwndhAddShrineItem vShrineItem Hidden +0xE
+Gui, Add, Button, x312 y178 w18 h18 vShrineLeft hwndhfShrineleft gba_AddShrineItemButton Hidden, <
+Gui, Add, Button, x385 y178 w18 h18 vShrineRight hwndhfShrineright gba_AddShrineItemButton Hidden, >
+Gui, Add, Button, x318 y208 w80 h16 +Center gba_AddShrineItem vShrineAddSlot Hidden
+
 ;hotbar
 Loop, 6
 {
@@ -3321,6 +3462,8 @@ nm_Start(){
 		nm_Collect()
 		;quests
 		nm_QuestRotate()
+		;shrine
+		nm_Shrine()
 		;booster
 		nm_ToAnyBooster()
 		;gather
@@ -3339,15 +3482,32 @@ nm_LockTabs(lock:=1){
 	global bitmaps
 
 	;controls outside tabs
+	Gui, Font, s8 cDefault w700 Tahoma
 	if (lock = 1)
 	{
 		GuiControl, Disable, CurrentFieldUp
 		GuiControl, Disable, CurrentFieldDown
 
+		GuiControl, Font, TextDiscordLink
+		GuiControl, -g, TextDiscordLink
 		pBM := Gdip_BitmapConvertGray(bitmaps["discordgui"]), hBM := Gdip_CreateHBITMAPFromBitmap(pBM)
 		GuiControl, , ImageDiscordLink, HBITMAP:*%hBM%
 		Gdip_DisposeImage(pBM), DllCall("DeleteObject", "Ptr", hBM)
 		GuiControl, -g, ImageDiscordLink
+
+		GuiControl, Font, TextRobloxLink
+		GuiControl, -g, TextRobloxLink
+		pBM := Gdip_BitmapConvertGray(bitmaps["robloxgui"]), hBM := Gdip_CreateHBITMAPFromBitmap(pBM)
+		GuiControl, , ImageRobloxLink, HBITMAP:*%hBM%
+		Gdip_DisposeImage(pBM), DllCall("DeleteObject", "Ptr", hBM)
+		GuiControl, -g, ImageRobloxLink
+		
+		GuiControl, Font, TextDonateLink
+		GuiControl, -g, TextDonateLink
+		pBM := Gdip_BitmapConvertGray(bitmaps["paypalgui"]), hBM := Gdip_CreateHBITMAPFromBitmap(pBM)
+		GuiControl, , ImageDonateLink, HBITMAP:*%hBM%
+		Gdip_DisposeImage(pBM), DllCall("DeleteObject", "Ptr", hBM)
+		GuiControl, -g, ImageDonateLink
 
 		GuiControl, -g, ImageGitHubLink
 		
@@ -3358,18 +3518,297 @@ nm_LockTabs(lock:=1){
 		GuiControl, Enable, CurrentFieldUp
 		GuiControl, Enable, CurrentFieldDown
 
+		Gui, Font, c0046ee
+
+		GuiControl, Font, TextDiscordLink
+		GuiControl, +gDiscordLink, TextDiscordLink
 		hBM := Gdip_CreateHBITMAPFromBitmap(bitmaps["discordgui"])
 		GuiControl, , ImageDiscordLink, HBITMAP:*%hBM%
 		DllCall("DeleteObject", "Ptr", hBM)
 		GuiControl, +gDiscordLink, ImageDiscordLink
 
+		GuiControl, Font, TextRobloxLink
+		GuiControl, +gRobloxLink, TextRobloxLink
+		hBM := Gdip_CreateHBITMAPFromBitmap(bitmaps["robloxgui"])
+		GuiControl, , ImageRobloxLink, HBITMAP:*%hBM%
+		DllCall("DeleteObject", "Ptr", hBM)
+		GuiControl, +gRobloxLink, ImageRobloxLink
+		
+		GuiControl, Font, TextDonateLink
+		GuiControl, +gDonateLink, TextDonateLink
+		hBM := Gdip_CreateHBITMAPFromBitmap(bitmaps["paypalgui"])
+		GuiControl, , ImageDonateLink, HBITMAP:*%hBM%
+		DllCall("DeleteObject", "Ptr", hBM)
+		GuiControl, +gDonateLink, ImageDonateLink
+
 		GuiControl, +gGitHubRepoLink, ImageGitHubLink
 
 		c := "UnLock"
 	}
+	Gui, Font, cDefault Norm
 
 	for i,tab in tabs
 		nm_Tab%tab%%c%()
+}
+nm_ShrineIndexOption() {
+	global ShrineIndexOption, ShrineIndex
+	GuiControlGet, ShrineIndexOption
+	if(ShrineIndexOption)
+		GuiControl, hide, ShrineIndex
+	else
+		GuiControl, show, ShrineIndex
+}
+ba_setShrineData(hCtrl){
+    global
+    Loop, 2 {
+        if (hCtrl = hShrineClear%A_Index%) {
+            if (ShrineItem%A_Index% = "None") {
+				ShrineaddIndex := A_Index, AddShrineItem := "RedExtract", ShrineAdd := Mod(ShrineAdd, 2) + 1
+				loop 2 {
+					i := A_Index
+					For x, Item in ["ShrineAdd", "LeftBracketS", "RightBracketS", "ShrineAmount", "ShrineIndex", "RightCurlS", "LeftCurlS"]
+						GuiControl, Hide, %Item%%i%
+					GuiControl, Hide, ShrineItem%i%Picture
+				}
+				
+				GuiControl,, ShrineAmount, % ShrineAmount%A_Index%
+				GuiControl,, ShrineIndex, % ((ShrineIndex%A_Index% != "Infinite" && ShrineIndex%A_Index% != "∞") ? ShrineIndex%A_Index% : 0) 
+				SetImage(hAddShrineItem, hBitmapsSB["RedExtract"])
+				GuiControl, ChooseString, ShrineIndexOption, Infinite
+				GuiControl,, ShrineAddSlot, Add to Slot %shrineaddIndex%
+				GuiControl,, ShrineIndexOption, 1
+
+				For z, ui in ["ShrineItem", "ShrineLeft", "ShrineRight", "ShrineAddSlot", "ShrineAmountText", "ShrineAmount", "ShrineRepeatText", "ShrineIndex", "ShrineIndexOption","shrineline1","shrinetitle1","shrineline2","shrineline3","shrineline4","shrineline5"]
+					GuiControl, Show, %ui%
+			} else {
+				ShrineItem%A_Index% := "None", ShrineAmount%A_Index% := 0, ShrineIndex%A_Index% := "Infinite"
+
+                IniWrite, None, settings\nm_config.ini, Shrine, ShrineItem%A_Index%
+                IniWrite, 0, settings\nm_config.ini, Shrine, ShrineAmount%A_Index%
+                Iniwrite, Infinite, settings\nm_config.ini, Shrine, ShrineIndex%A_Index%
+                Iniwrite, 0, settings\nm_config.ini, Shrine, ShrineTime%A_Index%
+
+				GuiControl, -Redraw, % hShrineClear%A_Index%
+				GuiControl,, % hShrineClear%A_Index%, % ((ShrineItem%A_Index% = "None" || ShrineItem%A_Index% = "") ? "Add" : "Clear")
+				GuiControl, +Redraw, % hShrineClear%A_Index%
+
+				GuiControl, Move, shrineAmount%A_Index%, w6
+				GuiControl,, shrineAmount%A_Index%, 0
+				GuiControlGet, pos, Pos, shrineAmount%A_Index%
+				coord := PosW + PosX + 12, leftCurlS := PosX - 5, RightCurlS := PosX + PosW + 1
+
+				GuiControl, Move, leftCurlS%A_Index%, x%leftCurlS%
+				GuiControl, Move, RightCurlS%A_Index%, x%RightCurlS%
+				
+				GuiControl, Move, ShrineIndex%A_Index%, w10 x%coord%
+				GuiControl,, ShrineIndex%A_Index%, % "∞"
+		
+				GuiControlGet, pos, Pos, ShrineIndex%A_Index%
+				LeftBracketS := PosX - 5, RightBracketS := PosX + PosW + 1
+
+				GuiControl, move, LeftBracketS%A_Index%, x%LeftBracketS%
+				GuiControl, move, RightBracketS%A_Index%, x%RightBracketS%
+
+				SetImage(hShrineItem%A_Index%Picture, hBitmapsSB["None"])
+            }
+            break
+        }
+    }
+}
+ba_AddShrineItemButton(hCtrl){
+    global hfShrineleft, hfShrineright, hAddShrineItem, AddShrineItem, ShrineAdd, hBitmapsSB
+    static items := ["RedExtract", "BlueExtract", "BlueBerry", "Pineapple", "StrawBerry", "Sunflower", "Enzymes", "Oil", "Glue", "TropicalDrink", "Gumdrops", "MoonCharms", "Glitter", "StarJelly", "PurplePotion", "SoftWax", "HardWax", "SwirledWax", "CausticWax", "FieldDice", "SmoothDice", "LoadedDice", "SuperSmoothie", "Turpentine"], i := 0, h := 0
+    if (h != ShrineAdd)
+        i := 0, h := ShrineAdd
+    i := Mod(items.Length() + i + ((hCtrl = hfShrineleft) ? -1 : 1), items.Length()), AddShrineItem := items[i+1]
+    SetImage(hAddShrineItem, hBitmapsSB[AddShrineItem])
+}
+ba_AddShrineItem(){
+    global
+	GuiControlGet, ShrineIndex
+	GuiControlGet, ShrineAmount
+	GuiControlGet, ShrineIndexOption
+	ShrineIndex := % ((ShrineIndexOption) ? "Infinite" : ShrineIndex)
+
+	ShrineItem%ShrineaddIndex% := AddShrineItem, ShrineIndex%ShrineaddIndex% := ShrineIndex, ShrineAmount%ShrineaddIndex% := ShrineAmount
+
+    IniWrite, %AddShrineItem%, settings\nm_config.ini, Shrine, ShrineItem%ShrineaddIndex%
+    IniWrite, %ShrineIndex%, settings\nm_config.ini, Shrine, ShrineIndex%ShrineaddIndex%
+	IniWrite, %ShrineAmount%, settings\nm_config.ini, Shrine, ShrineAmount%ShrineaddIndex%
+	
+	SetImage(hShrineItem%ShrineaddIndex%Picture, hBitmapsSB[ShrineItem%ShrineaddIndex%])
+	
+	SWitdh := Strlen(ShrineAmount%ShrineAddIndex%) * 6
+	GuiControl, Move, ShrineAmount%ShrineAddIndex%, w%SWitdh%
+	GuiControl,, ShrineAmount%ShrineAddIndex%, % ShrineAmount%ShrineAddIndex%
+
+	GuiControlGet, pos, Pos, ShrineAmount%ShrineAddIndex% 
+	GuiControl,, shrineIndex%ShrineAddIndex%, % (shrineIndex%ShrineAddIndex% := (shrineIndex%ShrineAddIndex% = "Infinite") ? "∞" : shrineIndex%ShrineAddIndex%)
+	
+	coord := PosW + PosX + 12, LeftCurlS := PosX - 5, RightCurlS := PosX + PosW + 1
+	SWitdh := Strlen(shrineIndex%ShrineAddIndex%) * ((shrineIndex%ShrineAddIndex% = "∞") ? 10 : 6)
+
+	GuiControl, Move, shrineIndex%ShrineAddIndex%, w%SWitdh% x%coord%
+	GuiControl, Move, LeftCurlS%ShrineAddIndex%, x%LeftCurlS%
+	GuiControl, Move, RightCurlS%ShrineAddIndex%, x%RightCurlS%
+
+	GuiControlGet, pos, Pos, shrineIndex%ShrineAddIndex%
+	LeftBracketS := PosX - 5, RightBracketS := PosX + PosW + 1
+	GuiControl, move, LeftBracketS%ShrineAddIndex%, x%LeftBracketS%
+	GuiControl, move, RightBracketS%ShrineAddIndex%, x%RightBracketS%
+
+	loop 2 {
+		i := A_Index
+		For x, Item in ["ShrineAdd", "LeftBracketS", "RightBracketS", "ShrineAmount", "ShrineIndex", "RightCurlS", "LeftCurlS"]
+			GuiControl, Show, %Item%%i%
+		GuiControl, Show, ShrineItem%i%Picture
+	}
+	For z, ui in ["ShrineItem", "ShrineLeft", "ShrineRight", "ShrineAddSlot", "ShrineAmountText", "ShrineAmount", "ShrineRepeatText", "ShrineIndex", "ShrineIndexOption","shrineline1","shrinetitle1","shrineline2","shrineline3","shrineline4","shrineline5"]
+		GuiControl, Hide, %ui%
+
+	GuiControl, -Redraw, % hShrineClear%ShrineaddIndex%
+    GuiControl,, % hShrineClear%ShrineaddIndex%, % ((AddShrineItem = "None" || AddShrineItem = "") ? "Add" : "Clear")
+    GuiControl, +Redraw, % hShrineClear%ShrineaddIndex%
+}
+nm_BlenderIndexOption() {
+	global BlenderIndexOption, BlenderIndex
+	GuiControlGet, BlenderIndexOption
+	if (BlenderIndexOption)
+		GuiControl, hide, BlenderIndex
+	else
+		GuiControl, show, BlenderIndex
+}
+nm_setBlenderData(hCtrl){
+    global
+    Loop, 3 {
+        if (hCtrl = hBlenderClear%A_Index%) {
+            if (BlenderItem%A_Index% = "None") {	
+				BlenderaddIndex := A_Index, AddBlenderItem := "RedExtract", BlenderAdd := Mod(BlenderAdd, 2) + 1
+
+				loop 3 {
+					i := A_Index
+					For x, Item in ["BlenderAdd", "LeftBracketB", "RightBracketB", "BlenderAmount", "BlenderIndex", "LeftCurlB", "RightCurlB"]
+						GuiControl, Hide, %Item%%i%
+					GuiControl, Hide, BlenderItem%i%Picture
+				}
+				
+				GuiControl,, BlenderAmount, % BlenderAmount%A_Index%
+				GuiControl,, BlenderIndex, % ((BlenderIndex%A_Index% != "Infinite" && BlenderIndex%A_Index% != "∞") ? BlenderIndex%A_Index% : 0) 
+				SetImage(hAddBlenderItem, hBitmapsSB["RedExtract"])
+				GuiControl, ChooseString, BlenderIndexOption, Infinite
+				GuiControl,, BlenderAddSlot, Add to Slot %BlenderaddIndex%
+				GuiControl,, BlenderIndexOption, 1
+
+				For z, ui in ["BlenderItem", "BlenderLeft", "BlenderRight", "BlenderAddSlot", "BlenderAmountText", "BlenderAmount", "BlenderRepeatText", "BlenderIndexOption","blenderline1","blendertitle1","blenderline2","blenderline3","blenderline4","blenderline5"]
+					GuiControl, Show, %ui%
+			} else {
+				BlenderItem%A_Index% := "None", BlenderAmount%A_Index% := 0, BlenderIndex%A_Index% := "Infinite"
+
+                IniWrite, None, settings\nm_config.ini, Blender, BlenderItem%A_Index%
+                IniWrite, 0, settings\nm_config.ini, Blender, BlenderAmount%A_Index%
+                Iniwrite, Infinite, settings\nm_config.ini, Blender, BlenderIndex%A_Index%
+                Iniwrite, 0, settings\nm_config.ini, Blender, BlenderTime%A_Index%
+
+				GuiControl, -Redraw, % hBlenderClear%A_Index%
+				GuiControl,, % hBlenderClear%A_Index%, % ((BlenderItem%A_Index% = "None" || BlenderItem%A_Index% = "") ? "Add" : "Clear")
+				GuiControl, +Redraw, % hBlenderClear%A_Index%
+				
+				GuiControl, Move, BlenderAmount%A_Index%, w6
+				GuiControl,, BlenderAmount%A_Index%, 0
+				GuiControlGet, pos, Pos, BlenderAmount%A_Index%
+				coord := PosW + PosX + 12, LeftCurlB := PosX - 5, RightCurlB := PosX + PosW + 1
+
+				GuiControl, Move, LeftCurlB%A_Index%, x%LeftCurlB%
+				GuiControl, Move, RightCurlB%A_Index%, x%RightCurlB%
+				
+				GuiControl, Move, BlenderIndex%A_Index%, w10 x%coord%
+				GuiControl,, BlenderIndex%A_Index%, % "∞"
+
+				GuiControlGet, pos, Pos, BlenderIndex%A_Index%
+				LeftBracketB := PosX - 5, RightBracketB := PosX + PosW + 1
+
+				GuiControl, move, LeftBracketB%A_Index%, x%LeftBracketB%
+				GuiControl, move, RightBracketB%A_Index%, x%RightBracketB%
+
+				SetImage(hBlenderItem%A_Index%Picture, hBitmapsSB["None"])
+
+            }
+            break
+        }
+    }
+}
+ba_AddBlenderItemButton(hCtrl){
+    global hfblenderleft, hfblenderright, hAddBlenderItem, AddBlenderItem, BlenderAdd, hBitmapsSB
+    static items := ["RedExtract", "BlueExtract", "Enzymes", "Oil", "Glue", "TropicalDrink", "Gumdrops", "MoonCharms", "Glitter", "StarJelly", "PurplePotion", "SoftWax", "HardWax", "SwirledWax", "CausticWax", "FieldDice", "SmoothDice", "LoadedDice", "SuperSmoothie", "Turpentine"], i := 0, h := 0
+    if (h != BlenderAdd)
+        i := 0, h := BlenderAdd
+    i := Mod(items.Length() + i + ((hCtrl = hfblenderleft) ? -1 : 1), items.Length()), AddBlenderItem := items[i+1]
+	SetImage(hAddBlenderItem, hBitmapsSB[AddBlenderItem])
+}
+ba_AddBlenderItem(){
+    global
+	GuiControlGet, BlenderIndex
+	GuiControlGet, BlenderAmount
+	GuiControlGet, BlenderIndexOption
+	BlenderIndex := % ((BlenderIndexOption) ? "Infinite" : BlenderIndex)
+	
+	BlenderItem%BlenderaddIndex% := AddBlenderItem, BlenderIndex%BlenderaddIndex% := BlenderIndex, BlenderAmount%BlenderaddIndex% := BlenderAmount
+
+    IniWrite, %AddBlenderItem%, settings\nm_config.ini, Blender, BlenderItem%BlenderaddIndex%
+    IniWrite, %BlenderIndex%, settings\nm_config.ini, Blender, BlenderIndex%BlenderaddIndex%
+	IniWrite, %BlenderAmount%, settings\nm_config.ini, Blender, BlenderAmount%BlenderaddIndex%
+	
+	SetImage(hBlenderItem%BlenderaddIndex%Picture, hBitmapsSB[BlenderItem%BlenderaddIndex%])
+	
+	BWitdh := Strlen(BlenderAmount%BlenderAddIndex%) * 6
+	
+	GuiControl, Move, BlenderAmount%BlenderAddIndex%, w%BWitdh%
+	GuiControl,, BlenderAmount%BlenderAddIndex%, % BlenderAmount%BlenderAddIndex%
+	GuiControl,, BlenderIndex%BlenderAddIndex%, % (BlenderIndex%BlenderAddIndex% := (BlenderIndex%BlenderAddIndex% = "Infinite") ? "∞" : BlenderIndex%BlenderAddIndex%)
+
+	GuiControlGet, pos, Pos, BlenderAmount%BlenderAddIndex% 
+	
+	BWitdh := Strlen(BlenderIndex%BlenderAddIndex%) * ((BlenderIndex%BlenderAddIndex% = "∞") ? 10 : 6)
+	coord := PosW + PosX + 12, LeftCurlB := PosX - 5, RightCurlB := PosX + PosW + 1
+
+	GuiControl, Move, BlenderIndex%BlenderAddIndex%, w%BWitdh% x%coord%
+	GuiControl, Move, LeftCurlB%BlenderAddIndex%, x%LeftCurlB%
+	GuiControl, Move, RightCurlB%BlenderAddIndex%, x%RightCurlB%
+
+	GuiControlGet, pos, Pos, BlenderIndex%BlenderAddIndex%
+	LeftBracketB := PosX - 5, RightBracketB := PosX + PosW + 1
+	GuiControl, move, LeftBracketB%BlenderAddIndex%, x%LeftBracketB%
+	GuiControl, move, RightBracketB%BlenderAddIndex%, x%RightBracketB%
+
+	loop 3 {
+		i := A_Index
+		For x, Item in ["BlenderAdd", "LeftBracketB", "RightBracketB", "BlenderAmount", "BlenderIndex", "LeftCurlB", "RightCurlB"]
+			GuiControl, Show, %Item%%i%
+		GuiControl, Show, BlenderItem%i%Picture
+	}
+	For z, ui in ["BlenderItem", "BlenderLeft", "BlenderRight", "BlenderAddSlot", "BlenderAmountText", "BlenderAmount", "BlenderRepeatText", "BlenderIndex", "BlenderIndexOption","blenderline1","blenderline2","blenderline3","blenderline4","blendertitle1"]
+		GuiControl, Hide, %ui%
+
+	GuiControl, -Redraw, % hBlenderClear%BlenderaddIndex%
+    GuiControl,, % hBlenderClear%BlenderaddIndex%, % ((AddBlenderItem = "None" || AddBlenderItem = "") ? "Add" : "Clear")
+    GuiControl, +Redraw, % hBlenderClear%BlenderaddIndex%
+}
+nm_UpdateGui(wParam, lParam) {
+	global
+	local Enum := Mod(wParam, 100), i := lParam
+	static BlenderItems := ["BlueExtract", "RedExtract", "Enzymes", "Oil", "Glue", "TropicalDrink", "Gumdrops", "MoonCharms", "Glitter", "StarJelly", "PurplePotion", "SoftWax", "HardWax", "SwirledWax", "CausticWax", "FieldDice", "SmoothDice", "LoadedDice", "SuperSmoothie", "Turpentine", "None"]
+	switch % wParam // 100
+	{
+		Case 1:
+		BlenderItem%i% := BlenderItems[Enum]
+		SetImage(hBlenderItem%i%Picture, hBitmapsSB[BlenderItems[Enum]])
+		GuiControl, , BlenderAdd%i%, % (BlenderItem%i%  = "None") ? "Add" : "Clear"
+
+		Case 2:
+		ShrineItem%i% := BlenderItems[Enum]
+		SetImage(hShrineItem%i%Picture, hBitmapsSB[BlenderItems[Enum]])
+		GuiControl, , ShrineAdd%i%, % (ShrineItem%i% = "None") ? "Add" : "Clear"
+	}
 }
 AsyncHttpRequest(method, url, func:="", headers:="")
 {
@@ -4667,8 +5106,19 @@ nm_BugrunCheck(){
 nm_TabCollectLock(){
 	global
 	;collect
+	GuiControl, disable, BlenderAddSlot
+	GuiControl, disable, BlenderAdd1
+	GuiControl, disable, BlenderAdd2
+	GuiControl, disable, BlenderAdd3
+	GuiControl, disable, BlenderAmount
+	GuiControl, disable, BlenderIndex
+	GuiControl, disable, BlenderIndexOption
+	GuiControl, disable, BlenderLeft
+	GuiControl, disable, BlenderRight
 	GuiControl, disable, ClockCheck
 	GuiControl, disable, MondoBuffCheck
+	if (MondoAction="Manual")
+		GuiControl, disable, MondoSecs
 	GuiControl, disable, % hMALeft
 	GuiControl, disable, % hMARight
 	GuiControl, disable, RoboPassCheck
@@ -4737,8 +5187,19 @@ nm_TabCollectLock(){
 nm_TabCollectUnLock(){
 	global
 	;collect
+	GuiControl, enable, BlenderAddSlot
+	GuiControl, enable, BlenderAdd1
+	GuiControl, enable, BlenderAdd2
+	GuiControl, enable, BlenderAdd3
+	GuiControl, enable, BlenderAmount
+	GuiControl, enable, BlenderIndex
+	GuiControl, enable, BlenderIndexOption
+	GuiControl, enable, BlenderLeft
+	GuiControl, enable, BlenderRight
 	GuiControl, enable, ClockCheck
 	GuiControl, enable, MondoBuffCheck
+	if (MondoAction="Manual")
+		GuiControl, enable, MondoSecs
 	GuiControl, enable, % hMALeft
 	GuiControl, enable, % hMARight
 	GuiControl, enable, RoboPassCheck
@@ -4842,6 +5303,14 @@ nm_BoostChaserCheck(){
 }
 nm_TabBoostLock(){
 	global
+	GuiControl, disable, ShrineAddSlot
+	GuiControl, disable, ShrineAdd1
+	GuiControl, disable, ShrineAdd2
+	GuiControl, disable, ShrineAmount
+	GuiControl, disable, ShrineIndex
+	GuiControl, disable, ShrineIndexOption
+	GuiControl, disable, ShrineLeft
+	GuiControl, disable, ShrineRight
 	GuiControl, disable, % hFB1Left
 	GuiControl, disable, % hFB1Right
 	GuiControl, disable, % hFB2Left
@@ -4872,6 +5341,14 @@ nm_TabBoostLock(){
 }
 nm_TabBoostUnLock(){
 	global
+	GuiControl, enable, ShrineAddSlot
+	GuiControl, enable, ShrineAdd1
+	GuiControl, enable, ShrineAdd2
+	GuiControl, enable, ShrineAmount
+	GuiControl, enable, ShrineIndex
+	GuiControl, enable, ShrineIndexOption
+	GuiControl, enable, ShrineLeft
+	GuiControl, enable, ShrineRight
 	GuiControl, enable, % hFB1Left
 	GuiControl, enable, % hFB1Right
 	nm_FieldBooster()
@@ -6564,12 +7041,19 @@ nm_MondoAction(hCtrl){
 	{
 		case % MondoActionList[1]:
 		i := 1
+		GuiControl, disable, MondoSecs
 		case % MondoActionList[2]:
 		i := 2
+		GuiControl, enable, MondoSecs
 		case % MondoActionList[3]:
 		i := 3
-		default:
+		GuiControl, disable, MondoSecs
+		case % MondoActionList[4]:
 		i := 4
+		GuiControl, disable, MondoSecs
+		default:
+		i := 5
+		GuiControl, disable, MondoSecs
 	}
 
 	GuiControl, , MondoAction, % (MondoAction := MondoActionList[(hCtrl = hMARight) ? (Mod(i, l) + 1) : (Mod(l + i - 2, l) + 1)])
@@ -7818,6 +8302,9 @@ nm_CollectKillButton(hCtrl){
 	static CollectControls := ["CollectGroupBox","DispensersGroupBox","BeesmasGroupBox","BeesmasFailImage","BeesmasImage","ClockCheck","MondoBuffCheck","MondoAction","AntPassCheck","AntPassAction","RoboPassCheck","HoneystormCheck","HoneyDisCheck","TreatDisCheck","BlueberryDisCheck","StrawberryDisCheck","CoconutDisCheck","RoyalJellyDisCheck","GlueDisCheck"]
 	, CollectControlsH := ["hMALeft","hMARight","hAPALeft","hAPARight","hBeesmas1","hBeesmas2","hBeesmas3","hBeesmas4","hBeesmas5","hBeesmas6","hBeesmas7","hBeesmas8","hBeesmas9","hBeesmas10","hBeesmas11"]
 	, KillControls := ["BugRunGroupBox","BugRunCheck","MonsterRespawnTime","TextMonsterRespawnPercent","TextMonsterRespawn","MonsterRespawnTimeHelp","BugrunInterruptCheck","TextLoot","TextKill","TextLineBugRun1","TextLineBugRun2","BugrunLadybugsLoot","BugrunRhinoBeetlesLoot","BugrunSpiderLoot","BugrunMantisLoot","BugrunScorpionsLoot","BugrunWerewolfLoot","BugrunLadybugsCheck","BugrunRhinoBeetlesCheck","BugrunSpiderCheck","BugrunMantisCheck","BugrunScorpionsCheck","BugrunWerewolfCheck","StingersGroupBox","StingerCheck","StingerDailyBonusCheck","TextFields","StingerCloverCheck","StingerSpiderCheck","StingerCactusCheck","StingerRoseCheck","StingerMountainTopCheck","StingerPepperCheck","BossesGroupBox","TunnelBearCheck","KingBeetleCheck","CocoCrabCheck","StumpSnailCheck","CommandoCheck","TunnelBearBabyCheck","KingBeetleBabyCheck","BabyLovePicture1","BabyLovePicture2","KingBeetleAmuletMode","ShellAmuletMode","KingBeetleAmuPicture","ShellAmuPicture","KingBeetleAmuletModeText","ShellAmuletModeText","ChickLevelTextLabel","ChickLevelText","ChickLevel","SnailHPText","SnailHealthEdit","SnailHealthText","ChickHPText","ChickHealthEdit","ChickHealthText","SnailTimeText","SnailTimeUpDown","ChickTimeText","ChickTimeUpDown","BossConfigHelp","TextLineBosses1","TextLineBosses2","TextLineBosses3","TextBosses1","TextBosses2","TextBosses3"]
+	, BlenderMain := ["BlenderItem1Picture", "BlenderItem2Picture", "BlenderItem3Picture", "BlenderAdd1", "BlenderAdd2", "BlenderAdd3", "BlenderAmount1", "BlenderAmount2", "BlenderAmount3", "LeftCurlB1", "LeftCurlB2", "LeftCurlB3", "RightCurlB1", "RightCurlB2", "RightCurlB3", "LeftBracB1", "LeftBracB2", "LeftBracB3", "RightBracB1", "RightBracB2", "RightBracB3", "BlenderIndex1", "BlenderIndex2", "BlenderIndex3"]
+	, BlenderSide := ["BlenderAmount", "BlenderAmountText", "BlenderRepeatText", "BlenderIndex", "BlenderItem", "BlenderLeft", "BlenderRight", "BlenderAddSlot", "BlenderIndexOption","blenderline1","blenderline2","blenderline3","blenderline4","blendertitle1"]
+
 	local p, i, c, k, v
 
 	p := (hCtrl = hKill)
@@ -7833,6 +8320,12 @@ nm_CollectKillButton(hCtrl){
 				GuiControl, %c%, %v%
 			for k,v in CollectControlsH
 				GuiControl, %c%, % %v%
+
+			GuiControlGet, BlenderAdd1, Visible
+			controls := (i = 1) ? (BlenderAdd1 ? "BlenderMain" : "BlenderSide") : controls
+
+			for k, v in %controls%
+				GuiControl, %c%, %v%
 		}
 
 		if (((i = 1) && (p = 0)) || ((i = 2) && (p = 1))) ; hide/show all kill controls
@@ -7910,6 +8403,12 @@ nm_MakeSuggestionButton(){
 }
 DiscordLink(){
     nm_RunDiscord("invite/xbkXjwWh8U")
+}
+DonateLink(){
+    run, https://www.paypal.com/donate/?hosted_button_id=9KN7JHBCTAU8U&no_recurring=0&currency_code=USD
+}
+RobloxLink(){
+    run, https://www.roblox.com/groups/16490149/Natro-Macro
 }
 GitHubRepoLink(){
 	run, https://github.com/NatroTeam/NatroMacro
@@ -8501,6 +9000,28 @@ nm_Reset(checkAll:=1, wait:=2000, convert:=1, force:=0){
 			Click
 			MouseMove, windowX+350, windowY+100
 		}
+		;check to make sure you are not in blender screen
+		BlenderSS := Gdip_BitmapFromScreen(WindowX+Windowwidth//2 - 277 "|" windowY+WindowHeight//2 - 243 "|553|400")
+		if (Gdip_ImageSearch(BlenderSS, bitmaps["CloseGUI"], , , , , , 5) > 0) {
+			MouseMove, WindowX+Windowwidth//2 - 250, windowY+WindowHeight//2 - 210
+			sleep, 150 
+			click
+		}
+		Gdip_DisposeImage(BlenderSS)
+		;check to make sure theres no memory match tiles on screen
+		loop 18 {
+			PBmScreen := Gdip_BitmapFromScreen(WindowX "|" windowY "|" WindowWidth "|" WindowHeight)
+			if (Gdip_ImageSearch(PBmScreen, bitmaps["MemoryMatchNTile"], , , , , , 5) > 0) {
+				MouseMove, windowX+SubStr(pos, 1, InStr(pos, ",")-1), windowY+SubStr(pos, InStr(pos, ",")+1)
+				sleep, 150 
+				click
+				sleep, 200
+			} else {
+				Gdip_DisposeImage(PBmScreen)
+				break
+			}
+			Gdip_DisposeImage(PBmScreen)
+		}
 		;check to make sure you are not in shop before reset
 		searchRet := nm_imgSearch("e_button.png",30,"high")
 		If (searchRet[1] = 0) {
@@ -8895,7 +9416,7 @@ nm_toAnyBooster(){
 	global MoveMethod
 	global LastBlueBoost, QuestBlueBoost
 	global LastRedBoost
-	global LastMountainBoost, QuestRedBoost, QuestGatherField, LastWindShrine
+	global LastMountainBoost, QuestRedBoost, QuestGatherField
 	global FieldBooster1
 	global FieldBooster2
 	global FieldBooster3
@@ -8911,9 +9432,7 @@ nm_toAnyBooster(){
 		return
 	if (QuestGatherField!="None" && QuestGatherField)
 		return
-	MyFunc := "nm_WindShrine"
-	%MyFunc%()
-	loop 3 {
+		loop 3 {
 		if(FieldBooster%A_Index%="none" && QuestBlueBoost=0 && QuestRedBoost=0)
 			break
 		LastBooster:=max(LastBlueBoost, LastRedBoost, LastMountainBoost)
@@ -8943,8 +9462,123 @@ nm_toAnyBooster(){
 		}
 	}
 }
+nm_shrine(){
+    global FwdKey, BackKey, LeftKey, RightKey, RotLeft, RotRight, KeyDelay, objective, CurrentAction, PreviousAction, MoveSpeedNum, GatherFieldBoostedStart, LastGlitter, MondoBuffCheck, PMondoGuid, LastGuid, MondoAction, LastMondoBuff, VBState, LastShrine, ShrineCheck, ShrineItem1, ShrineItem2, ShrineAmount1, ShrineAmount2, ShrineRot, resetTime, Shrine, SC_E, SC_Space, SC_1
+    if(VBState=1)
+        return
+    FormatTime, utc_min, %A_NowUTC%, m
+    if((MondoBuffCheck && utc_min>=0 && utc_min<14 && (nowUnix()-LastMondoBuff)>960 && (MondoAction="Buff" || MondoAction="Kill")) || (MondoBuffCheck && utc_min>=0 && utc_min<12 && (nowUnix()-LastGuid)<60 && PMondoGuid && MondoAction="Guid") || (MondoBuffCheck && (utc_min>=0 && utc_min<=8) && (nowUnix()-LastMondoBuff)>960 && PMondoGuid && MondoAction="Tag"))
+        return
+    if ((nowUnix()-GatherFieldBoostedStart<900) || (nowUnix()-LastGlitter<900) || nm_boostBypassCheck())
+        return
+
+    if(CurrentAction!="Shrine") {
+        PreviousAction:=CurrentAction
+        CurrentAction:="Shrine"
+    }
+    nm_ShrineRotation() ; make sure ShrineRot hasnt changed
+    if (ShrineCheck && (nowUnix()-LastShrine)>3600) { ;1 hour
+        loop, 2 {
+            ClickNum := 0, z := A_Index
+            nm_Reset()
+            nm_setStatus("Traveling", "Wind Shrine" ((A_Index > 1) ? " (Attempt 2)" : ""))
+
+            nm_gotoCollect("WindShrine")
+
+            searchRet := nm_imgSearch("e_button.png",30,"high")
+            If (searchRet[1] = 0) {
+                sendinput {%SC_E% down}
+                Sleep, 100
+                sendinput {%SC_E% up}
+                Sleep, 2000
+            	WinGetClientPos(windowX, windowY, windowWidth, windowHeight, "ahk_id " GetRobloxHWND())
+                MouseMove, WindowX+Windowwidth//2, WindowY+WindowHeight//1.35 - 5
+                sleep, 150
+                Click
+                sleep, 300
+                SearchX := WindowX+Windowwidth//2 + 20
+                SearchY := WindowY+WindowHeight//2 - 100
+                Loop
+                {
+                    sleep, 150
+					ShrineSS := Gdip_BitmapFromScreen(SearchX "|" SearchY "|170|245")
+                    Donation := % "ShrineItem" ShrineRot
+					DonationIMG := % %Donation%
+					
+                    if (Gdip_ImageSearch(ShrineSS, Shrine[DonationIMG], , , , , , 2, , 4) > 0) {
+						Gdip_DisposeImage(ShrineSS)
+                        MouseMove, WindowX+WindowWidth//2 + 165, Window+WindowHeight//2 + 65 ; Add more items
+                        sleep, 100
+						Test := % ShrineAmount%ShrineRot%
+                        While (Test > 1) {
+                            Test--
+                            Click
+                            sleep, 20
+                        }
+                        Break
+                    } else {
+						Gdip_DisposeImage(ShrineSS)
+                        MouseMove, WindowX+WindowWidth//2 + 165, WindowY+WindowHeight//2 - 20 ; go to next item
+                        sleep, 50
+                        Click
+                        ClickNum++
+                        if (ClickNum = 60) {
+                            if (z = 2)
+                                nm_setStatus("Failed", "Wind shrine")	
+                            break
+                        }
+                    }
+                }
+                if (ClickNum < 60) {
+					nm_SetStatus("Collected", "Wind Shrine") ;Temp for testing
+                    sleep, 300
+                    MouseMove, WindowX+WindowWidth//2 - 70, WindowY+WindowHeight//2 + 130 ; click donate/confirm
+                    sleep, 150
+                    Click
+                    sleep, 150
+                    MouseMove, WindowX+WindowWidth//2, WindowY+WindowHeight//1.35 - 5 ; move mouse onto gui box
+                    loop, 10 {
+                        sleep, 200
+                        Click
+                    }
+                    sleep 200
+                    send {raw}{..}
+                    sleep 800
+                    gatherloot := "
+                    (LTrim Join`r`n
+                    " nm_Walk(10.5, RightKey, BackKey) "
+                    " nm_Walk(3, LeftKey) "
+                    loop, 4 {
+                        " nm_Walk(15, FwdKey) "
+                        " nm_Walk(1.5, LeftKey) "
+                        " nm_Walk(15, BackKey) "
+                        " nm_Walk(1.5, LeftKey) "
+                    }
+                    )"
+                    nm_createWalk(gatherloot) ; maybe improve gather pattern ?
+                    KeyWait, F14, D T5 L
+                    KeyWait, F14, T60 L
+                    nm_endWalk()
+                    ;nm_SetStatus("Collected", "Wind Shrine")
+					
+					if (ShrineIndex%ShrineRot% != "Infinite")  {
+                    	ShrineIndex%shrineRot%-- ;subtract from shrineindex for looping only if its a number
+						GuiControl,, ShrinetextAmount%ShrineRot%, % "[" ShrineAmount%ShrineRot% "] (" ShrineIndex%ShrineRot% ")"
+					}
+                    ShrineRot := Mod(ShrineRot, 2) + 1 ; determine Shrinerot
+                    nm_ShrineRotation()
+
+                    break
+                }
+            }
+        }
+        LastShrine := nowUnix()
+        IniWrite, %LastShrine%, settings\nm_config.ini, collect, LastShrine
+        IniWrite, %ShrineRot%, settings\nm_config.ini, collect, ShrineRot
+    }
+}
 nm_Collect(){
-	global FwdKey, BackKey, LeftKey, RightKey, RotLeft, RotRight, KeyDelay, objective, CurrentAction, PreviousAction, MoveSpeedNum, GatherFieldBoostedStart, LastGlitter, MondoBuffCheck, PMondoGuid, LastGuid, MondoAction, LastMondoBuff, VBState, ClockCheck, LastClock, AntPassCheck, AntPassAction, QuestAnt, LastAntPass, HoneyDisCheck, LastHoneyDis, TreatDisCheck, LastTreatDis, BlueberryDisCheck, LastBlueberryDis, StrawberryDisCheck, LastStrawberryDis, CoconutDisCheck, LastCoconutDis, GlueDisCheck, LastGlueDis, RoboPassCheck, LastRoboPass, HoneystormCheck, LastHoneystorm, RoyalJellyDisCheck, LastRoyalJellyDis, StockingsCheck, LastStockings, FeastCheck, RBPDelevelCheck, LastRBPDelevel, LastFeast, GingerbreadCheck, LastGingerbread, SnowMachineCheck, LastSnowMachine, CandlesCheck, LastCandles, SamovarCheck, LastSamovar, LidArtCheck, LastLidArt, GummyBeaconCheck, LastGummyBeacon, beesmasActive, HoneySSCheck, resetTime, bitmaps, SC_E, SC_Space, SC_1
+	global FwdKey, BackKey, LeftKey, RightKey, RotLeft, RotRight, KeyDelay, objective, CurrentAction, PreviousAction, MoveSpeedNum, GatherFieldBoostedStart, LastGlitter, MondoBuffCheck, PMondoGuid, LastGuid, MondoAction, LastMondoBuff, VBState, ClockCheck, LastClock, AntPassCheck, AntPassAction, QuestAnt, LastAntPass, HoneyDisCheck, LastHoneyDis, TreatDisCheck, LastTreatDis, BlueberryDisCheck, LastBlueberryDis, StrawberryDisCheck, LastStrawberryDis, CoconutDisCheck, LastCoconutDis, GlueDisCheck, LastGlueDis, RoboPassCheck, LastRoboPass, HoneystormCheck, LastHoneystorm, RoyalJellyDisCheck, LastRoyalJellyDis, StockingsCheck, LastStockings, FeastCheck, RBPDelevelCheck, LastRBPDelevel, LastFeast, GingerbreadCheck, LastGingerbread, SnowMachineCheck, LastSnowMachine, CandlesCheck, LastCandles, SamovarCheck, LastSamovar, LidArtCheck, LastLidArt, GummyBeaconCheck, LastGummyBeacon, beesmasActive, HoneySSCheck, resetTime, bitmaps, SC_E, SC_Space, SC_1, BlenderRot, LastBlenderRot, BlenderEnd, TimerInterval, BlenderIndex1, BlenderIndex2, BlenderIndex3, BlenderItem1, BlenderItem2, BlenderItem3, BlenderTime1, BlenderTime2, BlenderTime3, BlenderAmount1, BlenderAmount2, BlenderAmount3, Blendercheck
 	static AntPassNum:=2, RoboPassNum:=1, LastHoneyLB:=1
 
 	if(VBState=1)
@@ -9043,6 +9677,165 @@ nm_Collect(){
 				IniWrite, %LastStockings%, settings\nm_config.ini, Collect, LastStockings
 			}
 		}
+	}
+	;Blender	
+	nm_BlenderRotation()
+	TimeForBlender := BlenderTime%LastBlenderRot% - TimerInterval ; due to BlenderTime being calcuted with TimerInterval integrated to fix that we simply subtract it before
+
+	if (BlenderCheck && (nowUnix() - TimeForBlender) > TimerInterval) {
+		loop, 2 {
+			z := A_Index, ClickNum := 0 ;Set variable for fail safe
+			nm_Reset()
+			nm_setStatus("Traveling", "Blender" ((A_Index > 1) ? " (Attempt 2)" : ""))
+			nm_gotoCollect("Blender")
+
+			searchRet := nm_imgSearch("e_button.png", 30, "high")
+			If (searchRet[1] = 0) {
+				sendinput {%SC_E% down}
+				Sleep, 100
+				sendinput {%SC_E% up}
+				Sleep, 500
+				WinGetClientPos(windowX, windowY, windowWidth, windowHeight, "ahk_id " GetRobloxHWND())
+
+				SearchX := windowX+Windowwidth//2 - 277, SearchY := windowY+WindowHeight//2 - 243, BlenderSS := Gdip_BitmapFromScreen(SearchX "|" SearchY "|553|400")
+
+				if (Gdip_ImageSearch(BlenderSS, bitmaps["CancelCraft"], , , , , , 2, , 7) > 0) {
+					MouseMove, windowX+WindowWidth//2 + 230, windowY+WindowHeight//2 + 90 ; click cancel button
+					sleep, 150
+					Click
+				}
+
+				if (!BlenderEnd && Gdip_ImageSearch(BlenderSS, bitmaps["EndCraftR"], , , , , , 3, , 6) > 0)
+				{
+					nm_setStatus("Confirmed", "Blender is already in use")
+					MouseMove, windowX+Windowwidth//2 - 250, windowY+WindowHeight//2 - 210, Gdip_disposeimage(BlenderSS) ;Close GUI and dispose of bitmap
+					sleep, 150
+					Click
+					break
+				} else if (BlenderEnd && Gdip_ImageSearch(BlenderSS, bitmaps["EndCraftR"], , , , , , 3, , 6) > 0) {
+					Iniwrite, 0, settings\nm_config.ini, Blender, BlenderEnd ; might not need iniwrite
+					BlenderEnd := 0
+					MouseMove, windowX+WindowWidth//2 - 60, windowY+WindowHeight//2 + 120 ; close red craft button
+					sleep, 150
+					Click
+				}
+
+				if (Gdip_ImageSearch(BlenderSS, bitmaps["EndCraftG"], , , , , , 4, , 6) > 0) {
+					MouseMove, windowX+WindowWidth//2 - 60, windowY+WindowHeight//2 + 120 ; close green craft button
+					sleep, 150
+					Click
+				}
+				gdip_disposeimage(BlenderSS)
+				sleep, 800
+				loop {
+					BlenderSS := Gdip_BitmapFromScreen(SearchX "|" SearchY "|170|245")
+
+					Blender := % "BlenderItem" BlenderRot
+					BlenderIMG := % %Blender% "B"
+
+					if (Gdip_ImageSearch(BlenderSS, bitmaps[BlenderIMG], , , , , , 2, , 4) > 0) {
+						gdip_disposeimage(BlenderSS)  ; Dispose of the bitmap
+						MouseMove, windowX+Windowwidth//2 + 80, windowY+WindowHeight//2 + 100 ;Open item menu
+						sleep, 150
+						click
+						sleep, 150
+						MouseMove, windowX+WindowWidth//2 - 60, windowY+WindowHeight//2 + 120 ;Add more of x item
+						sleep, 150
+						Temp := % BlenderAmount%BlenderRot%
+						While (Temp > 1) {
+							Temp--
+							Click
+							sleep, 20
+						}
+						sleep, 200
+						break
+					} else {
+						sleep, 50
+						MouseMove, windowX+WindowWidth//2 + 230, windowY+WindowHeight//2 + 90 ;not found go next item
+						sleep, 150
+						Click
+						sleep, 100
+						ClickNum++
+						if (ClickNum = 60) {
+							if (z = 2) {
+								nm_setStatus("Failed", "Blender")
+								MouseMove, windowX+Windowwidth//2 - 250, windowY+WindowHeight//2 - 210 ;Close GUI
+								sleep, 150
+								Click
+
+								BlenderTime%BlenderRot% := BlenderAmount%BlenderRot% * 300 ;calculate first time variable
+								BlenderTimeTemp := % BlenderTime%BlenderRot% ;set up a temporary varible to hold time
+								TempBlenderRot := BlenderRot ; save a temporary rotation holder
+
+								BlenderTime%TempBlenderRot% := BlenderTime%TempBlenderRot% + nowUnix() ;add nowunix for time after temporoary varible has been created
+								IniWrite, % BlenderTime%TempBlenderRot%, settings\nm_config.ini, blender, BlenderTime%TempBlenderRot% ; save timer to config
+
+								loop {
+									TempBlenderRot := Mod(TempBlenderRot, 3) + 1
+									if (TempBlenderRot = BlenderRot) ;makes sure it doesnt do the already calculated time again
+										break
+
+									if ((BlenderIndex%TempBlenderRot% = "Infinite" || BlenderIndex%TempBlenderRot% > 0) && (BlenderItem%TempBlenderRot% != "None" && BlenderItem%TempBlenderRot% != "")) { ;start time calculation process
+										BlenderTime%TempBlenderRot% := (BlenderAmount%TempBlenderRot% * 300) + BlenderTimeTemp ;add previous time to this one after to show time until its done
+										BlenderTimeTemp := % BlenderTime%TempBlenderRot% ;create a new temp for next
+										BlenderTime%TempBlenderRot% := % BlenderTime%TempBlenderRot% + nowUnix() ;add now unix to it for the counter
+										IniWrite, % BlenderTime%TempBlenderRot%, settings\nm_config.ini, blender, BlenderTime%TempBlenderRot% ;save the value to the config for GUI use and Remote control
+									}
+								}
+							}
+							break
+						}
+					}	
+				}
+				if (ClickNum < 60) {
+					IniWrite, 0, settings\nm_config.ini, blender, BlenderCount%LastBlenderRot% ; reset GUI counter
+
+					nm_setStatus("Collected", "Blender")
+
+					BlenderTime%BlenderRot% := BlenderAmount%BlenderRot% * 300 ;calculate first time variable
+					BlenderTimeTemp := % BlenderTime%BlenderRot% ;set up a temporary varible to hold time
+					TempBlenderRot := BlenderRot ; save a temporary rotation holder
+
+					BlenderTime%TempBlenderRot% := BlenderTime%TempBlenderRot% + nowUnix() ;add nowunix for time after temporoary varible has been created
+					IniWrite, % BlenderTime%TempBlenderRot%, settings\nm_config.ini, blender, BlenderTime%TempBlenderRot% ; save timer to config
+
+					loop {
+						TempBlenderRot := Mod(TempBlenderRot, 3) + 1
+						if (TempBlenderRot = BlenderRot) ;makes sure it doesnt do the already calculated time again
+							break
+
+						if ((BlenderIndex%TempBlenderRot% = "Infinite" || BlenderIndex%TempBlenderRot% > 0) && (BlenderItem%TempBlenderRot% != "None" && BlenderItem%TempBlenderRot% != "")) { ;start time calculation process
+							BlenderTime%TempBlenderRot% := (BlenderAmount%TempBlenderRot% * 300) + BlenderTimeTemp ;add previous time to this one after to show time until its done
+							BlenderTimeTemp := % BlenderTime%TempBlenderRot% ;create a new temp for next
+							BlenderTime%TempBlenderRot% := % BlenderTime%TempBlenderRot% + nowUnix() ;add now unix to it for the counter
+							IniWrite, % BlenderTime%TempBlenderRot%, settings\nm_config.ini, blender, BlenderTime%TempBlenderRot% ;save the value to the config for GUI use and Remote control
+						}
+					}
+					TimerInterval := BlenderAmount%BlenderRot% * 300 ;set up time
+					IniWrite, %BlenderRot%, settings\nm_config.ini, blender, LastBlenderRot ; define this for GUI and to reset counter as used above 
+
+					BlenderRot := Mod(BlenderRot, 3) + 1
+					nm_BlenderRotation()
+					if (BlenderIndex%BlenderRot% != "Infinite") {
+						BlenderIndex%BlenderRot%-- ;subtract from blenderindex for looping only if its a number
+						GuiControl,, BlendertextAmount%BlenderRot%, % "[" BlenderAmount%BlenderRot% "] (" BlenderIndex%BlenderRot% ")"
+					}
+					
+					sleep, 100
+					MouseMove, windowX+Windowwidth//2 + 80, windowY+WindowHeight//2 + 100 ;Click Confirm
+					sleep, 150
+					Click
+					sleep, 100
+					MouseMove, windowX+Windowwidth//2 - 250, windowY+WindowHeight//2 - 210 ;Close GUI
+					sleep, 150
+					Click
+					break
+				}
+			}
+		}
+		IniWrite, %TimerInterval%, settings\nm_config.ini, blender, TimerInterval
+		IniWrite, %BlenderRot%, settings\nm_config.ini, blender, BlenderRot
+		IniWrite, % BlenderIndex%BlenderRot%, settings\nm_config.ini, blender, BlenderIndex%BlenderRot%
 	}
 	;ant pass
 	if(((AntPassCheck && ((AntPassNum<10) || (AntPassAction="challenge"))) && (nowUnix()-LastAntPass>7200)) || (QuestAnt && (AntPassNum>0))){ ;2 hours OR ant quest
@@ -12134,7 +12927,7 @@ nm_Mondo(){
 	if(VBState=1)
 		return
 	FormatTime, utc_min, %A_NowUTC%, m
-	if((MondoBuffCheck && utc_min>=0 && utc_min<14 && (nowUnix()-LastMondoBuff)>960 && (MondoAction="Buff" || MondoAction="Kill")) || (MondoBuffCheck && utc_min>=0 && utc_min<12 && (nowUnix()-LastGuid)<60 && PMondoGuid && MondoAction="Guid") || (MondoBuffCheck  && (utc_min>=0 && utc_min<=8) && (nowUnix()-LastMondoBuff)>960 && PMondoGuid && MondoAction="Tag")){
+	if((MondoBuffCheck && utc_min>=0 && utc_min<14 && (nowUnix()-LastMondoBuff)>960 && (MondoAction="Buff" || MondoAction="Kill" || MondoAction="Manual")) || (MondoBuffCheck && utc_min>=0 && utc_min<12 && (nowUnix()-LastGuid)<60 && PMondoGuid && MondoAction="Guid") || (MondoBuffCheck  && (utc_min>=0 && utc_min<=8) && (nowUnix()-LastMondoBuff)>960 && PMondoGuid && MondoAction="Tag")){
 		mondobuff := nm_imgSearch("mondobuff.png",50,"buff")
 		If (mondobuff[1] = 0) {
 			LastMondoBuff:=nowUnix()
@@ -12150,6 +12943,7 @@ nm_Mondo(){
 		global AFBuseGlitter
 		global AFBuseBooster
 		global CurrentField, CurrentAction, PreviousAction
+global MondoSecs
 		PreviousAction:=CurrentAction
 		CurrentAction:="Mondo"
 		MoveSpeedFactor:=round(18/MoveSpeedNum, 2)
@@ -12214,6 +13008,15 @@ nm_Mondo(){
 			        if(MondoAction="Buff"){
 			            repeat:=0
 			            loop 120 { ;2 mins
+			                nm_autoFieldBoost(CurrentField)
+			                if(youDied || AFBrollingDice || AFBuseGlitter || AFBuseBooster)
+			                    break
+			                sleep, 1000
+			            }
+					}
+					else if (MondoAction="Manual") {
+						repeat:=0
+			            loop %MondoSecs% { ; inputted user time
 			                nm_autoFieldBoost(CurrentField)
 			                if(youDied || AFBrollingDice || AFBuseGlitter || AFBuseBooster)
 			                    break
@@ -17804,6 +18607,44 @@ nm_cannonTo(location){
 	KeyWait, F14, T60 L
 	nm_endWalk()
 }
+nm_BlenderRotation() {
+	global BlenderRot, BlenderItem1, BlenderItem2, BlenderItem3, BlenderIndex1, BlenderIndex2, BlenderIndex3, BlenderCheck
+	loop {
+		if ((BlenderIndex%BlenderRot% = "Infinite" || BlenderIndex%BlenderRot% > 0) && (BlenderItem%BlenderRot% != "None" && BlenderItem%BlenderRot% != "")) {
+			BlenderCheck := 1
+			IniWrite, %BlenderCheck%, settings\nm_config.ini, blender, BlenderCheck
+			break
+		} else {
+			BlenderRot := Mod(BlenderRot, 3) + 1
+			if (A_Index = 4) {
+				if (BlenderCheck) {
+					BlenderCheck := 0
+					IniWrite, %BlenderCheck%, settings\nm_config.ini, blender, BlenderCheck
+					nm_setStatus("Confirmed", "No more items to rotate through. Turning blender off")
+				}
+				break
+			}
+		}
+	}
+}
+nm_ShrineRotation() {
+    global ShrineRot, ShrineItem1, ShrineItem2, ShrineCheck, ShrineIndex1, ShrineIndex2
+	loop {
+		if ((ShrineItem%ShrineRot% != "None" && ShrineItem%ShrineRot% != "") && (ShrineIndex%ShrineRot% = "Infinite" || ShrineIndex%ShrineRot% > 0)) {
+			IniWrite, 1, settings\nm_config.ini, Shrine, ShrineCheck
+			break
+		} else {
+			ShrineRot := Mod(ShrineRot, 2) + 1
+			if (A_Index = 3) {
+				if (ShrineCheck) {
+					IniWrite, 0, settings\nm_config.ini, Shrine, ShrineCheck
+					nm_setStatus("Confirmed", "No more items to rotate through. Turning shrine off")
+				}
+				break
+			}
+		}
+	}
+}
 nm_walkFrom(field:="none")
 {
 	global
@@ -17894,6 +18735,8 @@ nm_gotoCollect(location, waitEnd := 1){
 
 	if ((paths.Count() = 0) || (SetMoveMethod != MoveMethod) || (SetHiveSlot != HiveSlot) || (SetHiveBees != HiveBees))
 	{
+		#Include gtc-WindShrine.ahk
+		#Include gtc-Blender.ahk
 		#Include gtc-clock.ahk
 		#Include gtc-antpass.ahk
 		#Include gtc-robopass.ahk
@@ -20131,7 +20974,7 @@ nm_setGlobalStr(wParam, lParam)
 	local var
 	; enumeration
 	#Include %A_ScriptDir%\shared\EnumStr.ahk
-	static sections := ["Boost","Collect","Gather","Gui","Planters","Quests","Settings","Status"]
+	static sections := ["Boost","Collect","Gather","Gui","Planters","Quests","Settings","Status","Blender","Shrine"]
 
 	var := arr[wParam], section := sections[lParam]
 	IniRead, %var%, settings\nm_config.ini, %section%, %var%
@@ -20216,6 +21059,72 @@ nm_UpdateGUIVar(var)
 		case "InputChickHealth":
 		GuiControl, % "+c" Format("0x{1:02x}{2:02x}{3:02x}", Round(Min(3*(100-InputChickHealth), 150)), Round(Min(3*InputChickHealth, 150)), 0) " +Redraw", ChickHealthText
 		GuiControl, , ChickHealthText, % InputChickHealth "%"
+
+		Case "BlenderItem1Picture", "BlenderItem2Picture", "BlenderItem3Picture":
+		SetImage(h%k%, hBitmapsSB[%k%])
+       	GuiControl, , BlenderAdd%z%, % (BlenderItem%z%Picture = "None") ? "Add" : "Clear"
+
+		case "BlenderIndex1", "BlenderIndex2", "BlenderIndex3":
+		Num := SubStr(k, 0)
+		GuiControlGet, pos, Pos, BlenderAmount%Num%
+		xCoord := PosW + PosX + 12, StrLen := Strlen(BlenderIndex%Num%) * ((BlenderIndex%Num% = "Infinite") ? 10 : 6)
+		GuiControl, Move, %k%, w%StrLen% x%xCoord%
+		GuiControl, , %k%, % (%k% = "Infinite") ? "∞" : %k%
+
+		GuiControlGet, pos, Pos, BlenderIndex%Num%
+		GuiControl, move, LeftBracketB%Num%, x%PosX%-5
+		GuiControl, move, RightBracketB%Num%, x%PosX%+%PosW%+1
+
+		case "BlenderAmount1", "BlenderAmount2", "BlenderAmount3":
+		StrLen := 6*StrLen(%k%)
+		GuiControl, Move, %k%, w%StrLen%
+		GuiControl, , %k%, % %k%
+
+		Num := SubStr(k, 0)
+		GuiControlGet, pos, Pos, %k% ;most likely gonna be changing X
+		RightCurlB := PosX + PosW + 1, LeftCurlB := PosX - 5, Xcoord := PosW + PosX + 12
+
+		GuiControl, Move, LeftCurlB%Num%, x%LeftCurlB%
+		GuiControl, Move, RightCurlB%Num%, x%RightCurlB%
+		GuiControl, Move, BlenderIndex%Num%, x%Xcoord%
+
+		GuiControlGet, pos, Pos, BlenderIndex%Num%
+		LeftBracB := PosX - 5, RightBracB := PosX + PosW + 1 ; 5 and below is funky but 6 is fine?
+		GuiControl, move, LeftBracketB%Num%, x%LeftBracB%
+		GuiControl, move, RightBracketB%Num%, x%RightBracB%
+
+		Case "ShrineItem1Picture", "ShrineItem2Picture":
+		SetImage(h%k%, hBitmapsSB[%k%])
+        	GuiControl, , ShrineAdd%z%, % (ShrineItem%z%Picture = "None") ? "Add" : "Clear"
+
+		case "ShrineIndex1", "ShrineIndex2":
+		Num := SubStr(k, 0)
+		GuiControlGet, pos, Pos, ShrineAmount%Num%
+		xCoord := PosW + PosX + 12, StrLen := Strlen(ShrineIndex%Num%) * ((ShrineIndex%Num% = "Infinite") ? 10 : 6)
+		GuiControl, Move, %k%, w%StrLen% x%xCoord%
+		GuiControl, , %k%, % (%k% = "Infinite") ? "∞" : %k%
+
+		GuiControlGet, pos, Pos, ShrineIndex%Num%
+		GuiControl, move, LeftBracketS%Num%, x%PosX%-5
+		GuiControl, move, RightBracketS%Num%, x%PosX%+%PosW%+1
+
+		case "ShrineAmount1", "ShrineAmount2":
+		StrLen := 6*StrLen(%k%)
+		GuiControl, Move, %k%, w%StrLen%
+		GuiControl, , %k%, % %k%
+
+		Num := SubStr(k, 0)
+		GuiControlGet, pos, Pos, %k% ;most likely gonna be changing X
+		RightCurlS := PosX + PosW + 1, LeftCurlS := PosX - 5, Xcoord := PosW + PosX + 12
+
+		GuiControl, Move, LeftCurlS%Num%, x%LeftCurlS%
+		GuiControl, Move, RightCurlS%Num%, x%RightCurlS%
+		GuiControl, Move, ShrineIndex%Num%, x%Xcoord%
+
+		GuiControlGet, pos, Pos, ShrineIndex%Num%
+		LeftBracS := PosX - 5, RightBracS := PosX + PosW + 1 ; 5 and below is funky but 6 is fine?
+		GuiControl, move, LeftBracketS%Num%, x%LeftBracS%
+		GuiControl, move, RightBracketS%Num%, x%RightBracS%
 
 		case "":
 
