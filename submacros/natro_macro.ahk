@@ -13372,7 +13372,9 @@ nm_BitterberryFeeder()
 			MsgBox, 0x40010, Bitterberry Auto-Feeder v0.2, You ran out of Bitterberries!
 			break
 		}
-		WinGetClientPos(windowX, windowY, windowWidth, windowHeight, ""ahk_id "" GetRobloxHWND())
+		hwnd := GetRobloxHWND()
+		offsetY := GetYOffset(hwnd)
+		WinGetClientPos(windowX, windowY, windowWidth, windowHeight, ""ahk_id "" hwnd)
 		MouseMove, windowX+pos[1], windowY+pos[2]
 		SendInput {Click Down}
 		Sleep, 100
@@ -13382,18 +13384,18 @@ nm_BitterberryFeeder()
 		Loop, 10
 		{
 			Sleep, 100
-			pBMScreen := Gdip_BitmapFromScreen(windowX+(51*windowWidth)//100-216 ""|"" windowY+(58*windowHeight)//100-59 ""|440|100"")
+			pBMScreen := Gdip_BitmapFromScreen(windowX+(51*windowWidth)//100-216 ""|"" windowY+offsetY+(58*windowHeight)//100-59 ""|440|100"")
 			if (Gdip_ImageSearch(pBMScreen, bitmaps[""feed""], pos, , , , , 2, , 2) = 1)
 			{
 				Gdip_DisposeImage(pBMScreen)
-				Click, % windowX+(51*windowWidth)//100-216+SubStr(pos, 1, InStr(pos, "","")-1)+140 "" "" windowY+(58*windowHeight)//100-59+SubStr(pos, InStr(pos, "","")+1)+5 ; Click Number
+				Click, % windowX+(51*windowWidth)//100-216+SubStr(pos, 1, InStr(pos, "","")-1)+140 "" "" windowY+offsetY+(58*windowHeight)//100-59+SubStr(pos, InStr(pos, "","")+1)+5 ; Click Number
 				Sleep, 100
 				Loop % StrLen(bitterberrynos)
 				{
 					SendEvent % ""{Text}"" SubStr(bitterberrynos, A_Index, 1)
 					Sleep, 100
 				}
-				Click, % windowX+(51*windowWidth)//100-216+SubStr(pos, 1, InStr(pos, "","")-1) "" "" windowY+(58*windowHeight)//100-59+SubStr(pos, InStr(pos, "","")+1) ; Click Feed
+				Click, % windowX+(51*windowWidth)//100-216+SubStr(pos, 1, InStr(pos, "","")-1) "" "" windowY+offsetY+(58*windowHeight)//100-59+SubStr(pos, InStr(pos, "","")+1) ; Click Feed
 				break
 			}
 			Gdip_DisposeImage(pBMScreen)
@@ -13402,7 +13404,7 @@ nm_BitterberryFeeder()
 		}
 		Sleep, 750
 
-		pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2-295 ""|"" windowY+((4*windowHeight)//10 - 15) ""|150|50"")
+		pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2-295 ""|"" windowY+offsetY+((4*windowHeight)//10 - 15) ""|150|50"")
 		if (Gdip_ImageSearch(pBMScreen, bitmaps[""greensuccess""], , , , , , 20) = 1) {
 			MsgBox, 0x40024, Bitterberry Auto-Feeder v0.2, SUCCESS!!!!``nKeep this?
 			IfMsgBox Yes
@@ -13413,7 +13415,7 @@ nm_BitterberryFeeder()
 			else
 			{
 				WinActivate, Roblox
-				Click, % windowX + (windowWidth//2 - 132) "" "" windowY + ((4*windowHeight)//10 - 150) ; Close Bee
+				Click, % windowX + (windowWidth//2 - 132) "" "" windowY + offsetY + ((4*windowHeight)//10 - 150) ; Close Bee
 			}
 		}
 		Gdip_DisposeImage(pBMScreen)
@@ -13507,7 +13509,9 @@ nm_BasicEggHatcher()
 			MsgBox, 0x40010, Basic Bee Replacement Program, % ""You ran out of "" ((rj = 1) ? ""Royal Jellies!"" : ""Basic Eggs!"")
 			break
 		}
-		WinGetClientPos(windowX, windowY, windowWidth, windowHeight, ""ahk_id "" GetRobloxHWND())
+		hwnd := GetRobloxHWND()
+		offsetY := GetYOffset(hwnd)
+		WinGetClientPos(windowX, windowY, windowWidth, windowHeight, ""ahk_id "" hwnd)
 		MouseMove, windowX+pos[1], windowY+pos[2]
 		SendInput {Click Down}
 		Sleep, 100
@@ -13517,11 +13521,11 @@ nm_BasicEggHatcher()
 		Loop, 10
 		{
 			Sleep, 100
-			pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2-250 ""|"" windowY+((6*windowHeight)//10-60) ""|500|150"")
+			pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2-250 ""|"" windowY+offsetY+((6*windowHeight)//10-60) ""|500|150"")
 			if (Gdip_ImageSearch(pBMScreen, bitmaps[""yes""], pos, , , , , 2, , 2) = 1)
 			{
 				Gdip_DisposeImage(pBMScreen)
-				Click % windowX+windowWidth//2-250+SubStr(pos, 1, InStr(pos, "","")-1) "" "" windowY+((6*windowHeight)//10-60)+SubStr(pos, InStr(pos, "","")+1)
+				Click % windowX+windowWidth//2-250+SubStr(pos, 1, InStr(pos, "","")-1) "" "" windowY+offsetY+((6*windowHeight)//10-60)+SubStr(pos, InStr(pos, "","")+1)
 				break
 			}
 			Gdip_DisposeImage(pBMScreen)
@@ -13533,7 +13537,7 @@ nm_BasicEggHatcher()
 		}
 		Sleep, 750
 
-		pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2-155 ""|"" windowY+((4*windowHeight)//10 - 135) ""|310|205""), rj := 0
+		pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2-155 ""|"" windowY+offsetY+((4*windowHeight)//10 - 135) ""|310|205""), rj := 0
 		if (Gdip_ImageSearch(pBMScreen, pBMM, , 50, 165, 260, 205, 2, , , 5) = 5) { ; Mythic Hatched
 			MsgBox, 0x40024, Basic Bee Replacement Program, MYTHIC!!!!``nKeep this?
 			IfMsgBox Yes
@@ -14655,8 +14659,10 @@ nm_LocateSprinkler(ByRef X:="", ByRef Y:=""){ ; find client coordinates of appro
 	global bitmaps, sprinklerImages
 	n := sprinklerImages.Length()
 
-	WinGetClientPos(windowX, windowY, windowWidth, windowHeight, "ahk_id " GetRobloxHWND())
-	pBMScreen := Gdip_BitmapFromScreen(windowX "|" (windowY + 75) "|" (hWidth := windowWidth) "|" (hHeight := windowHeight - 75) "|")
+	hwnd := GetRobloxHWND()
+	offsetY := GetYOffset(hwnd)
+	WinGetClientPos(windowX, windowY, windowWidth, windowHeight, "ahk_id " hwnd)
+	pBMScreen := Gdip_BitmapFromScreen(windowX "|" (windowY + offsetY + 75) "|" (hWidth := windowWidth) "|" (hHeight := windowHeight - offsetY - 75) "|")
 
 	Gdip_LockBits(pBMScreen, 0, 0, hWidth, hHeight, hStride, hScan, hBitmapData, 1)
 	hWidth := NumGet(hBitmapData, 0, "UInt"), hHeight := NumGet(hBitmapData, 4, "UInt")
