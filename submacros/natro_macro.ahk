@@ -1700,6 +1700,7 @@ bitmaps := {}
 #Include collect\bitmaps.ahk
 #Include inventory\bitmaps.ahk
 #Include reconnect\bitmaps.ahk
+#Include fdc\bitmaps.ahk
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; SYSTEM TRAY
@@ -14629,28 +14630,48 @@ nm_setSprinkler(field, loc, dist){
 	}
 }
 nm_fieldDriftCompensation(){
-	global FwdKey, LeftKey, BackKey, RightKey, DisableToolUse, PFieldDriftSteps, MoveSpeedNum
+	global FwdKey, LeftKey, BackKey, RightKey, DisableToolUse
 
 	WinGetClientPos(windowX, windowY, windowWidth, windowHeight, "ahk_id " GetRobloxHWND())
 	winUp := windowHeight // 2.14, winDown := windowHeight // 1.88
 	winLeft := windowWidth // 2.14, winRight := windowWidth // 1.88
 
-	if (nm_LocateSprinkler(x, y) = 1) {
+	if ((nm_LocateSprinkler(x, y) = 1) && !(x >= winLeft && x <= winRight && y >= winUp && y <= winDown)) {
 		if (!DisableToolUse)
 			click down
-		while (nm_LocateSprinkler(x, y) = 1 && A_Index <= PFieldDriftSteps) {
-			if (x >= winLeft && x <= winRight && y >= winUp && y <= winDown)
+		if ((x < winleft) && (hmove := LeftKey))
+			sendinput {%LeftKey% down}
+		else if ((x > winRight) && (hmove := RightKey))
+			sendinput {%RightKey% down}
+		if ((y < winUp) && (vmove := FwdKey))
+			sendinput {%FwdKey% down}
+		else if ((y > winDown) && (vmove := BackKey))
+			sendinput {%BackKey% down}
+		while (hmove || vmove) {
+			if (((hmove = LeftKey) && (x >= winLeft)) || ((hmove = RightKey) && (x <= winRight))) {
+				sendinput {%hmove% up}
+				hmove := ""
+			}
+			if (((vmove = FwdKey) && (y >= winUp)) || ((vmove = BackKey) && (y <= winDown))) {
+				sendinput {%vmove% up}
+				vmove := ""
+			}
+			Sleep, 20
+			if ((A_Index >= 300)) {
+				sendinput {%LeftKey% up}{%RightKey% up}{%FwdKey% up}{%BackKey% up}
 				break
-			if (x < winleft)
-				sendinput {%LeftKey% down}
-			else if (x > winRight)
-				sendinput {%RightKey% down}
-			if (y < winUp)
-				sendinput {%FwdKey% down}
-			else if (y > winDown)
-				sendinput {%BackKey% down}
-			sleep, 100*round(18/MoveSpeedNum, 2)
-			sendinput {%LeftKey% up}{%RightKey% up}{%FwdKey% up}{%BackKey% up}
+			}
+			if (nm_LocateSprinkler(x, y) = 0) {
+				sendinput {%LeftKey% up}{%RightKey% up}{%FwdKey% up}{%BackKey% up}
+				Loop, 25 {
+					Sleep, 20
+					if (nm_LocateSprinkler(x, y) = 1) {
+						sendinput % (hmove ? "{" hmove " down} " : "") (vmove ? "{" vmove " down} " : "") 
+						continue 2
+					}
+				}
+				break
+			}
 		}
 		click up
 	}
