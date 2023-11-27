@@ -59,6 +59,6 @@
 	, "BlenderIndex1"
 	, "BlenderIndex2"
 	, "BlenderIndex3"
-	, "BlenderItem1Picture"
-	, "BlenderItem2Picture"
-	, "BlenderItem3Picture"]
+	, "BlenderItem1"
+	, "BlenderItem2"
+	, "BlenderItem3"]

@@ -18,6 +18,8 @@ You should have received a copy of the license along with Natro Macro. If not, p
 global TimerGuiTransparency:=0
 global TimerX:=150
 global TimerY:=150
+DetectHiddenWindows, On
+SetTitleMatchMode, 2
 	
 SetWorkingDir %A_ScriptDir%\..
 #Include %A_WorkingDir%\lib\Gdip_All.ahk
@@ -257,8 +259,6 @@ Loop {
         GuiControl,ptimers:,p%i%timer,% p%i%timerstring
         GuiControl,ptimers:+Redraw, p%i%timer
     }
-    DetectHiddenWindows, On ; for PostMessage
-    SetTitleMatchMode, 2
     Loop, 3 {
         i := A_Index
 
@@ -568,7 +568,7 @@ ba_setBlenderAmount(hCtrl){
         for k,v in ["Sub","Add"] {
             if (hCtrl = h%v%BlenderAmount%i%) {
                 if (BlenderItem%i% != "None") {
-                    (k = 1 && BlenderAmount%i% > 0) ? BlenderAmount%i%-- : (k = 2) ? BlenderAmount%i%++ : BlenderAmount%i%
+                    (k = 1 && BlenderAmount%i% > 1) ? BlenderAmount%i%-- : (k = 2) ? BlenderAmount%i%++ : BlenderAmount%i%
                     GuiControl, pTimers:, BlenderTextAmount%i%, % "(" BlenderCount%i% "/" BlenderAmount%i% ") [" ((BlenderIndex%i% = "Infinite") ? "∞" : BlenderIndex%i%) "]"
                     IniWrite, % BlenderAmount%i%, settings\nm_config.ini, Blender, BlenderAmount%i%
                     If (LastBlenderRot = i) {
@@ -651,10 +651,12 @@ ba_AddBlenderItem(){
     global BlenderaddIndex, AddBlenderItem, BAddIndex, BlenderShrineEnum
     Gui addp:Submit
     Gui addp:Destroy
-    PostMessage, 0x5553, 59, 10 ; not sure why this PostMessage isnt working? It works fine with 0x5552
-
     IniWrite, %AddBlenderItem%, settings\nm_config.ini, Blender, BlenderItem%BlenderaddIndex%
     IniWrite, %BAddindex%, settings\nm_config.ini, Blender, BlenderIndex%BlenderaddIndex%
+    if WinExist("natro_macro ahk_class AutoHotkey") {
+        PostMessage, 0x5553, 58+BlenderaddIndex, 9
+        PostMessage, 0x5553, 61+BlenderaddIndex, 9
+    }
 }
 
 ba_setShrineAmount(hCtrl){

@@ -1973,6 +1973,9 @@ Gui, Add, Tab, x0 y-1 w500 h240 -Wrap hwndhTab vTab gnm_TabSelect, % "Gather|Col
 SendMessage, 0x1331, 0, 20, , ahk_id %hTab% ; set minimum tab width
 ;check for update
 try AsyncHttpRequest("GET", "https://api.github.com/repos/NatroTeam/NatroMacro/releases/latest", "nm_AutoUpdateHandler", {"accept": "application/vnd.github+json"})
+;open Timers
+if(TimersOpen)
+    run, "%exe_path32%" /script "submacros\PlanterTimers.ahk" "%hwndstate%"
 
 ;GATHER TAB
 ;------------------------
@@ -2305,85 +2308,86 @@ Gui, Add, Button, x4 y21 w246 h18 hwndhcollect gnm_CollectKillButton Disabled, C
 Gui, Add, Button, x250 y21 w246 h18 hwndhkill gnm_CollectKillButton, Kill
 ;collect
 Gui, Font, w700
-Gui, Add, GroupBox, x10 y42 w115 h129 vCollectGroupBox, Collect
+Gui, Add, GroupBox, x5 y42 w125 h195 vCollectGroupBox, Collect
 Gui, Font, s8 cDefault Norm, Tahoma
-Gui, Add, Checkbox, x15 y57 +BackgroundTrans vClockCheck gnm_saveCollect Checked%ClockCheck% Disabled, Clock (tickets)
-Gui, Add, Checkbox, x15 y76 w23 +BackgroundTrans vMondoBuffCheck gnm_saveCollect Checked%MondoBuffCheck% Disabled, Mondo
+Gui, Add, Checkbox, x10 y57 +BackgroundTrans vClockCheck gnm_saveCollect Checked%ClockCheck% Disabled, Clock (tickets)
+Gui, Add, Checkbox, x10 y76 w50 +BackgroundTrans vMondoBuffCheck gnm_saveCollect Checked%MondoBuffCheck% Disabled, Mondo
 MondoActionList := ["Buff", "Kill", "Manual"], PMondoGuid ? MondoActionList.Push("Tag", "Guid")
-Gui, Add, Text, x76 y76 w35 vMondoAction +Center +BackgroundTrans,%MondoAction%
-Gui, Add, Button, xp-14 yp-1 w12 h16 gnm_MondoAction hwndhMALeft Disabled, <
-Gui, Add, Button, xp+49 yp w12 h16 gnm_MondoAction hwndhMARight Disabled, >
-Gui, Add, Text, x45 y90 w110 vMondoPointText +left +BackgroundTrans, \___
-Gui, Add, Edit, % "x68 y93 w28 h18 number Limit3 +BackgroundTrans vMondoSecs gnm_SaveConfig" ((MondoAction = "Manual") ? "" : " Disabled") , %MondoSecs%
-Gui, Add, Text, x98 y95 vMondoSecsText, Secs
-Gui, Add, Checkbox, x15 y115 w35 +BackgroundTrans vAntPassCheck gnm_saveCollect Checked%AntPassCheck% Disabled, Ant
-Gui, Add, Text,x62 y115 w49 vAntPassAction +Center +BackgroundTrans,%AntPassAction%
+Gui, Add, Text, x75 y76 w40 vMondoAction +Center +BackgroundTrans,%MondoAction%
+Gui, Add, Button, xp-12 yp-1 w12 h16 gnm_MondoAction hwndhMALeft Disabled, <
+Gui, Add, Button, xp+51 yp w12 h16 gnm_MondoAction hwndhMARight Disabled, >
+Gui, Add, Text, x40 y90 w110 vMondoPointText +left +BackgroundTrans, \___
+Gui, Add, Edit, x63 y93 w28 h18 number Limit3 +BackgroundTrans vMondoSecs gnm_SaveConfig Disabled, %MondoSecs%
+Gui, Add, Text, x93 y95 vMondoSecsText, Secs
+Gui, Add, Checkbox, x10 y115 w35 +BackgroundTrans vAntPassCheck gnm_saveCollect Checked%AntPassCheck% Disabled, Ant
+Gui, Add, Text,x66 y115 w49 vAntPassAction +Center +BackgroundTrans,%AntPassAction%
 Gui, Add, Button, xp-12 yp-1 w12 h16 gnm_AntPassAction hwndhAPALeft Disabled, <
 Gui, Add, Button, xp+60 yp w12 h16 gnm_AntPassAction hwndhAPARight Disabled, >
-Gui, Add, Checkbox, x15 y134 +BackgroundTrans vRoboPassCheck gnm_saveCollect Checked%RoboPassCheck% Disabled, Robo Pass
-Gui, Add, Checkbox, x15 y153 +BackgroundTrans vHoneystormCheck gnm_saveCollect Checked%HoneystormCheck% Disabled, Honeystorm
+Gui, Add, Checkbox, x10 y134 +BackgroundTrans vRoboPassCheck gnm_saveCollect Checked%RoboPassCheck% Disabled, Robo Pass
+Gui, Add, Checkbox, x10 y153 +BackgroundTrans vHoneystormCheck gnm_saveCollect Checked%HoneystormCheck% Disabled, Honeystorm
 ;dispensers
 Gui, Font, w700
-Gui, Add, GroupBox, x130 y42 w170 h109 vDispensersGroupBox, Dispensers
+Gui, Add, GroupBox, x135 y42 w165 h109 vDispensersGroupBox, Dispensers
 Gui, Font, s8 cDefault Norm, Tahoma
-Gui, Add, Checkbox, x135 y57 +BackgroundTrans vHoneyDisCheck gnm_saveCollect Checked%HoneyDisCheck% Disabled, Honey
-Gui, Add, Checkbox, x135 yp+19 +BackgroundTrans vTreatDisCheck gnm_saveCollect Checked%TreatDisCheck% Disabled, Treat
-Gui, Add, Checkbox, x135 yp+19 +BackgroundTrans vBlueberryDisCheck gnm_saveCollect Checked%BlueberryDisCheck% Disabled, Blueberry
-Gui, Add, Checkbox, x135 yp+19 +BackgroundTrans vStrawberryDisCheck gnm_saveCollect Checked%StrawberryDisCheck% Disabled, Strawberry
-Gui, Add, Checkbox, x135 yp+19 +BackgroundTrans vCoconutDisCheck gnm_saveCollect Checked%CoconutDisCheck% Disabled, Coconut
-Gui, Add, Checkbox, x225 y57 +BackgroundTrans vRoyalJellyDisCheck gnm_saveCollect Checked%RoyalJellyDisCheck% Disabled, Royal Jelly
-Gui, Add, Checkbox, x225 yp+19 +BackgroundTrans vGlueDisCheck gnm_saveCollect Checked%GlueDisCheck% Disabled, Glue
+Gui, Add, Checkbox, x140 y57 +BackgroundTrans vHoneyDisCheck gnm_saveCollect Checked%HoneyDisCheck% Disabled, Honey
+Gui, Add, Checkbox, xp yp+19 +BackgroundTrans vTreatDisCheck gnm_saveCollect Checked%TreatDisCheck% Disabled, Treat
+Gui, Add, Checkbox, xp yp+19 +BackgroundTrans vBlueberryDisCheck gnm_saveCollect Checked%BlueberryDisCheck% Disabled, Blueberry
+Gui, Add, Checkbox, xp yp+19 +BackgroundTrans vStrawberryDisCheck gnm_saveCollect Checked%StrawberryDisCheck% Disabled, Strawberry
+Gui, Add, Checkbox, xp yp+19 +BackgroundTrans vCoconutDisCheck gnm_saveCollect Checked%CoconutDisCheck% Disabled, Coconut
+Gui, Add, Checkbox, xp+85 y57 +BackgroundTrans vRoyalJellyDisCheck gnm_saveCollect Checked%RoyalJellyDisCheck% Disabled, Royal Jelly
+Gui, Add, Checkbox, xp yp+19 +BackgroundTrans vGlueDisCheck gnm_saveCollect Checked%GlueDisCheck% Disabled, Glue
 ;beesmas
 beesmasActive := 0
 Gui, Font, w700
-Gui, Add, GroupBox, x205 y153 w290 h78 vBeesmasGroupBox, Beesmas (Inactive)
+Gui, Add, GroupBox, x135 y153 w360 h84 vBeesmasGroupBox, Beesmas (Inactive)
 Gui, Font, s8 cDefault Norm, Tahoma
 hBM := Gdip_CreateHBITMAPFromBitmap(bitmaps["warninggui"])
-Gui, Add, Picture, +BackgroundTrans  x267 y150 w14 h14 gBeesmasActiveFail vBeesmasFailImage, HBITMAP:*%hBM%
+Gui, Add, Picture, +BackgroundTrans  x261 y153 w14 h14 gBeesmasActiveFail vBeesmasFailImage, HBITMAP:*%hBM%
 DllCall("DeleteObject", "ptr", hBM)
-Gui, Add, Picture, +BackgroundTrans x267 y150 w20 h20 vBeesmasImage
-Gui, Add, Checkbox, x332 y154 +BackgroundTrans gnm_saveCollect hwndhBeesmas1 Disabled, Allow Gather Interrupt
-Gui, Add, Checkbox, x208 y167 +BackgroundTrans gnm_saveCollect hwndhBeesmas2 Disabled, Stockings
-Gui, Add, Checkbox, x208 yp+16 +BackgroundTrans gnm_saveCollect hwndhBeesmas3 Disabled, Honey Wreath
-Gui, Add, Checkbox, x208 yp+16 +BackgroundTrans gnm_saveCollect hwndhBeesmas4 Disabled, Feast
-Gui, Add, Checkbox, x208 yp+16 +BackgroundTrans gnm_saveCollect hwndhBeesmas5 Disabled, Robo Party De-level
-Gui, Add, Checkbox, x298 y167 +BackgroundTrans gnm_saveCollect hwndhBeesmas6 Disabled, Gingerbread
-Gui, Add, Checkbox, x298 yp+16 +BackgroundTrans gnm_saveCollect hwndhBeesmas7 Disabled, Snow Machine
-Gui, Add, Checkbox, x298 yp+16 +BackgroundTrans gnm_saveCollect hwndhBeesmas8 Disabled, Candles
-Gui, Add, Checkbox, x391 y167 +BackgroundTrans gnm_saveCollect hwndhBeesmas9 Disabled, Samovar
-Gui, Add, Checkbox, x391 yp+16 +BackgroundTrans gnm_saveCollect hwndhBeesmas10 Disabled, Lid Art
-Gui, Add, Checkbox, x391 yp+16 +BackgroundTrans gnm_saveCollect hwndhBeesmas11 Disabled, Gummy Beacon
+Gui, Add, Picture, +BackgroundTrans x247 y150 w20 h20 vBeesmasImage
+Gui, Add, Checkbox, x335 y153 +BackgroundTrans gnm_saveCollect hwndhBeesmas1 Disabled, Allow Gather Interrupt
+Gui, Add, Checkbox, x140 y170 +BackgroundTrans gnm_saveCollect hwndhBeesmas2 Disabled, Stockings
+Gui, Add, Checkbox, xp yp+17 +BackgroundTrans gnm_saveCollect hwndhBeesmas3 Disabled, Honey Wreath
+Gui, Add, Checkbox, xp yp+17 +BackgroundTrans gnm_saveCollect hwndhBeesmas4 Disabled, Feast
+Gui, Add, Checkbox, xp yp+17 +BackgroundTrans gnm_saveCollect hwndhBeesmas5 Disabled, Robo Party De-level
+Gui, Add, Checkbox, xp+125 y170 +BackgroundTrans gnm_saveCollect hwndhBeesmas6 Disabled, Gingerbread
+Gui, Add, Checkbox, xp yp+17 +BackgroundTrans gnm_saveCollect hwndhBeesmas7 Disabled, Snow Machine
+Gui, Add, Checkbox, xp yp+17 +BackgroundTrans gnm_saveCollect hwndhBeesmas8 Disabled, Candles
+Gui, Add, Checkbox, xp+125 y170 +BackgroundTrans gnm_saveCollect hwndhBeesmas9 Disabled, Samovar
+Gui, Add, Checkbox, xp yp+17 +BackgroundTrans gnm_saveCollect hwndhBeesmas10 Disabled, Lid Art
+Gui, Add, Checkbox, xp yp+17 +BackgroundTrans gnm_saveCollect hwndhBeesmas11 Disabled, Gummy Beacon
 try AsyncHttpRequest("GET", "https://raw.githubusercontent.com/NatroTeam/.github/main/data/beesmas.txt", "nm_BeesmasHandler", {"accept": "application/vnd.github.v3.raw"})
 ;Blender
 Gui, Font, w700
 Gui, Add, GroupBox, x305 y42 w190 h109 vBlenderGroupBox, Blender
 Gui, Font, s8 cDefault Norm, Tahoma
 loop 3 {
-	xCoords := 256 + (60 * A_index)
-	Gui, Add, Button, x%xCoords% y130 w40 h15 vBlenderAdd%A_index% hwndhBlenderClear%A_index% gnm_setBlenderData, % (BlenderItem%A_index% = "None") ? "Add" : "Clear"
-	Gui, add, picture, x%xCoords% y80 h40 w40 hwndhBlenderItem%A_index%Picture vBlenderItem%A_index%Picture +BackgroundTrans +0xE
+	xCoords := 256 + (62 * A_index)
+	Gui, Add, Button, x%xCoords% y128 w40 h15 vBlenderAdd%A_index% hwndhBlenderClear%A_index% gnm_setBlenderData, % (BlenderItem%A_index% = "None") ? "Add" : "Clear"
+	Gui, add, picture, x%xCoords% y78 h40 w40 hwndhBlenderItem%A_index%Picture vBlenderItem%A_index%Picture +BackgroundTrans +0xE
 	if (BlenderItem%A_index% != "None")
 		SetImage(hBlenderItem%A_Index%Picture, hBitmapsSB[BlenderItem%A_index%])
-	xCoords := 266 + (58 * A_index), Width := 6*StrLen(BlenderAmount%A_index%)
-	Gui, Add, Text, x%xCoords% y60 w%Width% vBlenderAmount%A_index% +Center, % BlenderAmount%A_index%
+	xCoords := 262 + (62 * A_index), Width := 6*StrLen(BlenderAmount%A_index%)
+	Gui, Add, Text, x%xCoords% y58 w%Width% vBlenderAmount%A_index% +Center, % BlenderAmount%A_index%
 	
 	GuiControlGet, pos, Pos, BlenderAmount%A_index%
 	
 	xcoord := PosW + PosX + 12, LeftCurlB := PosX - 5, RightCurlB := PosX + PosW + 1
 	
-	Gui, Add, Text, x%xcoord% y60 vBlenderIndex%A_index%, % (BlenderIndex%A_index% := (BlenderIndex%A_index% = "Infinite") ? "∞" : BlenderIndex%A_index%)
-	Gui, Add, Text, x%LeftCurlB% y60 vLeftCurlB%A_index%, % "("
-	Gui, Add, Text, x%RightCurlB% y60 vRightCurlB%A_index%, % ")"
+	Gui, Add, Text, x%xcoord% y58 vBlenderIndex%A_index%, % (BlenderIndex%A_index% := (BlenderIndex%A_index% = "Infinite") ? "∞" : BlenderIndex%A_index%)
+	Gui, Add, Text, x%LeftCurlB% y58 vLeftCurlB%A_index%, % "("
+	Gui, Add, Text, x%RightCurlB% y58 vRightCurlB%A_index%, % ")"
 	GuiControlGet, pos, Pos, BlenderIndex%A_index%
 	
 	LeftBracketB := PosX - 5, RightBracketB := PosX + PosW + 1
 	
-	Gui, Add, Text, x%LeftBracketB% y60 vLeftBracketB%A_index%, % "["
-	Gui, Add, Text, x%RightBracketB% y60 vRightBracketB%A_index%, % "]"
+	Gui, Add, Text, x%LeftBracketB% y58 vLeftBracketB%A_index%, % "["
+	Gui, Add, Text, x%RightBracketB% y58 vRightBracketB%A_index%, % "]"
 }
-BlenderAdd := 1 ;setup BlenderAdd for later use in the GUI
+BlenderAdd := 0 ;setup BlenderAdd for later use in the GUI
 
-Gui, Add, edit, x427 y125 w50 vBlenderAmount Hidden Number Limit3, 0
+Gui, Add, Text, x431 y125 w41 h16 +Center +0x200 vBlenderAmountNum Hidden
+Gui, Add, UpDown, vBlenderAmount Range1-999 Hidden, 1
 Gui, Add, Text, x435 y106 vBlenderAmountText Hidden, Amount
 Gui, Add, Text, x435 y50 h13 vBlenderRepeatText Hidden, Repeat
 Gui, Font, w700 underline
@@ -3436,9 +3440,6 @@ Hotkey, %PauseHotkey%, pause, UseErrorLevel On
 Hotkey, %AutoClickerHotkey%, autoclicker, UseErrorLevel On T2
 Hotkey, %TimersHotkey%, timers, UseErrorLevel On
 
-if(TimersOpen && (PlanterMode != 0))
-    run, "%exe_path32%" /script "submacros\PlanterTimers.ahk" "%hwndstate%"
-
 settimer, Background, 2000
 if (A_Args[1] = 1)
 	settimer, start, -1000
@@ -3704,7 +3705,7 @@ nm_setBlenderData(hCtrl){
     Loop, 3 {
         if (hCtrl = hBlenderClear%A_Index%) {
             if (BlenderItem%A_Index% = "None") {	
-				BlenderaddIndex := A_Index, AddBlenderItem := "RedExtract", BlenderAdd := Mod(BlenderAdd, 2) + 1
+				BlenderaddIndex := A_Index, BlenderAdd := A_Index
 
 				loop 3 {
 					i := A_Index
@@ -3715,12 +3716,12 @@ nm_setBlenderData(hCtrl){
 				
 				GuiControl,, BlenderAmount, % BlenderAmount%A_Index%
 				GuiControl,, BlenderIndex, % ((BlenderIndex%A_Index% != "Infinite" && BlenderIndex%A_Index% != "∞") ? BlenderIndex%A_Index% : 0) 
-				SetImage(hAddBlenderItem, hBitmapsSB["RedExtract"])
+				ba_AddBlenderItemButton()
 				GuiControl, ChooseString, BlenderIndexOption, Infinite
 				GuiControl,, BlenderAddSlot, Add to Slot %BlenderaddIndex%
 				GuiControl,, BlenderIndexOption, 1
 
-				For z, ui in ["BlenderItem", "BlenderLeft", "BlenderRight", "BlenderAddSlot", "BlenderAmountText", "BlenderAmount", "BlenderRepeatText", "BlenderIndexOption","blenderline1","blendertitle1","blenderline2","blenderline3","blenderline4","blenderline5"]
+				For z, ui in ["BlenderItem", "BlenderLeft", "BlenderRight", "BlenderAddSlot", "BlenderAmountText", "BlenderAmount", "BlenderAmountNum", "BlenderRepeatText", "BlenderIndexOption","blenderline1","blendertitle1","blenderline2","blenderline3","blenderline4","blenderline5"]
 					GuiControl, Show, %ui%
 			} else {
 				BlenderItem%A_Index% := "None", BlenderAmount%A_Index% := 0, BlenderIndex%A_Index% := "Infinite"
@@ -3758,12 +3759,12 @@ nm_setBlenderData(hCtrl){
         }
     }
 }
-ba_AddBlenderItemButton(hCtrl){
+ba_AddBlenderItemButton(hCtrl:=0){
     global hfblenderleft, hfblenderright, hAddBlenderItem, AddBlenderItem, BlenderAdd, hBitmapsSB
     static items := ["RedExtract", "BlueExtract", "Enzymes", "Oil", "Glue", "TropicalDrink", "Gumdrops", "MoonCharms", "Glitter", "StarJelly", "PurplePotion", "SoftWax", "HardWax", "SwirledWax", "CausticWax", "FieldDice", "SmoothDice", "LoadedDice", "SuperSmoothie", "Turpentine"], i := 0, h := 0
     if (h != BlenderAdd)
         i := 0, h := BlenderAdd
-    i := Mod(items.Length() + i + ((hCtrl = hfblenderleft) ? -1 : 1), items.Length()), AddBlenderItem := items[i+1]
+    i := Mod(items.Length() + i + ((hCtrl = hfblenderleft) ? -1 : (hCtrl = hfblenderright) ? 1 : 0), items.Length()), AddBlenderItem := items[i+1]
 	SetImage(hAddBlenderItem, hBitmapsSB[AddBlenderItem])
 }
 ba_AddBlenderItem(){
@@ -3801,14 +3802,15 @@ ba_AddBlenderItem(){
 	GuiControl, move, LeftBracketB%BlenderAddIndex%, x%LeftBracketB%
 	GuiControl, move, RightBracketB%BlenderAddIndex%, x%RightBracketB%
 
+	For z, ui in ["BlenderItem", "BlenderLeft", "BlenderRight", "BlenderAddSlot", "BlenderAmountText", "BlenderAmount", "BlenderAmountNum", "BlenderRepeatText", "BlenderIndex", "BlenderIndexOption","blenderline1","blenderline2","blenderline3","blenderline4","blendertitle1"]
+		GuiControl, Hide, %ui%
 	loop 3 {
 		i := A_Index
 		For x, Item in ["BlenderAdd", "LeftBracketB", "RightBracketB", "BlenderAmount", "BlenderIndex", "LeftCurlB", "RightCurlB"]
 			GuiControl, Show, %Item%%i%
 		GuiControl, Show, BlenderItem%i%Picture
 	}
-	For z, ui in ["BlenderItem", "BlenderLeft", "BlenderRight", "BlenderAddSlot", "BlenderAmountText", "BlenderAmount", "BlenderRepeatText", "BlenderIndex", "BlenderIndexOption","blenderline1","blenderline2","blenderline3","blenderline4","blendertitle1"]
-		GuiControl, Hide, %ui%
+	BlenderAdd := 0
 
 	GuiControl, -Redraw, % hBlenderClear%BlenderaddIndex%
     GuiControl,, % hBlenderClear%BlenderaddIndex%, % ((AddBlenderItem = "None" || AddBlenderItem = "") ? "Add" : "Clear")
@@ -5145,8 +5147,7 @@ nm_TabCollectLock(){
 	GuiControl, disable, BlenderRight
 	GuiControl, disable, ClockCheck
 	GuiControl, disable, MondoBuffCheck
-	if (MondoAction="Manual")
-		GuiControl, disable, MondoSecs
+	GuiControl, disable, MondoSecs
 	GuiControl, disable, % hMALeft
 	GuiControl, disable, % hMARight
 	GuiControl, disable, RoboPassCheck
@@ -7071,22 +7072,18 @@ nm_MondoAction(hCtrl){
 	{
 		case % MondoActionList[1]:
 		i := 1
-		GuiControl, disable, MondoSecs
 		case % MondoActionList[2]:
 		i := 2
-		GuiControl, enable, MondoSecs
 		case % MondoActionList[3]:
 		i := 3
-		GuiControl, disable, MondoSecs
 		case % MondoActionList[4]:
 		i := 4
-		GuiControl, disable, MondoSecs
 		default:
 		i := 5
-		GuiControl, disable, MondoSecs
 	}
 
 	GuiControl, , MondoAction, % (MondoAction := MondoActionList[(hCtrl = hMARight) ? (Mod(i, l) + 1) : (Mod(l + i - 2, l) + 1)])
+	GuiControl, % (MondoAction = "Manual") ? "Enable" : "Disable", MondoSecs
 	IniWrite, %MondoAction%, settings\nm_config.ini, Collect, MondoAction
 }
 nm_AntPassAction(hCtrl){
@@ -8329,13 +8326,15 @@ nm_ContributorsPageButton(hwnd){
 }
 nm_CollectKillButton(hCtrl){
 	global
-	static CollectControls := ["CollectGroupBox","DispensersGroupBox","BeesmasGroupBox","BeesmasFailImage","BeesmasImage","ClockCheck","MondoBuffCheck","MondoAction","AntPassCheck","AntPassAction","RoboPassCheck","HoneystormCheck","HoneyDisCheck","TreatDisCheck","BlueberryDisCheck","StrawberryDisCheck","CoconutDisCheck","RoyalJellyDisCheck","GlueDisCheck"]
+	static CollectControls := ["CollectGroupBox","DispensersGroupBox","BeesmasGroupBox","BlenderGroupBox","BeesmasFailImage","BeesmasImage"
+		,"ClockCheck","MondoBuffCheck","MondoAction","MondoPointText","MondoSecs","MondoSecsText","AntPassCheck","AntPassAction","RoboPassCheck","HoneystormCheck"
+		,"HoneyDisCheck","TreatDisCheck","BlueberryDisCheck","StrawberryDisCheck","CoconutDisCheck","RoyalJellyDisCheck","GlueDisCheck"]
 	, CollectControlsH := ["hMALeft","hMARight","hAPALeft","hAPARight","hBeesmas1","hBeesmas2","hBeesmas3","hBeesmas4","hBeesmas5","hBeesmas6","hBeesmas7","hBeesmas8","hBeesmas9","hBeesmas10","hBeesmas11"]
 	, KillControls := ["BugRunGroupBox","BugRunCheck","MonsterRespawnTime","TextMonsterRespawnPercent","TextMonsterRespawn","MonsterRespawnTimeHelp","BugrunInterruptCheck","TextLoot","TextKill","TextLineBugRun1","TextLineBugRun2","BugrunLadybugsLoot","BugrunRhinoBeetlesLoot","BugrunSpiderLoot","BugrunMantisLoot","BugrunScorpionsLoot","BugrunWerewolfLoot","BugrunLadybugsCheck","BugrunRhinoBeetlesCheck","BugrunSpiderCheck","BugrunMantisCheck","BugrunScorpionsCheck","BugrunWerewolfCheck","StingersGroupBox","StingerCheck","StingerDailyBonusCheck","TextFields","StingerCloverCheck","StingerSpiderCheck","StingerCactusCheck","StingerRoseCheck","StingerMountainTopCheck","StingerPepperCheck","BossesGroupBox","TunnelBearCheck","KingBeetleCheck","CocoCrabCheck","StumpSnailCheck","CommandoCheck","TunnelBearBabyCheck","KingBeetleBabyCheck","BabyLovePicture1","BabyLovePicture2","KingBeetleAmuletMode","ShellAmuletMode","KingBeetleAmuPicture","ShellAmuPicture","KingBeetleAmuletModeText","ShellAmuletModeText","ChickLevelTextLabel","ChickLevelText","ChickLevel","SnailHPText","SnailHealthEdit","SnailHealthText","ChickHPText","ChickHealthEdit","ChickHealthText","SnailTimeText","SnailTimeUpDown","ChickTimeText","ChickTimeUpDown","BossConfigHelp","TextLineBosses1","TextLineBosses2","TextLineBosses3","TextBosses1","TextBosses2","TextBosses3"]
 	, BlenderMain := ["BlenderItem1Picture", "BlenderItem2Picture", "BlenderItem3Picture", "BlenderAdd1", "BlenderAdd2", "BlenderAdd3", "BlenderAmount1", "BlenderAmount2", "BlenderAmount3", "LeftCurlB1", "LeftCurlB2", "LeftCurlB3", "RightCurlB1", "RightCurlB2", "RightCurlB3", "LeftBracB1", "LeftBracB2", "LeftBracB3", "RightBracB1", "RightBracB2", "RightBracB3", "BlenderIndex1", "BlenderIndex2", "BlenderIndex3"]
-	, BlenderSide := ["BlenderAmount", "BlenderAmountText", "BlenderRepeatText", "BlenderIndex", "BlenderItem", "BlenderLeft", "BlenderRight", "BlenderAddSlot", "BlenderIndexOption","blenderline1","blenderline2","blenderline3","blenderline4","blendertitle1"]
+	, BlenderSide := ["BlenderAmount", "BlenderAmountNum", "BlenderAmountText", "BlenderRepeatText", "BlenderIndex", "BlenderItem", "BlenderLeft", "BlenderRight", "BlenderAddSlot", "BlenderIndexOption","blenderline1","blenderline2","blenderline3","blenderline4","blendertitle1"]
 
-	local p, i, c, k, v
+	local p, i, c, k, v, arr
 
 	p := (hCtrl = hKill)
 	GuiControl, % (p ? "Enable" : "Disable"), % hCollect
@@ -8350,11 +8349,8 @@ nm_CollectKillButton(hCtrl){
 				GuiControl, %c%, %v%
 			for k,v in CollectControlsH
 				GuiControl, %c%, % %v%
-
-			GuiControlGet, BlenderAdd1, Visible
-			controls := (i = 1) ? (BlenderAdd1 ? "BlenderMain" : "BlenderSide") : controls
-
-			for k, v in %controls%
+			arr := (BlenderAdd > 0) ? "BlenderSide" : "BlenderMain"
+			for k,v in %arr%
 				GuiControl, %c%, %v%
 		}
 
@@ -13020,7 +13016,7 @@ nm_Mondo(){
 		global AFBuseGlitter
 		global AFBuseBooster
 		global CurrentField, CurrentAction, PreviousAction
-global MondoSecs
+		global MondoSecs
 		PreviousAction:=CurrentAction
 		CurrentAction:="Mondo"
 		MoveSpeedFactor:=round(18/MoveSpeedNum, 2)
@@ -21035,20 +21031,16 @@ nm_UpdateGUIVar(var)
 		GuiControl, % "+c" Format("0x{1:02x}{2:02x}{3:02x}", Round(Min(3*(100-InputChickHealth), 150)), Round(Min(3*InputChickHealth, 150)), 0) " +Redraw", ChickHealthText
 		GuiControl, , ChickHealthText, % InputChickHealth "%"
 
-		Case "BlenderItem1Picture", "BlenderItem2Picture", "BlenderItem3Picture":
-		SetImage(h%k%, hBitmapsSB[%k%])
-       	GuiControl, , BlenderAdd%z%, % (BlenderItem%z%Picture = "None") ? "Add" : "Clear"
-
 		case "BlenderIndex1", "BlenderIndex2", "BlenderIndex3":
 		Num := SubStr(k, 0)
 		GuiControlGet, pos, Pos, BlenderAmount%Num%
-		xCoord := PosW + PosX + 12, StrLen := Strlen(BlenderIndex%Num%) * ((BlenderIndex%Num% = "Infinite") ? 10 : 6)
-		GuiControl, Move, %k%, w%StrLen% x%xCoord%
+		xCoord := PosW + PosX + 12, StrLen := (%k% = "Infinite") ? 10 : Strlen(%k%) * 6
+		GuiControl, MoveDraw, %k%, w%StrLen% x%xCoord%
 		GuiControl, , %k%, % (%k% = "Infinite") ? "∞" : %k%
 
-		GuiControlGet, pos, Pos, BlenderIndex%Num%
-		GuiControl, move, LeftBracketB%Num%, x%PosX%-5
-		GuiControl, move, RightBracketB%Num%, x%PosX%+%PosW%+1
+		GuiControlGet, pos, Pos, %k%
+		GuiControl, MoveDraw, LeftBracketB%Num%, % "x" PosX-5
+		GuiControl, MoveDraw, RightBracketB%Num%, % "x" PosX+PosW+1
 
 		case "BlenderAmount1", "BlenderAmount2", "BlenderAmount3":
 		StrLen := 6*StrLen(%k%)
@@ -21059,14 +21051,14 @@ nm_UpdateGUIVar(var)
 		GuiControlGet, pos, Pos, %k% ;most likely gonna be changing X
 		RightCurlB := PosX + PosW + 1, LeftCurlB := PosX - 5, Xcoord := PosW + PosX + 12
 
-		GuiControl, Move, LeftCurlB%Num%, x%LeftCurlB%
-		GuiControl, Move, RightCurlB%Num%, x%RightCurlB%
-		GuiControl, Move, BlenderIndex%Num%, x%Xcoord%
+		GuiControl, MoveDraw, LeftCurlB%Num%, x%LeftCurlB%
+		GuiControl, MoveDraw, RightCurlB%Num%, x%RightCurlB%
+		GuiControl, MoveDraw, BlenderIndex%Num%, x%Xcoord%
 
 		GuiControlGet, pos, Pos, BlenderIndex%Num%
 		LeftBracB := PosX - 5, RightBracB := PosX + PosW + 1 ; 5 and below is funky but 6 is fine?
-		GuiControl, move, LeftBracketB%Num%, x%LeftBracB%
-		GuiControl, move, RightBracketB%Num%, x%RightBracB%
+		GuiControl, MoveDraw, LeftBracketB%Num%, x%LeftBracB%
+		GuiControl, MoveDraw, RightBracketB%Num%, x%RightBracB%
 
 		Case "ShrineItem1Picture", "ShrineItem2Picture":
 		SetImage(h%k%, hBitmapsSB[%k%])
@@ -21102,6 +21094,14 @@ nm_UpdateGUIVar(var)
 		GuiControl, move, RightBracketS%Num%, x%RightBracS%
 
 		case "":
+		k := var
+		switch % k
+		{
+			case "BlenderItem1", "BlenderItem2", "BlenderItem3":
+			SetImage(h%k%Picture, hBitmapsSB[%k%])
+			z := SubStr(k, 0)
+			GuiControl, , BlenderAdd%z%, % (BlenderItem%z%Picture = "None") ? "Add" : "Clear"
+		}
 
 		default:
 		GuiControl, , %k%, % %k%
