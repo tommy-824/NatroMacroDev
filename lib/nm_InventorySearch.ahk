@@ -18,6 +18,7 @@
 			{
 				if (Gdip_ImageSearch(pBMScreen, bitmaps["item"], lpos, , , 6, , 2, , 2) = 1)
 				{
+					Gdip_DisposeImage(pBMScreen)
 					l := SubStr(lpos, InStr(lpos, ",")+1)-60 ; image 20px, item 80px => y+20-80 = y-60
 					hRoblox := hwnd
 					break

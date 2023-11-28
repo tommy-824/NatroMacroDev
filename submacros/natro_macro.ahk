@@ -9212,9 +9212,11 @@ nm_findHiveSlot(){
 
 	pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2-200 "|" windowY+offsetY "|400|125")
 	if ((Gdip_ImageSearch(pBMScreen, bitmaps["makehoney"], , , , , , 2, , 2) = 1) || (Gdip_ImageSearch(pBMScreen, bitmaps["collectpollen"], , , , , , 2, , 2) = 1))
-		HiveConfirmed := 1
+		HiveConfirmed := 1, Gdip_DisposeImage(pBMScreen)
 	else
 	{
+		Gdip_DisposeImage(pBMScreen)
+		
 		; find hive slot
 		movement := "
 		(LTrim Join`r`n
