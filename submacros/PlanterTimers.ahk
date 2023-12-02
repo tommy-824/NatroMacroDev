@@ -247,10 +247,6 @@ ba_setPlanterData(hCtrl){
 	global hClear1, hClear2, hClear3
 	Loop, 3 {
 		if (hCtrl = hClear%A_Index%) {
-			;resets hold/release/smoking planter to 0, if user presses clear/add button
-			IniWrite, % 0, Settings/nm_config.ini, Planters, MPlanterHold%A_Index%
-			IniWrite, % 0, Settings/nm_config.ini, Planters, MPlanterRelease%A_Index%
-			IniWrite, % 0, Settings/nm_config.ini, Planters, MPlanterSmoking%A_Index%
 			IniRead, PlanterName%A_Index%, settings\nm_config.ini, Planters, PlanterName%A_Index%
 			if (PlanterName%A_Index% = "None") {
 				ba_addPlanterData(A_Index)
@@ -263,6 +259,9 @@ ba_setPlanterData(hCtrl){
 				IniWrite, % "", settings\nm_config.ini, Planters, PlanterHarvestFull%A_Index%
 				IniWrite, 0, settings\nm_config.ini, Planters, PlanterGlitter%A_Index%
 				IniWrite, 0, settings\nm_config.ini, Planters, PlanterGlitterC%A_Index%
+				IniWrite, 0, settings\nm_config.ini, Planters, MPlanterHold%A_Index%
+				IniWrite, 0, settings\nm_config.ini, Planters, MPlanterRelease%A_Index%
+				IniWrite, 0, settings\nm_config.ini, Planters, MPlanterSmoking%A_Index%
 			}
 			break
 		}
@@ -358,6 +357,9 @@ ba_AddPlanter(){
 	IniWrite, % "", settings\nm_config.ini, Planters, PlanterHarvestFull%addindex%
 	IniWrite, 0, settings\nm_config.ini, Planters, PlanterGlitter%addindex%
 	IniWrite, 0, settings\nm_config.ini, Planters, PlanterGlitterC%addindex%
+	IniWrite, 0, settings\nm_config.ini, Planters, MPlanterHold%addindex%
+	IniWrite, 0, settings\nm_config.ini, Planters, MPlanterRelease%addindex%
+	IniWrite, 0, settings\nm_config.ini, Planters, MPlanterSmoking%addindex%
 }
 ba_saveTimerGui(){
 	global hGUI, TimerGuiTransparency

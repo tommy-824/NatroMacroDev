@@ -1521,8 +1521,7 @@ FileAppend, %ini%, %A_WorkingDir%\settings\field_config.ini
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ManualPlanters := {}
 
-ManualPlanters["General"] := {"MHarvestInterval":"2 hours"
-	, "LastPlanterGatherSlot":3}
+ManualPlanters["General"] := {"MHarvestInterval":"2 hours"}
 
 ManualPlanters["Slot 1"] := {"MSlot1Cycle1Planter":""
 	, "MSlot1Cycle2Planter":""
@@ -2635,12 +2634,12 @@ Loop, 3 {
     Gui, Add, Text, % "xs ys+20 +Center Section vMSlot" i "FieldText" (PlanterMode == 1 ? "" : " Hidden"), S%i% Fields:
     Gui, Add, Text, % "xs ys+20 +Center Section vMSlot" i "SettingsText" (PlanterMode == 1 ? "" : " Hidden"), S%i% Settings:
     if (i < 3)
-        Gui, Add, Text, % "xs ys+22 w" ((i = 1) ? "350" : "350") " h1 0x7 vMSlot" i "SeparatorLine" (PlanterMode == 1 ? "" : " Hidden")
+        Gui, Add, Text, % "xs ys+22 w350 h1 0x7 vMSlot" i "SeparatorLine" (PlanterMode == 1 ? "" : " Hidden")
 }
 
-Gui, Add, Text, % "x378 y62 w200 +BackgroundTrans Section vMCurrentCycle" (PlanterMode == 1 ? "" : " Hidden"), Current planter cycle
+Gui, Add, Text, % "x378 y62 +BackgroundTrans Section vMCurrentCycle" (PlanterMode == 1 ? "" : " Hidden"), Current Planter Cycle
 Loop, 3 {
-	Gui, Add, Text, % ((A_Index = 1) ? "x361 y76" : "xs ys+16") "w200 +BackgroundTrans Section vMSlot" A_Index "CycleText" (PlanterMode == 1 ? "" : " Hidden"), % "Slot " A_Index ": Cycle " PlanterManualCycle%A_Index%
+	Gui, Add, Text, % ((A_Index = 1) ? "x361 y78" : "xs ys+16") "w200 +BackgroundTrans Section vMSlot" A_Index "CycleText" (PlanterMode == 1 ? "" : " Hidden"), % "Slot " A_Index ": Cycle " PlanterManualCycle%A_Index%
 	Gui, Add, Button, % "x461 ys-2 w15 h16 +Center vMSlot" A_Index "Left gmp_Slot" A_Index "ChangeLeft Disabled" (PlanterMode == 1 ? "" : " Hidden"), —
 	Gui, Add, Button, % "x+2 ys-2 w15 h16 +Center vMSlot" A_Index "Right gmp_Slot" A_Index "ChangeRight Disabled" (PlanterMode == 1 ? "" : " Hidden"), +
 }
@@ -2650,7 +2649,7 @@ Gui, Add, Text, % "x355 y58 h1 w150 0x7 vMSliderSeparatorLine" (PlanterMode == 1
 
 ; disable automatic harvest
 Gui, Add, Text, % "x355 y128 h1 w150 0x7 Section vMPuffModeSeparatorLine" (PlanterMode == 1 ? "" : " Hidden")
-Gui, Add, Checkbox, % "xs+5 ys+4 w150 h16 +BackgroundTrans vMPuffModeA gmp_MPuffMode Section Disabled Checked" MPuffModeA ((PlanterMode = 1) ? "" : " Hidden"), Disable auto harvest
+Gui, Add, Checkbox, % "xs+5 ys+4 w150 h16 +BackgroundTrans vMPuffModeA gmp_MPuffMode Section Disabled Checked" MPuffModeA ((PlanterMode = 1) ? "" : " Hidden"), Disable Auto-Harvest
 Gui, Add, Text, % "xs+16 ys+16 vMPuffModeText " (PlanterMode == 1 ? "" : " Hidden"), Slots:
 Gui, Add, Checkbox, % "xs+46 yp-1 w24 h16 +BackgroundTrans vMPuffMode1 gmp_SaveConfig Disabled Checked" MPuffMode1 ((PlanterMode = 1) ? "" : " Hidden"), 1
 Gui, Add, Checkbox, % "xs+70 yp w24 h16 +BackgroundTrans vMPuffMode2 gmp_SaveConfig Disabled Checked" MPuffMode2 ((PlanterMode = 1) ? "" : " Hidden"), 2
@@ -2659,7 +2658,7 @@ Gui, Add, Button, % "x481 yp+1 w12 h14 gnm_MPuffModeHelp vMPuffModeHelp Disabled
 
 ; gather in planter field and slots
 Gui, Add, Text, % "x355 y165 h1 w156 0x7 Section vMGatherSeparatorLine" (PlanterMode == 1 ? "" : " Hidden")
-Gui, Add, Checkbox, % "xs+5 ys+4 w150 h16 +BackgroundTrans vMPlanterGatherA gmp_MPlanterGatherSwitch_ Section Disabled Checked" MPlanterGatherA ((PlanterMode = 1) ? "" : " Hidden"), Gather in planter fields
+Gui, Add, Checkbox, % "xs+5 ys+4 w150 h16 +BackgroundTrans vMPlanterGatherA gmp_MPlanterGatherSwitch_ Section Disabled Checked" MPlanterGatherA ((PlanterMode = 1) ? "" : " Hidden"), Gather in Planter Fields
 Gui, Add, Text, % "xs+16 ys+16 vMPlanterGatherText " (PlanterMode == 1 ? "" : " Hidden"), Slots:
 Gui, Add, Checkbox, % "xs+46 yp-1 w24 h16 +BackgroundTrans vMPlanterGather1 gmp_SaveConfig Disabled Checked" MPlanterGather1 ((PlanterMode = 1) ? "" : " Hidden"), 1
 Gui, Add, Checkbox, % "xs+70 yp w24 h16 +BackgroundTrans vMPlanterGather2 gmp_SaveConfig Disabled Checked" MPlanterGather2 ((PlanterMode = 1) ? "" : " Hidden"), 2
@@ -2668,16 +2667,16 @@ Gui, Add, Button, % "x481 yp+1 w12 h14 gnm_MPlanterGatherHelp vMPlanterGatherHel
 
 ; harvest every interval
 Gui, Add, Text, % "x355 y202 h1 w150 0x7 Section vMPageSeparatorLine" (PlanterMode == 1 ? "" : " Hidden")
-Gui, Add, Text, % "xs+8 ys+3 vMHarvestText Section" (PlanterMode == 1 ? "" : " Hidden"), Harvest every
+Gui, Add, Text, % "xs+9 ys+3 vMHarvestText Section" (PlanterMode == 1 ? "" : " Hidden"), Harvest every
 Gui, Add, Text, % "x374 ys+15 w48 vMHarvestInterval +Center +BackgroundTrans " ((PlanterMode = 1) ? "" : " Hidden"),%MHarvestInterval%
 Gui, Add, Button, % "x361 ys+15 w15 h16 gnm_MHarvestInterval hwndhMHILeft Disabled" ((PlanterMode = 1) ? "" : " Hidden"), <
-Gui, Add, Button, % "x418 ys+15 w15 h16 gnm_MHarvestInterval hwndhMHIRight Disabled" ((PlanterMode = 1) ? "" : " Hidden"), >
+Gui, Add, Button, % "x420 ys+15 w15 h16 gnm_MHarvestInterval hwndhMHIRight Disabled" ((PlanterMode = 1) ? "" : " Hidden"), >
 ;Gui, Add, DropdownList, % "x374 ys+12 w60 vMHarvestInterval gmp_SaveConfig Disabled" (PlanterMode == 1 ? "" : " Hidden"), % StrReplace("30 min|Hour|2 hours|3 hours|4 hours|5 hours|6 hours|", MHarvestInterval, MHarvestInterval "|")
 
 SetLoadingProgress(99)
 
 ; page movement
-Gui, Add, Text, % "x461 ys vMPageNumberText" (PlanterMode == 1 ? "" : " Hidden"), % "Page " (MPageIndex := 1) ;
+Gui, Add, Text, % "x460 ys vMPageNumberText" (PlanterMode == 1 ? "" : " Hidden"), % "Page " (MPageIndex := 1) ;
 Gui, Add, Button, % "x461 ys+15 w15 h16 hwndMPageLeftHWND vMPageLeft gmp_UpdatePage Disabled" (PlanterMode == 1 ? "" : " Hidden"), <
 Gui, Add, Button, % "x+2 ys+15 w15 h16 hwndMPageRightHWND vMPageRight gmp_UpdatePage Disabled" (PlanterMode == 1 ? "" : " Hidden"), >
 
@@ -2792,10 +2791,10 @@ mp_SaveConfig() {
 	Loop, 3 {
 		i := A_Index
 		Loop, 9 {
-			IniWrite, % MSlot%i%Cycle%A_Index%Planter, Settings\manual_planters.ini, % "Slot " i, MSlot%i%Cycle%A_Index%Planter
-			IniWrite, % MSlot%i%Cycle%A_Index%Field, Settings\manual_planters.ini, % "Slot " i, MSlot%i%Cycle%A_Index%Field
-			IniWrite, % MSlot%i%Cycle%A_Index%Glitter, Settings\manual_planters.ini, % "Slot " i, MSlot%i%Cycle%A_Index%Glitter
-			IniWrite, % MSlot%i%Cycle%A_Index%AutoFull, Settings\manual_planters.ini, % "Slot " i, MSlot%i%Cycle%A_Index%AutoFull
+			IniWrite, % MSlot%i%Cycle%A_Index%Planter, settings\manual_planters.ini, % "Slot " i, MSlot%i%Cycle%A_Index%Planter
+			IniWrite, % MSlot%i%Cycle%A_Index%Field, settings\manual_planters.ini, % "Slot " i, MSlot%i%Cycle%A_Index%Field
+			IniWrite, % MSlot%i%Cycle%A_Index%Glitter, settings\manual_planters.ini, % "Slot " i, MSlot%i%Cycle%A_Index%Glitter
+			IniWrite, % MSlot%i%Cycle%A_Index%AutoFull, settings\manual_planters.ini, % "Slot " i, MSlot%i%Cycle%A_Index%AutoFull
 		}
 	}
 
@@ -2826,7 +2825,7 @@ mp_UpdateCycles() {
 		}
 
 		PlanterManualCycle%i% := Min(MSlot%i%MaxCycle, PlanterManualCycle%i%)
-		IniWrite, % PlanterManualCycle%i%, Settings\nm_config.ini, Planters, PlanterManualCycle%i%
+		IniWrite, % PlanterManualCycle%i%, settings\nm_config.ini, Planters, PlanterManualCycle%i%
 
 		GuiControl, % (PlanterManualCycle%i% != 1 ? "Enable" : "Disable"), MSlot%i%Left
 		GuiControl, % (PlanterManualCycle%i% < MSlot%i%MaxCycle ? "Enable" : "Disable"), MSlot%i%Right
@@ -2896,9 +2895,9 @@ mp_Planter() {
 			; reset Hold and Smoking variables to 0 if disable auto harvest no longer selected, planter field empty, or user has set to Release with remote control
 			If ((!MPuffModeA) || (!MPuffMode%A_Index%) || (PlanterField%A_Index% = "None")  || (MPlanterRelease%A_Index%)) {
 				MPlanterHold%A_Index% := 0
-				IniWrite, % MPlanterHold%A_Index%, Settings/nm_config.ini, Planters, MPlanterHold%A_Index%
+				IniWrite, % MPlanterHold%A_Index%, settings\nm_config.ini, Planters, MPlanterHold%A_Index%
 				MPlanterSmoking%A_Index% := 0
-				IniWrite, % MPlanterSmoking%A_Index%, Settings/nm_config.ini, Planters, MPlanterSmoking%A_Index%
+				IniWrite, % MPlanterSmoking%A_Index%, settings\nm_config.ini, Planters, MPlanterSmoking%A_Index%
 			}
 			If (PlanterHarvestTime%A_Index% > 2**31) {
 				mp_PlantPlanter(A_Index)
@@ -3097,13 +3096,13 @@ mp_PlantPlanter(PlanterIndex) {
 				PlanterHarvestTime%PlanterIndex% := PlanterHarvestTime%A_Index%
 	}
 
-	IniWrite, % PlanterName%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterName%PlanterIndex%
-	IniWrite, % PlanterField%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterField%PlanterIndex%
-	IniWrite, % PlanterNectar%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterNectar%PlanterIndex%
-	IniWrite, % PlanterGlitter%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterGlitter%PlanterIndex%
-	IniWrite, % PlanterGlitterC%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterGlitterC%PlanterIndex%
-	IniWrite, % PlanterHarvestFull%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterHarvestFull%PlanterIndex%
-	IniWrite, % PlanterHarvestTime%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterHarvestTime%PlanterIndex%
+	IniWrite, % PlanterName%PlanterIndex%, settings\nm_config.ini, Planters, PlanterName%PlanterIndex%
+	IniWrite, % PlanterField%PlanterIndex%, settings\nm_config.ini, Planters, PlanterField%PlanterIndex%
+	IniWrite, % PlanterNectar%PlanterIndex%, settings\nm_config.ini, Planters, PlanterNectar%PlanterIndex%
+	IniWrite, % PlanterGlitter%PlanterIndex%, settings\nm_config.ini, Planters, PlanterGlitter%PlanterIndex%
+	IniWrite, % PlanterGlitterC%PlanterIndex%, settings\nm_config.ini, Planters, PlanterGlitterC%PlanterIndex%
+	IniWrite, % PlanterHarvestFull%PlanterIndex%, settings\nm_config.ini, Planters, PlanterHarvestFull%PlanterIndex%
+	IniWrite, % PlanterHarvestTime%PlanterIndex%, settings\nm_config.ini, Planters, PlanterHarvestTime%PlanterIndex%
 
 	If (nowUnix() - LastGlitter >= 900 && PlanterGlitterC%PlanterIndex% && !PlanterGlitter%PlanterIndex%)
 		mp_UseGlitter(PlanterIndex, 1)
@@ -3188,7 +3187,7 @@ mp_UseGlitter(PlanterIndex, atField:=0) {
 	PlanterGlitter%PlanterIndex% := LastGlitter
 	PlanterHarvestTime%PlanterIndex% := nowUnix() + (PlanterHarvestTime%PlanterIndex% - nowUnix()) * 0.75
 	IniWrite, % PlanterGlitter%PlanterIndex%, settings\nm_config.ini, Planters, PlanterGlitter%PlanterIndex%
-	IniWrite, % PlanterHarvestTime%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterHarvestTime%PlanterIndex%
+	IniWrite, % PlanterHarvestTime%PlanterIndex%, settings\nm_config.ini, Planters, PlanterHarvestTime%PlanterIndex%
 }
 
 mp_HarvestPlanter(PlanterIndex) {
@@ -3210,7 +3209,7 @@ mp_HarvestPlanter(PlanterIndex) {
 	nm_gotoPlanter(MFieldName)
 	if ((!MPuffModeA) || (!MPuffMode%PlanterIndex%) || (MPlanterRelease%PlanterIndex%))
 		nm_setStatus("Collecting", (MPlanterName . " (" . MFieldName . ")"))
-	if ((MPuffModeA) && (MPuffMode%PlanterIndex%) && (!MPlanterRelease%PlanterIndex%))
+	else
 		nm_setStatus("Checking", (MPlanterName . " (" . MFieldName . ")"))
 	while ((A_Index <= 5) && !(findPlanter := (nm_imgSearch("e_button.png",10)[1] = 0)))
 		Sleep, 200
@@ -3243,13 +3242,13 @@ mp_HarvestPlanter(PlanterIndex) {
 			PlanterHarvestFull%PlanterIndex% := ""
 			PlanterHarvestTime%PlanterIndex% := 20211106000000
 
-			IniWrite, % PlanterName%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterName%PlanterIndex%
-			IniWrite, % PlanterField%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterField%PlanterIndex%
-			IniWrite, % PlanterNectar%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterNectar%PlanterIndex%
-			IniWrite, % PlanterGlitter%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterGlitter%PlanterIndex%
-			IniWrite, % PlanterGlitterC%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterGlitterC%PlanterIndex%
-			IniWrite, % PlanterHarvestFull%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterHarvestFull%PlanterIndex%
-			IniWrite, % PlanterHarvestTime%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterHarvestTime%PlanterIndex%
+			IniWrite, % PlanterName%PlanterIndex%, settings\nm_config.ini, Planters, PlanterName%PlanterIndex%
+			IniWrite, % PlanterField%PlanterIndex%, settings\nm_config.ini, Planters, PlanterField%PlanterIndex%
+			IniWrite, % PlanterNectar%PlanterIndex%, settings\nm_config.ini, Planters, PlanterNectar%PlanterIndex%
+			IniWrite, % PlanterGlitter%PlanterIndex%, settings\nm_config.ini, Planters, PlanterGlitter%PlanterIndex%
+			IniWrite, % PlanterGlitterC%PlanterIndex%, settings\nm_config.ini, Planters, PlanterGlitterC%PlanterIndex%
+			IniWrite, % PlanterHarvestFull%PlanterIndex%, settings\nm_config.ini, Planters, PlanterHarvestFull%PlanterIndex%
+			IniWrite, % PlanterHarvestTime%PlanterIndex%, settings\nm_config.ini, Planters, PlanterHarvestTime%PlanterIndex%
 		}
 
 		return 1
@@ -3259,7 +3258,7 @@ mp_HarvestPlanter(PlanterIndex) {
 		Sleep, 100 ; wait for game to update frame
 		nm_setStatus("Holding", (MPlanterName . " (" . MFieldName . ")"))
 		MPlanterHold%PlanterIndex% := 1
-		IniWrite, % MPlanterHold%PlanterIndex%, Settings/nm_config.ini, Planters, MPlanterHold%PlanterIndex%
+		IniWrite, % MPlanterHold%PlanterIndex%, settings\nm_config.ini, Planters, MPlanterHold%PlanterIndex%
 		return 1
 	}
 	else {
@@ -3320,9 +3319,9 @@ mp_HarvestPlanter(PlanterIndex) {
 		}
 		
 		MPlanterRelease%PlanterIndex% := 0
-		IniWrite, % MPlanterRelease%PlanterIndex%, Settings/nm_config.ini, Planters, MPlanterRelease%PlanterIndex%
+		IniWrite, % MPlanterRelease%PlanterIndex%, settings\nm_config.ini, Planters, MPlanterRelease%PlanterIndex%
 		MPlanterSmoking%PlanterIndex% := 0
-		IniWrite, % MPlanterSmoking%PlanterIndex%, Settings/nm_config.ini, Planters, MPlanterSmoking%PlanterIndex%
+		IniWrite, % MPlanterSmoking%PlanterIndex%, settings\nm_config.ini, Planters, MPlanterSmoking%PlanterIndex%
 
 		;reset values
 		CycleIndex := PlanterManualCycle%PlanterIndex%
@@ -3339,13 +3338,13 @@ mp_HarvestPlanter(PlanterIndex) {
 		PlanterHarvestFull%PlanterIndex% := ""
 		PlanterHarvestTime%PlanterIndex% := 20211106000000
 
-		IniWrite, % PlanterName%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterName%PlanterIndex%
-		IniWrite, % PlanterField%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterField%PlanterIndex%
-		IniWrite, % PlanterNectar%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterNectar%PlanterIndex%
-		IniWrite, % PlanterGlitter%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterGlitter%PlanterIndex%
-		IniWrite, % PlanterGlitterC%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterGlitterC%PlanterIndex%
-		IniWrite, % PlanterHarvestFull%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterHarvestFull%PlanterIndex%
-		IniWrite, % PlanterHarvestTime%PlanterIndex%, Settings/nm_config.ini, Planters, PlanterHarvestTime%PlanterIndex%
+		IniWrite, % PlanterName%PlanterIndex%, settings\nm_config.ini, Planters, PlanterName%PlanterIndex%
+		IniWrite, % PlanterField%PlanterIndex%, settings\nm_config.ini, Planters, PlanterField%PlanterIndex%
+		IniWrite, % PlanterNectar%PlanterIndex%, settings\nm_config.ini, Planters, PlanterNectar%PlanterIndex%
+		IniWrite, % PlanterGlitter%PlanterIndex%, settings\nm_config.ini, Planters, PlanterGlitter%PlanterIndex%
+		IniWrite, % PlanterGlitterC%PlanterIndex%, settings\nm_config.ini, Planters, PlanterGlitterC%PlanterIndex%
+		IniWrite, % PlanterHarvestFull%PlanterIndex%, settings\nm_config.ini, Planters, PlanterHarvestFull%PlanterIndex%
+		IniWrite, % PlanterHarvestTime%PlanterIndex%, settings\nm_config.ini, Planters, PlanterHarvestTime%PlanterIndex%
 
 		TotalPlantersCollected:=TotalPlantersCollected+1
 		SessionPlantersCollected:=SessionPlantersCollected+1
@@ -8166,14 +8165,8 @@ nm_TabPlantersUnLock(){
 	GuiControl, enable, % hMHIRight
 	GuiControl, enable, MSlot1Cycle1Planter
 	GuiControl, enable, MPuffModeA
-	GuiControl, enable, MPuffMode1
-	GuiControl, enable, MPuffMode2
-	GuiControl, enable, MPuffMode3
 	GuiControl, enable, MPuffModeHelp
 	GuiControl, enable, MPlanterGatherA
-	GuiControl, enable, MPlanterGather1
-	GuiControl, enable, MPlanterGather2
-	GuiControl, enable, MPlanterGather3
 	GuiControl, enable, MPlanterGatherHelp
 	mp_UpdatePage()
 	mp_UpdateControls()
@@ -12597,17 +12590,16 @@ nm_GoGather(){
 			Loop 3 { 
 				IniRead, PlanterField%A_Index%, settings\nm_config.ini, planters, PlanterField%A_Index%
 				IniRead, MPlanterHold%A_Index%, settings\nm_config.ini, planters, MPlanterHold%A_Index%
-				}			
-				IniRead, LastPlanterGatherSlot, Settings\manual_planters.ini, General, LastPlanterGatherSlot
+			}			
+			IniRead, LastPlanterGatherSlot, settings\nm_config.ini, Planters, LastPlanterGatherSlot
 							
 			; define available planter gather slots/fields: selected by user for planter gather, with planter in field, and not 'holding at full grown' 
 			eligible := []
-			Loop 3 
-				{
+			Loop 3 {
 				if((MPlanterGather%A_Index%) && (PlanterField%A_Index% != "None") && (!MPlanterHold%A_Index%)) 
 					eligible[A_Index] := planterField%A_Index%
-				}   
-						
+			}
+
 			LastPlanterGatherSlot := ("") ? 3 : LastPlanterGatherSlot
 
 			; if at least one slot is available for planter gather, proceed, else revert to gather tab
@@ -12649,7 +12641,7 @@ nm_GoGather(){
 				FieldDriftCheck:=FieldDefault[FieldName]["drift"]
 
 				; write currentfield to file as LastPlanterGatherSlot, to read on next loop
-				IniWrite, % slot, Settings\manual_planters.ini, General, LastPlanterGatherSlot
+				IniWrite, % slot, settings\nm_config.ini, Planters, LastPlanterGatherSlot
 
 			} else  { ; if (!include)
 				FieldName:=FieldName%CurrentFieldNum%
@@ -18505,7 +18497,7 @@ nm_MHarvestInterval(hCtrl){
 	}
 	
 	GuiControl, , MHarvestInterval, % (MHarvestInterval := val[(hCtrl = hMHIRight) ? (Mod(i, l) + 1) : (Mod(l + i - 2, l) + 1)])
-	IniWrite, % MHarvestInterval, Settings\manual_planters.ini, General, MHarvestInterval
+	IniWrite, % MHarvestInterval, settings\manual_planters.ini, General, MHarvestInterval
 }
 ba_gatherFieldSippingSwitch_(){
 	global GatherFieldSipping
