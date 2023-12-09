@@ -1009,13 +1009,45 @@ nm_command(command)
 				if (PlanterName%n% && (PlanterName%n% != "None"))
 				{
 					IniWrite, % (PlanterHarvestTime%n% := nowUnix()-1), settings\nm_config.ini, Planters, PlanterHarvestTime%n%
-					discord.SendEmbed("Set planter in Slot " n " to harvest!", 5066239, , , , id)
+					discord.SendEmbed("Set remaining planter time in Slot " n " to 0!", 5066239, , , , id)
 				}
 				else
 					discord.SendEmbed("There is no planter in Slot " n "!", 16711731, , , , id)
 			}
 			else
 				discord.SendEmbed((StrLen(params[3]) = 0) ? "You must specify a Planter Slot to harvest!" : ("Planter Slot must be 1, 2, or 3!\nYou entered " params[3] "."), 16711731, , , , id)
+
+			case "release":
+			if ((params[3] = 1) || (params[3] = 2) || (params[3] = 3))
+			{
+				IniRead, PlanterMode, Settings/nm_config.ini, Gui, PlanterMode
+				n := params[3]
+				if (PlanterName%n% && (PlanterName%n% != "None")&& (MPlanterHold%n% = 1) && (PlanterMode = 1)) 
+				{
+					IniWrite, % 1, settings\nm_config.ini, Planters, MPlanterRelease%n%
+					discord.SendEmbed("Release held planter in Slot " n "!", 5066239, , , , id)
+				}
+				else
+					discord.SendEmbed("There is no held planter in Slot " n "!", 16711731, , , , id)
+			}
+			else
+				discord.SendEmbed((StrLen(params[3]) = 0) ? "You must specify a Planter Slot to release!" : ("Planter Slot must be 1, 2, or 3!\nYou entered " params[3] "."), 16711731, , , , id)
+			
+			case "smoking":
+			if ((params[3] = 1) || (params[3] = 2) || (params[3] = 3))
+			{
+				IniRead, PlanterMode, Settings/nm_config.ini, Gui, PlanterMode
+				n := params[3]
+				if (PlanterName%n% && (PlanterName%n% != "None") && (MPlanterHold%n% = 1) && (PlanterMode = 1)) 
+				{
+					IniWrite, % 1, settings\nm_config.ini, Planters, MPlanterSmoking%n%
+					discord.SendEmbed("Set held planter in Slot " n " to smoking!", 5066239, , , , id)
+				}
+				else
+					discord.SendEmbed("There is no held planter in Slot " n "!", 16711731, , , , id)
+			}
+			else
+				discord.SendEmbed((StrLen(params[3]) = 0) ? "You must specify a Planter Slot to release!" : ("Planter Slot must be 1, 2, or 3!\nYou entered " params[3] "."), 16711731, , , , id)
 			
 			case "add":
 			if ((params[4] = 1) || (params[4] = 2) || (params[4] = 3))
@@ -1132,7 +1164,7 @@ nm_command(command)
 					""description"": ""The macro's currently placed planters are shown below.\nYou can use these commands to edit the timers:"",
 					""fields"": [{
 						""name"": """ commandPrefix "planter harvest [``n``]"",
-						""value"": ""Sets planter in Slot ``n`` to be harvested"",
+						""value"": ""Sets remaining time for planter in Slot ``n`` to 0"",
 						""inline"": true
 					},
 					{
@@ -1144,17 +1176,28 @@ nm_command(command)
 						""name"": """ commandPrefix "planter sub [``h:m:s``] [``n``]"",
 						""value"": ""Subtracts ``h:m:s`` from planter timer in Slot ``n``"",
 						""inline"": true
+					},
+					{
+						""name"": """ commandPrefix "planter smoking [``n``]"",
+						""value"": ""Sets held planter in Slot ``n`` to smoking (Manual planters 'disable auto harvest' option)"",
+						""inline"": true
+					},
+					{
+						""name"": """ commandPrefix "planter release [``n``]"",
+						""value"": ""Releases held planter in Slot ``n`` (Manual planters 'disable auto harvest' option)"",
+						""inline"": true
 					}]
 				}
 			)"
 			
 			t := nowUnix()
+			IniRead, PlanterMode, Settings/nm_config.ini, Gui, PlanterMode
 			Loop, 3
 			{
 				if (PlanterName%A_Index% && (PlanterName%A_Index% != "None") && planters.HasKey(PlanterName%A_Index%))
 				{
 					objParam.Push({"name":("files[" A_Index-1 "]"),"filename":(PlanterName%A_Index% ".png"),"content-type":"image/png","pBitmap":planters[PlanterName%A_Index%].bitmap})
-					VarSetCapacity(duration,256), DllCall("GetDurationFormatEx","Ptr",0,"UInt",0,"Ptr",0,"Int64",(ptimer := (PlanterHarvestTime%A_Index% - t))*10000000,"WStr",(ptimer > 0) ? (((ptimer >= 3600) ? "h'h' m" : "") ((ptimer >= 60) ? "m'm' s" : "") "s's'") : "'Ready'","Str",duration,"Int",256)
+					VarSetCapacity(duration,256), DllCall("GetDurationFormatEx","Ptr",0,"UInt",0,"Ptr",0,"Int64",(ptimer := (PlanterHarvestTime%A_Index% - t))*10000000,"WStr",(ptimer > 0) ? (((ptimer >= 3600) ? "h'h' m" : "") ((ptimer >= 60) ? "m'm' s" : "") "s's'") : ((MPlanterSmoking%A_Index%) && (PlanterMode = 1)) ? "'Smoking'" : ((MPlanterHold%A_Index%) && (PlanterMode = 1)) ? "'Holding'" : "'Ready'","Str",duration,"Int",256)
 					payload_json .= "
 					(LTrim Join
 					,{
