@@ -3405,8 +3405,9 @@ mp_HarvestPlanter(PlanterIndex) {
 	}
 	else if ((MPuffModeA = 1) && (MPuffMode%PlanterIndex% = 1) && (MPlanterRelease%PlanterIndex% != 1)) {
 		; screenshot and set to hold instead of harvest, if auto harvest is disabled for the slot, and the user hasn't selected to release it by remote control
-		Sleep, 100 ; wait for game to update frame
+		Sleep, 200 ; wait for game to update frame
 		nm_setStatus("Holding", (MPlanterName . " (" . MFieldName . ")"))
+		Sleep, 2000
 		MPlanterHold%PlanterIndex% := 1
 		IniWrite, % MPlanterHold%PlanterIndex%, settings\nm_config.ini, Planters, MPlanterHold%PlanterIndex%
 		return 1
@@ -13192,12 +13193,6 @@ nm_GoGather(){
 			return
 		;VICIOUS BEE
 		if (VBState = 1)
-			return
-		;MANUAL PLANTER HARVEST
-		IniRead, PlanterHarvestTime1, settings\nm_config.ini, Planters, PlanterHarvestTime1
-		IniRead, PlanterHarvestTime2, settings\nm_config.ini, Planters, PlanterHarvestTime2
-		IniRead, PlanterHarvestTime3, settings\nm_config.ini, Planters, PlanterHarvestTime3
-		if ((PlanterMode = 1) && (MPlanterGatherA) && (((MPlanterGather1) && (!MPlanterHold1) && (PlanterField1 != "None") && (nowUnix() >= PlanterHarvestTime1)) || ((MPlanterGather2) && (!MPlanterHold2) && (PlanterField2 != "None") && (nowUnix() >= PlanterHarvestTime2)) || ((MPlanterGather3) && (!MPlanterHold3) && (PlanterField3 != "None") && (nowUnix() >= PlanterHarvestTime3))))
 			return
 	}
 	if(CurrentField="mountain top" && (utc_min>=0 && utc_min<15)) ;mondo dangerzone! skip over this field if possible
