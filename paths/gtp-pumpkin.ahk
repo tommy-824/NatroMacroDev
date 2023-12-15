@@ -16,6 +16,7 @@ send {" RotRight " 4}
 " nm_Walk(34, RightKey, FwdKey) "
 " nm_Walk(10, RightKey) "
 " nm_Walk(12, LeftKey) " 
+" nm_Walk(3, BackKey) " 
 )"
 }
 else {
@@ -36,6 +37,7 @@ HyperSleep(600)
 " nm_Walk(15, FwdKey) "
 " nm_Walk(24, RightKey) "
 " nm_Walk(12, LeftKey) " 
+" nm_Walk(3, BackKey) " 
 )"
 }
 ;path 230729 noobyguy

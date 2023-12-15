@@ -8779,7 +8779,7 @@ nm_PlanterTimeUpdate(FieldName, SetStatus := 1)
 					sleep 100						
 						
 					; if second screenshot within +/-10% of first, update
-					if PlanterBarProgress between %PlanterBarProgress1LB% and %PlanterBarProgress1UB% 
+					if ((PlanterBarProgress >= PlanterBarProgress1LB) && (PlanterBarProgress <= PlanterBarProgress1UB) && (PlanterBarProgress > 0))
 					{
 						PlanterBarProgress2 := PlanterBarProgress
 						PlanterBarProgress 	:= (((PlanterBarProgress1) + (PlanterBarProgress2)) / 2)
