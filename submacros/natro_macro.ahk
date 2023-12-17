@@ -8724,7 +8724,7 @@ nm_PlanterDetection()
 nm_PlanterTimeUpdate(FieldName, SetStatus := 1)
 {
 	global
-	local i, field, k, v, r, PlanterGrowTime, PlanterBarProgress
+	local i, field, k, v, r, PlanterGrowTime, PlanterBarProgress, CurrentPlanterBarProgress, NewPlanterBarProgress, VerifiedPlanterBarProgress
 
 	Loop, 3
 	{
@@ -8745,53 +8745,50 @@ nm_PlanterTimeUpdate(FieldName, SetStatus := 1)
 			Sleep, 200
 
 			; get prior PlanterBarProgress bounds for comparison
-			PlanterBarProgress0 	:= 1 - ((PlanterHarvestTime%i% - nowUnix()) / 3600 / PlanterGrowTime)
-			PlanterBarProgress0LB 	:= ((PlanterBarProgress0)-0.10)
-			PlanterBarProgress0UB 	:= ((PlanterBarProgress0)+0.10)
+			CurrentPlanterBarProgress := 1 - ((PlanterHarvestTime%i% - nowUnix()) / 3600 / PlanterGrowTime)  ; PlanterBarProgress0
+
 			Loop, 20
 			{
-				PlanterBarProgress := nm_PlanterDetection()
-				; if new estimate within +/-10%, update
-				if ((PlanterBarProgress >= PlanterBarProgress0LB) && (PlanterBarProgress <= PlanterBarProgress0UB) && (PlanterBarProgress > 0))
+				if (((PlanterBarProgress := nm_PlanterDetection()) > 0) && PlanterBarProgress <= 1)
 				{
-					PlanterHarvestTime%i% := nowUnix() + Round((1 - PlanterBarProgress) * PlanterGrowTime * 3600)
-					IniWrite, % PlanterHarvestTime%i%, settings\nm_config.ini, Planters, PlanterHarvestTime%i%
-					SetStatus ? nm_setStatus("Detected", PlanterName%i% "`nField: " FieldName " - Est. Progress: " Round(PlanterBarProgress*100) "%")
-					;PlanterBarProgress1 := PlanterBarProgress
-					;SetStatus ? nm_setStatus("Detected", PlanterName%i% " Attempt 1 `nPlanterBarProgress0: " PlanterBarProgress0 "`nPlanterBarProgress1: " PlanterBarProgress1 "`nPlanterBarProgress2: " PlanterBarProgress2 "`nField: " FieldName " - Est. Progress: " Round(PlanterBarProgress*100) "%")
-					break
-				}
-				; if new estimate not within +/-10%, screenshot again
-				if (((PlanterBarProgress < PlanterBarProgress0LB) || (PlanterBarProgress > PlanterBarProgress0UB)) && (PlanterBarProgress > 0) && (PlanterBarProgress <= 1))
-				{
-					PlanterBarProgress1 	:= PlanterBarProgress
-					PlanterBarProgress1LB 	:= ((PlanterBarProgress1)-0.10)
-					PlanterBarProgress1UB 	:= ((PlanterBarProgress1)+0.10)
-					PlanterBarProgress 		:= ""
-					sleep 2000	
-
-					sendinput {%RotRight% 2}
-					sendinput {%ZoomOut%}
-					sleep 100
-					PlanterBarProgress := nm_PlanterDetection()
-					sendinput {%ZoomIn%}
-					sendinput {%RotLeft% 2}
-					sleep 100						
-						
-					; if second screenshot within +/-10% of first, update
-					if ((PlanterBarProgress >= PlanterBarProgress1LB) && (PlanterBarProgress <= PlanterBarProgress1UB) && (PlanterBarProgress > 0))
+					; if new estimate within +/-10%, update
+					if (Abs(PlanterBarProgress - CurrentPlanterBarProgress) <= 0.10)
 					{
-						PlanterBarProgress2 := PlanterBarProgress
-						PlanterBarProgress 	:= (((PlanterBarProgress1) + (PlanterBarProgress2)) / 2)
-
 						PlanterHarvestTime%i% := nowUnix() + Round((1 - PlanterBarProgress) * PlanterGrowTime * 3600)
 						IniWrite, % PlanterHarvestTime%i%, settings\nm_config.ini, Planters, PlanterHarvestTime%i%
 						SetStatus ? nm_setStatus("Detected", PlanterName%i% "`nField: " FieldName " - Est. Progress: " Round(PlanterBarProgress*100) "%")
-						;SetStatus ? nm_setStatus("Detected", PlanterName%i% " Attempt 2 `nPlanterBarProgress0: " PlanterBarProgress0 "`nPlanterBarProgress1: " PlanterBarProgress1 "`nPlanterBarProgress2: " PlanterBarProgress2 "`nField: " FieldName " - Est. Progress: " Round(PlanterBarProgress*100) "%")
-						PlanterBarProgress2 := ""
-						break 1							
-					}						
+						;SetStatus ? nm_setStatus("Detected", PlanterName%i% " Attempt 1 `nCurrentPlanterBarProgress: " CurrentPlanterBarProgress "`nNewPlanterBarProgress: " NewPlanterBarProgress "`nVerifiedPlanterBarProgress: " VerifiedPlanterBarProgress "`nField: " FieldName " - Est. Progress: " Round(PlanterBarProgress*100) "%")
+						break
+					}
+					else ; if new estimate not within +/-10%, screenshot again
+					{
+						NewPlanterBarProgress := PlanterBarProgress  ; PlanterBarProgress1
+
+						sleep 2000	
+
+						sendinput {%RotRight% 2}
+						sendinput {%ZoomIn%}
+						sleep 100
+						PlanterBarProgress := nm_PlanterDetection()
+						sendinput {%ZoomOut%}
+						sendinput {%RotLeft% 2}
+						sleep 100
+
+						; if second screenshot within +/-10% of first, update
+						if ((PlanterBarProgress > 0) && (PlanterBarProgress <= 1) && (Abs(PlanterBarProgress - NewPlanterBarProgress) <= 0.10))
+						{
+							VerifiedPlanterBarProgress := PlanterBarProgress  ; PlanterBarProgress2, variable only needed for testing status update
+							PlanterBarProgress := (NewPlanterBarProgress + PlanterBarProgress) / 2
+
+							PlanterHarvestTime%i% := nowUnix() + Round((1 - PlanterBarProgress) * PlanterGrowTime * 3600)
+							IniWrite, % PlanterHarvestTime%i%, settings\nm_config.ini, Planters, PlanterHarvestTime%i%
+							SetStatus ? nm_setStatus("Detected", PlanterName%i% "`nField: " FieldName " - Est. Progress: " Round(PlanterBarProgress*100) "%")
+							;SetStatus ? nm_setStatus("Detected", PlanterName%i% " Attempt 1 `nCurrentPlanterBarProgress: " CurrentPlanterBarProgress "`nNewPlanterBarProgress: " NewPlanterBarProgress "`nVerifiedPlanterBarProgress: " VerifiedPlanterBarProgress "`nField: " FieldName " - Est. Progress: " Round(PlanterBarProgress*100) "%")
+							break
+						}						
+					}
 				}
+
 				Sleep, 100
 				sendinput {%ZoomOut%}
 				if (A_Index = 10)
