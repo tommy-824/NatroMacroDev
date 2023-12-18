@@ -1950,11 +1950,12 @@ nm_UpdateButton()
 			wr.WaitForResponse()
 			for k,v in (files := JSON.parse(wr.ResponseText)["files"])
 				if (SubStr(v["filename"], 1, 6) = "paths/")
-					changedpaths .= SubStr(v["filename"], 7) ","
+					changedpaths .= """" SubStr(v["filename"], 7) """ "
+			changedpaths := RTrim(changedpaths)
 		}
 		catch
 		{
-			msgbox, 0x1010, Error, Unable to fetch changed paths from GitHub!`nIf you still want to update, disable 'Copy Paths' (and copy them manually) or try again later.
+			msgbox, 0x1010, Error, % "Unable to fetch changed paths from GitHub!`nIf you still want to update, disable 'Copy Paths' (and copy them manually) or try again later.", 30
 			return
 		}
 	}
