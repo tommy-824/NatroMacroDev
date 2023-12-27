@@ -4216,7 +4216,7 @@ nm_testButton(){ ;~~ lines 3464 and 3465 have the same change as 14156
 	nm_gotoramp()
 	{
 		"" nm_Walk(5, FwdKey) ""
-		"" nm_Walk(8.35*HiveSlot+1, RightKey) ""
+		"" nm_Walk(9.2*HiveSlot-4, RightKey) ""
 	}
 	nm_gotocannon()
 	{
@@ -9264,7 +9264,7 @@ nm_gotoRamp(){
 	movement := "
 	(LTrim Join`r`n
 	" nm_Walk(5, FwdKey) "
-	" nm_Walk(8.35*HiveSlot+1, RightKey) "
+	" nm_Walk(9.2*HiveSlot-4, RightKey) "
 	)"
 
 	nm_createWalk(movement)
@@ -16052,9 +16052,11 @@ nm_claimHiveSlot(){
 
 		movement := "
 		(LTrim Join`r`n
-		" nm_Walk(35, FwdKey, RightKey) "
-		" nm_Walk(3, BackKey) "
-		" nm_Walk(2, LeftKey) "
+		Send {" RightKey " down}
+		Walk(4)
+		Send {" FwdKey " down}
+		Walk(20)
+		Send {" RightKey " up}{" FwdKey " up}
 		)"
 		nm_createWalk(movement)
 		KeyWait, F14, D T5 L
@@ -16065,7 +16067,7 @@ nm_claimHiveSlot(){
 		slots := {}
 		movement := "
 		(LTrim Join`r`n
-		" nm_Walk(8.2, LeftKey) "
+		" nm_Walk(9.2, LeftKey) "
 		)"
 		Loop % HiveSlot
 		{
@@ -16092,7 +16094,7 @@ nm_claimHiveSlot(){
 			{
 				movement := "
 				(LTrim Join`r`n
-				" nm_Walk((HiveSlot - slots.MinIndex()) * 8.2, RightKey) "
+				" nm_Walk((HiveSlot - slots.MinIndex()) * 9.2, RightKey) "
 				)"
 				nm_createWalk(movement)
 				KeyWait, F14, D T5 L
