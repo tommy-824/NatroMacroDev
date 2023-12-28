@@ -3113,7 +3113,6 @@ mp_PlantPlanter(PlanterIndex) {
 	}
 
 	nm_setShiftLock(0)
-	nm_OpenMenu("itemmenu")
 
 	nm_Reset()
 	nm_setStatus("Traveling", MPlanterName " (" MFieldName ")")
@@ -3261,7 +3260,6 @@ mp_UseGlitter(PlanterIndex, atField:=0) {
 	Local pBMScreen, windowX, windowY, windowWidth, windowHeight, glitterPos
 
 	nm_setShiftLock(0)
-	nm_OpenMenu("itemmenu")
 
 	if (atField = 0) {
 		nm_Reset()
@@ -3367,7 +3365,6 @@ mp_HarvestPlanter(PlanterIndex) {
 		;check for phantom planter
 		nm_setStatus("Checking", "Phantom Planter: " . MPlanterName)
 
-		nm_OpenMenu("itemmenu")
 		planterPos := nm_InventorySearch(MPlanterName, "up", 4) ;~ new function
 
 		if (planterPos != 0) { ; found planter in inventory planter is a phantom
@@ -8973,7 +8970,6 @@ nm_Reset(checkAll:=1, wait:=2000, convert:=1, force:=0){
 	global AFBuseBooster
 	global currentField
 	global HiveConfirmed, GameFrozenCounter, MultiReset, bitmaps
-	nm_setShiftLock(0)
 	;check for game frozen conditions
 	if (GameFrozenCounter>=3) { ;3 strikes
 		nm_setStatus("Detected", "Roblox Game Frozen, Restarting")
@@ -8981,6 +8977,8 @@ nm_Reset(checkAll:=1, wait:=2000, convert:=1, force:=0){
 		GameFrozenCounter:=0
 	}
 	DisconnectCheck()
+	nm_setShiftLock(0)
+	nm_OpenMenu()
 	if(youDied && not instr(objective, "mondo") && VBState=0){
 		wait:=max(wait, 20000)
 	}
@@ -10196,7 +10194,6 @@ nm_Collect(){
 			nm_Reset()
 			nm_setStatus("Traveling", "Glue Dispenser" ((A_Index > 1) ? " (Attempt 2)" : ""))
 
-			nm_OpenMenu("itemmenu")
 			nm_gotoCollect("gluedis", 0) ; do not wait for end
 
 			;locate gumdrops
@@ -20246,7 +20243,6 @@ ba_placePlanter(fieldName, planter, planterNum, atField:=0){
 	}
 
 	nm_setShiftLock(0)
-	nm_OpenMenu("itemmenu")
 
 	planterName := planter[1]
 	if (atField = 0)
@@ -20396,7 +20392,6 @@ ba_harvestPlanter(planterNum){
 		WinActivate, Roblox
 		WinGetClientPos(windowX, windowY, windowWidth, windowHeight, "ahk_id " GetRobloxHWND())
 
-		nm_OpenMenu("itemmenu")
 		planterPos := nm_InventorySearch(planterName, "up", 4)
 
 		if (planterPos != 0) { ; found planter in inventory planter is a phantom
