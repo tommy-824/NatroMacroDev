@@ -1858,14 +1858,19 @@ nm_AutoUpdateGUI()
 	DllCall("DeleteObject", "ptr", hBM)
 	Gui, update:Add, Text, x+4 yp+1 c0046ee gGitHubReleaseLink +BackgroundTrans, Patch Notes && Updates
 	Gui, update:Font, w700 s8
-	Gui, update:Add, GroupBox, x50 y+4 w200 h50, Options
+
+	local MajorUpdate := (StrSplit(VersionID, ".")[1] < StrSplit(LatestVer, ".")[1])
+	Gui, update:Add, GroupBox, % "x50 y+4 w200 h" (MajorUpdate ? 74 : 50), Options
 	Gui, update:Font, Norm
 	Gui, update:Add, CheckBox, xp+8 yp+16 Checked vCopySettings, Copy Settings
-	Gui, update:Add, CheckBox, xp+92 yp Checked vCopyPatterns, Copy Patterns
-	Gui, update:Add, CheckBox, xp-92 yp+16 Checked vCopyPaths, Copy Paths
+	Gui, update:Add, CheckBox, % "xp+92 yp vCopyPatterns Checked" !MajorUpdate " Disabled" MajorUpdate, Copy Patterns
+	Gui, update:Add, CheckBox, % "xp-92 yp+16 vCopyPaths Checked" !MajorUpdate " Disabled" MajorUpdate, Copy Paths
 	Gui, update:Add, CheckBox, xp+92 yp vDeleteOld, Delete v%VersionID%
+	if MajorUpdate
+		Gui, update:Add, Button, x60 y+5 w180 h18 gnm_MajorUpdateHelp, Why are some options disabled?
+
 	Gui, update:Font, s9
-	Gui, update:Add, Button, x8 y144 w92 h26 gnm_NeverButton, Never
+	Gui, update:Add, Button, x8 y+12 w92 h26 gnm_NeverButton, Never
 	Gui, update:Add, Button, xp+96 yp wp hp vDismissButton gnm_DismissButton, Dismiss (120)
 	SetTimer, nm_DismissLabel, -1000
 	Gui, update:Font, Bold
@@ -1962,6 +1967,12 @@ nm_UpdateButton()
 	
 	Run, "%A_WorkingDir%\submacros\update.bat" "%url%" "%olddir%" "%CopySettings%" "%CopyPatterns%" "%CopyPaths%" "%DeleteOld%" "%changedpaths%"
 	ExitApp
+}
+nm_MajorUpdateHelp()
+{
+	global
+	Gui, update:+OwnDialogs
+	msgbox, 0x1040, Major Update, % "v" VersionID " to v" LatestVer " is a major version update.`n`nThis means that backward compatibility of Paths and Patterns cannot be guaranteed, so they cannot be automatically copied.`nHowever, in Natro Macro, your Settings are guaranteed to be transferable to any new version, so that option remains enabled.`n`nFor more information, you can review the convention at https://semver.org/"
 }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
