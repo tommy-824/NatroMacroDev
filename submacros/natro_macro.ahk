@@ -15671,17 +15671,23 @@ nm_Move(MoveTime, MoveKey1, MoveKey2:="None"){
 }
 CloseRoblox()
 {
-	local PrevKeyDelay, p
+	global KeyDelay, SC_Esc, SC_L, SC_Enter
 	; if roblox exists, activate it and send Esc+L+Enter
-	if GetRobloxHWND()
+	if (hwnd := GetRobloxHWND())
 	{
-		WinActivate, Roblox
-		PrevKeyDelay := A_KeyDelay
-		SetKeyDelay, 250+KeyDelay
-		send {%SC_Esc%}{%SC_L%}{%SC_Enter%}
-		SetKeyDelay, PrevKeyDelay
+		WinGetClientPos(, , , windowHeight, "ahk_id " hwnd)
+		if (windowHeight >= 500) ; requirement for L to activate "Leave"
+		{
+			WinActivate, Roblox
+			PrevKeyDelay := A_KeyDelay
+			SetKeyDelay, 250+KeyDelay
+			send {%SC_Esc%}{%SC_L%}{%SC_Enter%}
+			SetKeyDelay, PrevKeyDelay
+		}
 		WinClose, Roblox
-		Sleep, 5000 ;Delay to prevent Roblox Error Code 264
+		Sleep, 500
+		WinClose, Roblox
+		Sleep, 4500 ;Delay to prevent Roblox Error Code 264
 	}
 	; kill any remnant processes
 	for p in ComObjGet("winmgmts:").ExecQuery("SELECT * FROM Win32_Process WHERE Name LIKE '%Roblox%' OR CommandLine LIKE '%ROBLOXCORPORATION%'")
