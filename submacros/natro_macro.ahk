@@ -15700,9 +15700,9 @@ DisconnectCheck(testCheck := 0)
 	
 	; return if not disconnected or crashed
 	WinGetClientPos(windowX, windowY, windowWidth, windowHeight, "ahk_id " GetRobloxHWND())
-	if ((windowWidth != 0) && !WinExist("Roblox Crash")) {
+	if ((windowWidth > 0) && !WinExist("Roblox Crash")) {
 		pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2-200 "|" windowY+windowHeight//2-160 "|400|320")
-		if (Gdip_ImageSearch(pBMScreen, bitmaps["disconnected"], , , , , , 2) = 0) {
+		if (Gdip_ImageSearch(pBMScreen, bitmaps["disconnected"], , , , , , 2) != 1) {
 			Gdip_DisposeImage(pBMScreen)
 			return 0
 		}
@@ -21188,8 +21188,7 @@ loop, 3 {
 		break
 	}
 }
-if !GetRobloxHWND()
-	disconnectCheck()
+disconnectCheck()
 WinActivate, Roblox
 ;check UIPI
 PostMessage, 0x100, 0x7, 0, , % "ahk_id " (hRoblox := GetRobloxHWND())
@@ -21197,11 +21196,11 @@ if (ErrorLevel = 1)
 	msgbox, 0x1030, WARNING!!, % "Your Roblox window is run as admin, but the macro is not!`nThis means the macro will be unable to send any inputs to Roblox.`nYou must either reinstall Roblox without administrative rights, or run Natro Macro as admin!`n`nNOTE: It is recommended to stop the macro now, as this issue also causes hotkeys to not work while Roblox is active.", 60
 PostMessage, 0x101, 0x7, 0xC0000000, , % "ahk_id " hRoblox
 nm_setShiftLock(0)
-nm_OpenMenu()
 WinGetClientPos(windowX, windowY, windowWidth, windowHeight, "ahk_id " hRoblox)
 offsetY := GetYOffset(hRoblox, offsetfail)
 if (offsetfail = 1)
 	msgbox, 0x1030, WARNING!!, % "Unable to detect in-game GUI offset!`nThis means the macro will NOT work correctly!`n`nThere are a few reasons why this can happen:`n - Incorrect graphics settings (check Troubleshooting Guide!)`n - Your 'Experience Language' is not set to English`n - Something is covering the top of your Roblox window`n`nJoin our Discord server for support!", 60
+nm_OpenMenu()
 MouseMove, windowX+350, windowY+offsetY+100
 Prev_DetectHiddenWindows := A_DetectHiddenWindows
 Prev_TitleMatchMode := A_TitleMatchMode
