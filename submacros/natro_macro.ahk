@@ -4305,10 +4305,14 @@ nm_testButton(){ ;~~ lines 3464 and 3465 have the same change as 14156
 	nm_reset()
 	{
 		global offsetY
-		pBMHive := Gdip_CreateBitmap(25, 11), G := Gdip_GraphicsFromImage(pBMHive), Gdip_GraphicsClear(G,0xff50440A), Gdip_DeleteGraphics(G)
-		pBMHiveEH := Gdip_CreateBitmap(30, 30), G := Gdip_GraphicsFromImage(pBMHiveEH), Gdip_GraphicsClear(G,0xff7C6815), Gdip_DeleteGraphics(G)
-		pBMHiveDNT := Gdip_CreateBitmap(20, 200), G := Gdip_GraphicsFromImage(pBMHiveDNT), Gdip_GraphicsClear(G, 0xff9E831D), Gdip_DeleteGraphics(G) 
-		pBMHiveNNT := Gdip_CreateBitmap(20, 200), G := Gdip_GraphicsFromImage(pBMHiveNNT), Gdip_GraphicsClear(G, 0xff7A6615), Gdip_DeleteGraphics(G)
+		
+		bitmaps := {}
+		bitmaps[""""day""""] := Gdip_CreateBitmap(1, 4), G := Gdip_GraphicsFromImage(bitmaps[""""day""""]), Gdip_GraphicsClear(G, 0xffda9400), Gdip_DeleteGraphics(G)
+		bitmaps[""""night""""] := Gdip_CreateBitmap(1, 4), G := Gdip_GraphicsFromImage(bitmaps[""""night""""]), Gdip_GraphicsClear(G, 0xffd18e00), Gdip_DeleteGraphics(G)
+		bitmaps[""""honeystorm""""] := Gdip_CreateBitmap(1, 4), G := Gdip_GraphicsFromImage(bitmaps[""""honeystorm""""]), Gdip_GraphicsClear(G, 0xffdc9e29), Gdip_DeleteGraphics(G)
+		bitmaps[""""untextured""""] := Gdip_CreateBitmap(1, 4), G := Gdip_GraphicsFromImage(bitmaps[""""untextured""""]), Gdip_GraphicsClear(G, 0xff7d5700), Gdip_DeleteGraphics(G)
+		bitmaps[""""untextured-night""""] := Gdip_CreateBitmap(1, 4), G := Gdip_GraphicsFromImage(bitmaps[""""untextured-night""""]), Gdip_GraphicsClear(G, 0xff684900), Gdip_DeleteGraphics(G)
+		bitmaps[""""untextured-honeystorm""""] := Gdip_CreateBitmap(1, 4), G := Gdip_GraphicsFromImage(bitmaps[""""untextured-honeystorm""""]), Gdip_GraphicsClear(G, 0xff8e6d29), Gdip_DeleteGraphics(G)
 
 		pBMR := Gdip_BitmapFromBase64(""""iVBORw0KGgoAAAANSUhEUgAAACgAAAAGCAAAAACUM4P3AAAAAnRSTlMAAHaTzTgAAAAXdEVYdFNvZnR3YXJlAFBob3RvRGVtb24gOS4wzRzYMQAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0n77u/JyBpZD0nVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkJz8+Cjx4OnhtcG1ldGEgeG1sbnM6eD0nYWRvYmU6bnM6bWV0YS8nIHg6eG1wdGs9J0ltYWdlOjpFeGlmVG9vbCAxMi40NCc+CjxyZGY6UkRGIHhtbG5zOnJkZj0naHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyc+CgogPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9JycKICB4bWxuczpleGlmPSdodHRwOi8vbnMuYWRvYmUuY29tL2V4aWYvMS4wLyc+CiAgPGV4aWY6UGl4ZWxYRGltZW5zaW9uPjQwPC9leGlmOlBpeGVsWERpbWVuc2lvbj4KICA8ZXhpZjpQaXhlbFlEaW1lbnNpb24+NjwvZXhpZjpQaXhlbFlEaW1lbnNpb24+CiA8L3JkZjpEZXNjcmlwdGlvbj4KCiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0nJwogIHhtbG5zOnRpZmY9J2h0dHA6Ly9ucy5hZG9iZS5jb20vdGlmZi8xLjAvJz4KICA8dGlmZjpJbWFnZUxlbmd0aD42PC90aWZmOkltYWdlTGVuZ3RoPgogIDx0aWZmOkltYWdlV2lkdGg+NDA8L3RpZmY6SW1hZ2VXaWR0aD4KICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogIDx0aWZmOlJlc29sdXRpb25Vbml0PjI8L3RpZmY6UmVzb2x1dGlvblVuaXQ+CiAgPHRpZmY6WFJlc29sdXRpb24+OTYvMTwvdGlmZjpYUmVzb2x1dGlvbj4KICA8dGlmZjpZUmVzb2x1dGlvbj45Ni8xPC90aWZmOllSZXNvbHV0aW9uPgogPC9yZGY6RGVzY3JpcHRpb24+CjwvcmRmOlJERj4KPC94OnhtcG1ldGE+Cjw/eHBhY2tldCBlbmQ9J3InPz77yGiWAAAAI0lEQVR42mNUYyAOMDJggOUMDAyRmAqXMxAHmBiobjWxngEAj7gC+wwAe1AAAAAASUVORK5CYII="""")
 		success := 0
@@ -4330,25 +4334,29 @@ nm_testButton(){ ;~~ lines 3464 and 3465 have the same change as 14156
 				Gdip_DisposeImage(pBMScreen)
 			}
 			Sleep, 1000
-			Send {"" RotRight "" 3}
-			SendEvent {"" ZoomOut "" 2}
-			Loop, 4
-			{
-				Sleep, 250
-				pBMScreen := Gdip_BitmapFromScreen(WindowX """"|"""" WindowY+windowHeight//2-50 """"|400|250"""")
-				if ((Gdip_ImageSearch(pBMScreen, pBMHive, , , , , , 5) = 1) || (Gdip_ImageSearch(pBMScreen, pBMHiveEH) = 1) || (Gdip_ImageSearch(pBMScreen, pBMHiveDNT, , , , , , 5) = 1) || (Gdip_ImageSearch(pBMScreen, pBMHiveNNT, , , , , , 5) = 1))
-				{
-					Gdip_DisposeImage(pBMScreen)
-					Send {"" RotLeft "" 3}
-					SendEvent {"" ZoomOut "" 3}
-					success:=1
-					break 2
+
+			hiveWidth := 5*windowHeight//9
+			region := windowX+windowWidth//2-hiveWidth//2 """"|"""" windowY """"|"""" hiveWidth """"|"""" windowHeight//2
+			sconf := hiveWidth**2//400
+			loop, 4 {
+				sleep 250
+				pBMScreen := Gdip_BitmapFromScreen(region), s := 0
+				for i, k in [""""day"""", """"night"""", """"honeystorm"""", """"untextured"""", """"untextured-night"""", """"untextured-honeystorm""""] {
+					s := Max(s, Gdip_ImageSearch(pBMScreen, bitmaps[k], , , , , , 6, , , 0))
+					if (s > sconf) {
+						Gdip_DisposeImage(pBMScreen)
+						success := 1
+						SendEvent {"" ZoomOut "" 5}
+						break 3
+					}
 				}
 				Gdip_DisposeImage(pBMScreen)
 				Send {"" RotRight "" 4}
 			}
 		}
-		Gdip_DisposeImage(pBMHive), Gdip_DisposeImage(pBMHiveEH), Gdip_DisposeImage(pBMHiveDNT), Gdip_DisposeImage(pBMHiveNNT)
+		Gdip_DisposeImage(pBMR)
+		for k,v in bitmaps
+			Gdip_DisposeImage(v)
 		if (success = 0)
 		{
 			msgbox, 0x40034, Test Paths/Patterns, Reset Failed!````r````nTest has been aborted.
@@ -9198,17 +9206,22 @@ nm_Reset(checkAll:=1, wait:=2000, convert:=1, force:=0){
 			Sleep, 1000
 		}
 		SetKeyDelay, PrevKeyDelay
-		sendinput {%RotRight% 3}
-		send {%ZoomOut% 2}
+
+		; hive check
+		hiveWidth := 5*windowHeight//9
+		region := windowX+windowWidth//2-hiveWidth//2 "|" windowY "|" hiveWidth "|" windowHeight//2
+		sconf := hiveWidth**2//400
 		loop, 4 {
 			sleep (250+KeyDelay)
-			pBMScreen := Gdip_BitmapFromScreen(windowX "|" WindowY+windowHeight//2-50 "|400|250")
-			if (Gdip_ImageSearch(pBMScreen, bitmaps["pBMHive"], , , , , , 5) = 1 || Gdip_ImageSearch(pBMScreen, bitmaps["pBMHiveEH"]) = 1 || Gdip_ImageSearch(pBMScreen, bitmaps["pBMHiveDNT"], , , , , , 5) = 1 || Gdip_ImageSearch(pBMScreen, bitmaps["pBMHiveNNT"], , , , , , 5) = 1) {
-				Gdip_DisposeImage(pBMScreen)
-				sendinput {%RotLeft% 3}
-				send {%ZoomOut% 3}
-				HiveConfirmed:=1
-				break
+			pBMScreen := Gdip_BitmapFromScreen(region), s := 0
+			for i, k in ["day", "night", "honeystorm", "untextured", "untextured-night", "untextured-honeystorm"] {
+				s := Max(s, Gdip_ImageSearch(pBMScreen, bitmaps["hive"][k], , , , , , 6, , , 0))
+				if (s > sconf) {
+					Gdip_DisposeImage(pBMScreen)
+					HiveConfirmed := 1
+					Send {%ZoomOut% 5}
+					break 2
+				}
 			}
 			Gdip_DisposeImage(pBMScreen)
 			sendinput {%RotRight% 4}
