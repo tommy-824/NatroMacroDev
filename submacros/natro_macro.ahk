@@ -3142,6 +3142,7 @@ mp_PlantPlanter(PlanterIndex) {
 	nm_setShiftLock(0)
 
 	nm_Reset()
+	nm_OpenMenu("itemmenu")
 	nm_setStatus("Traveling", MPlanterName " (" MFieldName ")")
 	nm_gotoPlanter(MFieldName, 0)
 
@@ -3290,6 +3291,7 @@ mp_UseGlitter(PlanterIndex, atField:=0) {
 
 	if (atField = 0) {
 		nm_Reset()
+		nm_OpenMenu("itemmenu")
 		nm_setStatus("Traveling", "Glitter: " PlanterName%PlanterIndex% " (" PlanterField%PlanterIndex% ")")
 		nm_gotoPlanter(PlanterField%PlanterIndex%, 0)
 	}
@@ -10266,6 +10268,8 @@ nm_Collect(){
 	if (GlueDisCheck && (nowUnix()-LastGlueDis)>(79200)) { ;22 hours
 		loop, 2 {
 			nm_Reset()
+			nm_OpenMenu("itemmenu")
+			
 			nm_setStatus("Traveling", "Glue Dispenser" ((A_Index > 1) ? " (Attempt 2)" : ""))
 
 			nm_gotoCollect("gluedis", 0) ; do not wait for end
@@ -17453,7 +17457,6 @@ nm_Feed(food){
 	nm_Reset(0,0,0,1)
 	nm_setStatus("Feeding", food)
 	;feed
-	nm_OpenMenu("itemmenu")
 	nm_InventorySearch(food)
 	hwnd := GetRobloxHWND()
 	offsetY := GetYOffset(hwnd)
@@ -20677,6 +20680,7 @@ ba_placePlanter(fieldName, planter, planterNum, atField:=0){
 	if (atField = 0)
 	{
 		nm_Reset()
+		nm_OpenMenu("itemmenu")
 		nm_setStatus("Traveling", (planterName . " (" . fieldName . ")"))
 		nm_gotoPlanter(fieldName, 0)
 	}
