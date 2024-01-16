@@ -18711,6 +18711,7 @@ nm_BrownQuestProg(){
 	;also set next steps
 	QuestGatherField:="None"
 	QuestGatherFieldSlot:=0
+	QuestGatherObjective:=""
 	newLine:="|"
 	brownProgress:=""
 	BrownQuest:=(objectives.Length() = 1) ? "Solo" : ""
@@ -18765,9 +18766,10 @@ nm_BrownQuestProg(){
 		if((questbarColor=Format("{:d}",0xF46C55)) || (questbarColor=Format("{:d}",0x6EFF60))) {
 			BrownQuestComplete:=0
 			completeness:="Incomplete"
-			if(QuestGatherField="None") {
+			if(QuestGatherField="None" || InStr(QuestGatherObjective, "pollen")) { ; override colour pollen if there is an incomplete field objective
 				QuestGatherField:=where
 				QuestGatherFieldSlot:=i
+				QuestGatherObjective:=obj
 			}
 		}
 		;border color, white (titlebar), black (text)
