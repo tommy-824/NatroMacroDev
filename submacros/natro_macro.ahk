@@ -491,6 +491,7 @@ config["Collect"] := {"ClockCheck":1
 	, "MondoAction":"Buff"
 	, "LastMondoBuff":1
 	, "AntPassCheck":0
+	, "AntPassBuyCheck":0
 	, "AntPassAction":"Pass"
 	, "LastAntPass":1
 	, "RoboPassCheck":0
@@ -2388,14 +2389,16 @@ MondoActionList := ["Buff", "Kill", "Manual"], PMondoGuid ? MondoActionList.Push
 Gui, Add, Text, x75 yp w40 vMondoAction +Center +BackgroundTrans,%MondoAction%
 Gui, Add, Button, xp-12 yp-1 w12 h16 gnm_MondoAction hwndhMALeft Disabled, <
 Gui, Add, Button, xp+51 yp w12 h16 gnm_MondoAction hwndhMARight Disabled, >
-Gui, Add, Text, x40 yp+15 w110 vMondoPointText +left +BackgroundTrans, \___
+Gui, Add, Text, x36 yp+15 w110 vMondoPointText +left +BackgroundTrans, \___
 Gui, Add, Edit, x63 yp+3 w28 h18 number Limit3 +BackgroundTrans vMondoSecs gnm_saveCollect Disabled, %MondoSecs%
 Gui, Add, Text, x95 yp+2 vMondoSecsText, Secs
 Gui, Add, Checkbox, x10 yp+20 w35 +BackgroundTrans vAntPassCheck gnm_saveCollect Checked%AntPassCheck% Disabled, Ant
-Gui, Add, Text,x66 yp w49 vAntPassAction +Center +BackgroundTrans,%AntPassAction%
+Gui, Add, Text,x60 yp w55 vAntPassAction +Center +BackgroundTrans,%AntPassAction%
 Gui, Add, Button, xp-12 yp-1 w12 h16 gnm_AntPassAction hwndhAPALeft Disabled, <
-Gui, Add, Button, xp+60 yp w12 h16 gnm_AntPassAction hwndhAPARight Disabled, >
-Gui, Add, Checkbox, x10 yp+19 +BackgroundTrans vRoboPassCheck gnm_saveCollect Checked%RoboPassCheck% Disabled, Robo Pass
+Gui, Add, Button, xp+66 yp w12 h16 gnm_AntPassAction hwndhAPARight Disabled, >
+Gui, Add, Text, x24 yp+15 vAntPassPointText +BackgroundTrans, \___
+Gui, Add, Checkbox, x+4 yp+5 vAntPassBuyCheck gnm_AntPassBuyCheck Checked%AntPassBuyCheck% Disabled, Use Tickets
+Gui, Add, Checkbox, x10 yp+17 +BackgroundTrans vRoboPassCheck gnm_saveCollect Checked%RoboPassCheck% Disabled, Robo Pass
 Gui, Add, Checkbox, x10 yp+18 +BackgroundTrans vHoneystormCheck gnm_saveCollect Checked%HoneystormCheck% Disabled, Honeystorm
 ;dispensers
 Gui, Font, w700
@@ -5049,6 +5052,14 @@ nm_saveStingers(hCtrl){
 		GuiControl, %c%, StingerDailyBonusCheck
 	}
 }
+nm_AntPassBuyCheck(){
+	global
+	Gui +OwnDialogs
+	GuiControlGet, AntPassBuyCheck
+	IniWrite, %AntPassBuyCheck%, settings\nm_config.ini, Collect, AntPassBuyCheck
+	if AntPassBuyCheck
+		msgbox, 0, Ant Pass, This option will make the macro buy Ant Passes with Tickets when:`n1. You have no Ant Passes in your inventory.`n2. The Free Ant Pass Dispenser is under cooldown.`n3. You have a quest that requires you to kill ants.
+}
 nm_saveAmulet(hCtrl){
 	global
 	local k
@@ -5191,6 +5202,7 @@ nm_TabCollectLock(){
 	GuiControl, disable, RoboPassCheck
 	GuiControl, disable, HoneystormCheck
 	GuiControl, disable, AntPassCheck
+	GuiControl, disable, AntPassBuyCheck
 	GuiControl, disable, % hAPALeft
 	GuiControl, disable, % hAPARight
 	GuiControl, disable, HoneyDisCheck
@@ -5274,6 +5286,7 @@ nm_TabCollectUnLock(){
 	GuiControl, enable, RoboPassCheck
 	GuiControl, enable, HoneystormCheck
 	GuiControl, enable, AntPassCheck
+	GuiControl, enable, AntPassBuyCheck
 	GuiControl, enable, % hAPALeft
 	GuiControl, enable, % hAPARight
 	GuiControl, enable, HoneyDisCheck
@@ -8550,7 +8563,7 @@ nm_ContributorsPageButton(hwnd){
 nm_CollectKillButton(hCtrl){
 	global
 	static CollectControls := ["CollectGroupBox","DispensersGroupBox","BeesmasGroupBox","BlenderGroupBox","BeesmasFailImage","BeesmasImage"
-		,"ClockCheck","MondoBuffCheck","MondoAction","MondoPointText","MondoSecs","MondoSecsText","AntPassCheck","AntPassAction","RoboPassCheck","HoneystormCheck"
+		,"ClockCheck","MondoBuffCheck","MondoAction","MondoPointText","MondoSecs","MondoSecsText","AntPassCheck","AntPassPointText","AntPassBuyCheck","AntPassAction","RoboPassCheck","HoneystormCheck"
 		,"HoneyDisCheck","TreatDisCheck","BlueberryDisCheck","StrawberryDisCheck","CoconutDisCheck","RoyalJellyDisCheck","GlueDisCheck"]
 	, CollectControlsH := ["hMALeft","hMARight","hAPALeft","hAPARight","hBeesmas1","hBeesmas2","hBeesmas3","hBeesmas4","hBeesmas5","hBeesmas6","hBeesmas7","hBeesmas8","hBeesmas9","hBeesmas10","hBeesmas11"]
 	, KillControls := ["BugRunGroupBox","BugRunCheck","MonsterRespawnTime","TextMonsterRespawnPercent","TextMonsterRespawn","MonsterRespawnTimeHelp","BugrunInterruptCheck","TextLoot","TextKill","TextLineBugRun1","TextLineBugRun2","BugrunLadybugsLoot","BugrunRhinoBeetlesLoot","BugrunSpiderLoot","BugrunMantisLoot","BugrunScorpionsLoot","BugrunWerewolfLoot","BugrunLadybugsCheck","BugrunRhinoBeetlesCheck","BugrunSpiderCheck","BugrunMantisCheck","BugrunScorpionsCheck","BugrunWerewolfCheck","StingersGroupBox","StingerCheck","StingerDailyBonusCheck","TextFields","StingerCloverCheck","StingerSpiderCheck","StingerCactusCheck","StingerRoseCheck","StingerMountainTopCheck","StingerPepperCheck","BossesGroupBox","TunnelBearCheck","KingBeetleCheck","CocoCrabCheck","StumpSnailCheck","CommandoCheck","TunnelBearBabyCheck","KingBeetleBabyCheck","BabyLovePicture1","BabyLovePicture2","KingBeetleAmuletMode","ShellAmuletMode","KingBeetleAmuPicture","ShellAmuPicture","KingBeetleAmuletModeText","ShellAmuletModeText","ChickLevelTextLabel","ChickLevelText","ChickLevel","SnailHPText","SnailHealthEdit","SnailHealthText","ChickHPText","ChickHealthEdit","ChickHealthText","SnailTimeText","SnailTimeUpDown","ChickTimeText","ChickTimeUpDown","BossConfigHelp","TextLineBosses1","TextLineBosses2","TextLineBosses3","TextBosses1","TextBosses2","TextBosses3"]
@@ -10028,7 +10041,7 @@ nm_toAnyBooster(){
 	}
 }
 nm_Collect(){
-	global FwdKey, BackKey, LeftKey, RightKey, RotLeft, RotRight, KeyDelay, objective, CurrentAction, PreviousAction, MoveSpeedNum, GatherFieldBoostedStart, LastGlitter, MondoBuffCheck, PMondoGuid, LastGuid, MondoAction, LastMondoBuff, VBState, ClockCheck, LastClock, AntPassCheck, AntPassAction, QuestAnt, LastAntPass, HoneyDisCheck, LastHoneyDis, TreatDisCheck, LastTreatDis, BlueberryDisCheck, LastBlueberryDis, StrawberryDisCheck, LastStrawberryDis, CoconutDisCheck, LastCoconutDis, GlueDisCheck, LastGlueDis, RoboPassCheck, LastRoboPass, HoneystormCheck, LastHoneystorm, RoyalJellyDisCheck, LastRoyalJellyDis, StockingsCheck, LastStockings, FeastCheck, RBPDelevelCheck, LastRBPDelevel, LastFeast, GingerbreadCheck, LastGingerbread, SnowMachineCheck, LastSnowMachine, CandlesCheck, LastCandles, SamovarCheck, LastSamovar, LidArtCheck, LastLidArt, GummyBeaconCheck, LastGummyBeacon, beesmasActive, HoneySSCheck, resetTime, bitmaps, SC_E, SC_Space, SC_1, BlenderRot, LastBlenderRot, BlenderEnd, TimerInterval, BlenderIndex1, BlenderIndex2, BlenderIndex3, BlenderItem1, BlenderItem2, BlenderItem3, BlenderTime1, BlenderTime2, BlenderTime3, BlenderAmount1, BlenderAmount2, BlenderAmount3, Blendercheck
+	global FwdKey, BackKey, LeftKey, RightKey, RotLeft, RotRight, KeyDelay, objective, CurrentAction, PreviousAction, MoveSpeedNum, GatherFieldBoostedStart, LastGlitter, MondoBuffCheck, PMondoGuid, LastGuid, MondoAction, LastMondoBuff, VBState, ClockCheck, LastClock, AntPassCheck, AntPassBuyCheck, AntPassAction, QuestAnt, LastAntPass, HoneyDisCheck, LastHoneyDis, TreatDisCheck, LastTreatDis, BlueberryDisCheck, LastBlueberryDis, StrawberryDisCheck, LastStrawberryDis, CoconutDisCheck, LastCoconutDis, GlueDisCheck, LastGlueDis, RoboPassCheck, LastRoboPass, HoneystormCheck, LastHoneystorm, RoyalJellyDisCheck, LastRoyalJellyDis, StockingsCheck, LastStockings, FeastCheck, RBPDelevelCheck, LastRBPDelevel, LastFeast, GingerbreadCheck, LastGingerbread, SnowMachineCheck, LastSnowMachine, CandlesCheck, LastCandles, SamovarCheck, LastSamovar, LidArtCheck, LastLidArt, GummyBeaconCheck, LastGummyBeacon, beesmasActive, HoneySSCheck, resetTime, bitmaps, SC_E, SC_Space, SC_1, BlenderRot, LastBlenderRot, BlenderEnd, TimerInterval, BlenderIndex1, BlenderIndex2, BlenderIndex3, BlenderItem1, BlenderItem2, BlenderItem3, BlenderTime1, BlenderTime2, BlenderTime3, BlenderAmount1, BlenderAmount2, BlenderAmount3, Blendercheck
 	static AntPassNum:=2, RoboPassNum:=1, LastHoneyLB:=1
 
 	if(VBState=1)
@@ -10305,7 +10318,7 @@ nm_Collect(){
 		IniWrite, % BlenderIndex%BlenderRot%, settings\nm_config.ini, blender, BlenderIndex%BlenderRot%
 	}
 	;ant pass
-	if(((AntPassCheck && ((AntPassNum<10) || (AntPassAction="challenge"))) && (nowUnix()-LastAntPass>7200)) || (QuestAnt && (AntPassNum>0))){ ;2 hours OR ant quest
+	if(((AntPassCheck && ((AntPassNum<10) || (AntPassAction="challenge"))) && (nowUnix()-LastAntPass>7200)) || (QuestAnt && ((AntPassNum>0) || (AntPassBuyCheck = 1)))){ ;2 hours OR ant quest
 		Loop, 2 {
 			nm_Reset(1, (QuestAnt || (AntPassAction = "challenge")) ? 20000 : 2000)
 			nm_setStatus("Traveling", (QuestAnt ? "Ant Challenge" : ("Ant " . AntPassAction)) ((A_Index > 1) ? " (Attempt 2)" : ""))
@@ -10356,63 +10369,104 @@ nm_Collect(){
 			KeyWait, F14, T30 L
 			nm_endWalk()
 			Sleep, 500
-			If (nm_imgSearch("e_button.png",30,"high")[1] = 0) {
-				sendinput {%SC_E% down}
-				Sleep, 100
-				sendinput {%SC_E% up}
-				--AntPassNum
-				nm_setStatus("Attacking", "Ant Challenge")
-				Sleep, 500
-				send {%SC_1%}
-				MoveSpeedFactor := round(18/MoveSpeedNum, 2)
-				movement := "
-				(LTrim Join`r`n
-				" nm_Walk(9, BackKey) "
-				" nm_Walk(3, RightKey, FwdKey) "
-				" nm_Walk(1, FwdKey) "
-				)"
-				nm_createWalk(movement)
-				KeyWait, F14, D T5 L
-				KeyWait, F14, T30 L
-				nm_endWalk()
-				click, down
-				loop 300 {
-					if (Mod(A_Index, 10) = 1) {
-						resetTime:=nowUnix()
-						Prev_DetectHiddenWindows := A_DetectHiddenWindows
-						Prev_TitleMatchMode := A_TitleMatchMode
-						DetectHiddenWindows On
-						SetTitleMatchMode 2
-						if WinExist("background.ahk ahk_class AutoHotkey") {
-							PostMessage, 0x5554, 1, resetTime
+			Loop, 2 {
+				If (nm_imgSearch("e_button.png",30,"high")[1] = 0) {
+					sendinput {%SC_E% down}
+					Sleep, 100
+					sendinput {%SC_E% up}
+					--AntPassNum
+					nm_setStatus("Attacking", "Ant Challenge")
+					Sleep, 500
+					send {%SC_1%}
+					MoveSpeedFactor := round(18/MoveSpeedNum, 2)
+					movement := "
+					(LTrim Join`r`n
+					" nm_Walk(9, BackKey) "
+					" nm_Walk(3, RightKey, FwdKey) "
+					" nm_Walk(1, FwdKey) "
+					)"
+					nm_createWalk(movement)
+					KeyWait, F14, D T5 L
+					KeyWait, F14, T30 L
+					nm_endWalk()
+					click, down
+					loop 300 {
+						if (Mod(A_Index, 10) = 1) {
+							resetTime:=nowUnix()
+							Prev_DetectHiddenWindows := A_DetectHiddenWindows
+							Prev_TitleMatchMode := A_TitleMatchMode
+							DetectHiddenWindows On
+							SetTitleMatchMode 2
+							if WinExist("background.ahk ahk_class AutoHotkey") {
+								PostMessage, 0x5554, 1, resetTime
+							}
+							DetectHiddenWindows %Prev_DetectHiddenWindows%
+							SetTitleMatchMode %Prev_TitleMatchMode%
 						}
-						DetectHiddenWindows %Prev_DetectHiddenWindows%
-						SetTitleMatchMode %Prev_TitleMatchMode%
+						searchRet := nm_imgSearch("keep.png",30,"center")
+						searchRet2 := nm_imgSearch("d_ant_amulet.png",30,"center")
+						searchRet3 := nm_imgSearch("g_ant_amulet.png",30,"center")
+						If (searchRet[1]=0 && (searchRet2[1]=0 || searchRet3[1]=0)) {
+							nm_setStatus("Keeping", "Ant Amulet")
+							hwnd := GetRobloxHWND()
+							offsetY := GetYOffset(hwnd)
+							WinGetClientPos(windowX, windowY, , , "ahk_id " hwnd)
+							MouseMove, windowX+searchRet[2], windowY+searchRet[3], 5
+							click
+							MouseMove, windowX+350, windowY+offsetY+100
+							break 2
+						}
+						sleep, 1000
 					}
-					searchRet := nm_imgSearch("keep.png",30,"center")
-					searchRet2 := nm_imgSearch("d_ant_amulet.png",30,"center")
-					searchRet3 := nm_imgSearch("g_ant_amulet.png",30,"center")
-					If (searchRet[1]=0 && (searchRet2[1]=0 || searchRet3[1]=0)) {
-						nm_setStatus("Keeping", "Ant Amulet")
-						hwnd := GetRobloxHWND()
-						offsetY := GetYOffset(hwnd)
-						WinGetClientPos(windowX, windowY, , , "ahk_id " hwnd)
-						MouseMove, windowX+searchRet[2], windowY+searchRet[3], 5
-						click
-						MouseMove, windowX+350, windowY+offsetY+100
-						break
+					click, up
+				}
+				else {
+					pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2-200 "|" windowY+offsetY "|400|125")
+					if (Gdip_ImageSearch(pBMScreen, bitmaps["passnone"], , , , , , 2, , 2) = 1) {
+						Gdip_DisposeImage(pBMScreen)
+						AntPassNum:=0
+						if ((AntPassBuyCheck = 1) && (A_Index = 1)) {
+							movement := "
+							(LTrim Join`r`n
+							" nm_Walk(6, LeftKey) "
+							" nm_Walk(10, BackKey, LeftKey) "
+							)"
+							nm_createWalk(movement)
+							KeyWait, F14, D T5 L
+							KeyWait, F14, T30 L
+							nm_endWalk()
+							Sleep, 200
+
+							If (nm_imgSearch("e_button.png",30,"high")[1] = 0) {
+								sendinput {%SC_E% down}
+								Sleep, 100
+								sendinput {%SC_E% up}
+								Sleep, 500
+								nm_setStatus("Bought", "Ant Pass")
+								++AntPassNum
+							} else {
+								nm_setStatus("Aborting", "Cannot buy Ant Pass")
+								break
+							}
+
+							movement := "
+							(LTrim Join`r`n
+							" nm_Walk(10, FwdKey, RightKey) "
+							" nm_Walk(6, RightKey) "
+							)"
+							nm_createWalk(movement)
+							KeyWait, F14, D T5 L
+							KeyWait, F14, T30 L
+							nm_endWalk()
+							Sleep, 200
+							continue
+						} else {
+							nm_setStatus("Aborting", "No Ant Pass in Inventory")
+							break
+						}
 					}
-					sleep, 1000
+					Gdip_DisposeImage(pBMScreen)
 				}
-				click, up
-			}
-			else {
-				pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2-200 "|" windowY+offsetY "|400|125")
-				if (Gdip_ImageSearch(pBMScreen, bitmaps["passnone"], , , , , , 2, , 2) = 1) {
-					nm_setStatus("Aborting", "No Ant Pass in Inventory")
-					AntPassNum:=0
-				}
-				Gdip_DisposeImage(pBMScreen)
 			}
 		}
 	}
