@@ -4342,10 +4342,14 @@ nm_testButton(){ ;~~ lines 3464 and 3465 have the same change as 14156
 		global offsetY
 		
 		bitmaps := {}
-		bitmaps[""""day""""] := Gdip_CreateBitmap(1, 16), G := Gdip_GraphicsFromImage(bitmaps[""""day""""]), Gdip_GraphicsClear(G, 0xffb97e03), Gdip_DeleteGraphics(G)
-		bitmaps[""""night""""] := Gdip_CreateBitmap(1, 16), G := Gdip_GraphicsFromImage(bitmaps[""""night""""]), Gdip_GraphicsClear(G, 0xffa97300), Gdip_DeleteGraphics(G)
-		bitmaps[""""noshadow""""] := Gdip_CreateBitmap(1, 16), G := Gdip_GraphicsFromImage(bitmaps[""""noshadow""""]), Gdip_GraphicsClear(G, 0xffe39d1f), Gdip_DeleteGraphics(G)
-		bitmaps[""""wing""""] := Gdip_CreateBitmap(1, 16), G := Gdip_GraphicsFromImage(bitmaps[""""wing""""]), Gdip_GraphicsClear(G, 0xffa28645), Gdip_DeleteGraphics(G)
+		bitmaps[""""day""""] := Gdip_CreateBitmap(16, 4), G := Gdip_GraphicsFromImage(bitmaps[""""day""""]), Gdip_GraphicsClear(G, 0xffd28f0c), Gdip_DeleteGraphics(G)
+		bitmaps[""""night""""] := Gdip_CreateBitmap(16, 4), G := Gdip_GraphicsFromImage(bitmaps[""""night""""]), Gdip_GraphicsClear(G, 0xffc08200), Gdip_DeleteGraphics(G)
+		bitmaps[""""day-gifted""""] := Gdip_CreateBitmap(16, 4), G := Gdip_GraphicsFromImage(bitmaps[""""day-gifted""""]), Gdip_GraphicsClear(G, 0xffb97e03), Gdip_DeleteGraphics(G)
+		bitmaps[""""night-gifted""""] := Gdip_CreateBitmap(16, 4), G := Gdip_GraphicsFromImage(bitmaps[""""night-gifted""""]), Gdip_GraphicsClear(G, 0xffaa7400), Gdip_DeleteGraphics(G)
+		bitmaps[""""noshadow-day""""] := Gdip_CreateBitmap(16, 4), G := Gdip_GraphicsFromImage(bitmaps[""""noshadow-day""""]), Gdip_GraphicsClear(G, 0xffffb325), Gdip_DeleteGraphics(G)
+		bitmaps[""""noshadow-night""""] := Gdip_CreateBitmap(16, 4), G := Gdip_GraphicsFromImage(bitmaps[""""noshadow-night""""]), Gdip_GraphicsClear(G, 0xff694a00), Gdip_DeleteGraphics(G)
+		bitmaps[""""noshadow-gifted""""] := Gdip_CreateBitmap(16, 4), G := Gdip_GraphicsFromImage(bitmaps[""""noshadow-gifted""""]), Gdip_GraphicsClear(G, 0xffe39d1f), Gdip_DeleteGraphics(G)
+		bitmaps[""""wing""""] := Gdip_CreateBitmap(16, 4), G := Gdip_GraphicsFromImage(bitmaps[""""wing""""]), Gdip_GraphicsClear(G, 0xffa28645), Gdip_DeleteGraphics(G)
 
 		pBMR := Gdip_BitmapFromBase64(""""iVBORw0KGgoAAAANSUhEUgAAACgAAAAGCAAAAACUM4P3AAAAAnRSTlMAAHaTzTgAAAAXdEVYdFNvZnR3YXJlAFBob3RvRGVtb24gOS4wzRzYMQAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0n77u/JyBpZD0nVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkJz8+Cjx4OnhtcG1ldGEgeG1sbnM6eD0nYWRvYmU6bnM6bWV0YS8nIHg6eG1wdGs9J0ltYWdlOjpFeGlmVG9vbCAxMi40NCc+CjxyZGY6UkRGIHhtbG5zOnJkZj0naHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyc+CgogPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9JycKICB4bWxuczpleGlmPSdodHRwOi8vbnMuYWRvYmUuY29tL2V4aWYvMS4wLyc+CiAgPGV4aWY6UGl4ZWxYRGltZW5zaW9uPjQwPC9leGlmOlBpeGVsWERpbWVuc2lvbj4KICA8ZXhpZjpQaXhlbFlEaW1lbnNpb24+NjwvZXhpZjpQaXhlbFlEaW1lbnNpb24+CiA8L3JkZjpEZXNjcmlwdGlvbj4KCiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0nJwogIHhtbG5zOnRpZmY9J2h0dHA6Ly9ucy5hZG9iZS5jb20vdGlmZi8xLjAvJz4KICA8dGlmZjpJbWFnZUxlbmd0aD42PC90aWZmOkltYWdlTGVuZ3RoPgogIDx0aWZmOkltYWdlV2lkdGg+NDA8L3RpZmY6SW1hZ2VXaWR0aD4KICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogIDx0aWZmOlJlc29sdXRpb25Vbml0PjI8L3RpZmY6UmVzb2x1dGlvblVuaXQ+CiAgPHRpZmY6WFJlc29sdXRpb24+OTYvMTwvdGlmZjpYUmVzb2x1dGlvbj4KICA8dGlmZjpZUmVzb2x1dGlvbj45Ni8xPC90aWZmOllSZXNvbHV0aW9uPgogPC9yZGY6RGVzY3JpcHRpb24+CjwvcmRmOlJERj4KPC94OnhtcG1ldGE+Cjw/eHBhY2tldCBlbmQ9J3InPz77yGiWAAAAI0lEQVR42mNUYyAOMDJggOUMDAyRmAqXMxAHmBiobjWxngEAj7gC+wwAe1AAAAAASUVORK5CYII="""")
 		success := 0
@@ -4373,7 +4377,7 @@ nm_testButton(){ ;~~ lines 3464 and 3465 have the same change as 14156
 			loop, 4 {
 				sleep 250
 				pBMScreen := Gdip_BitmapFromScreen(region), s := 0
-				for i, k in [""""day"""", """"night"""", """"noshadow"""", """"wing""""] {
+				for i, k in [""""day"""", """"night"""", """"day-gifted"""", """"night-gifted"""", """"noshadow-gifted"""", """"noshadow-day"""", """"noshadow-night"""", """"wing""""] {
 					s := Max(s, Gdip_ImageSearch(pBMScreen, bitmaps[k], , , , , , 8, , , sconf))
 					if (s >= sconf) {
 						Gdip_DisposeImage(pBMScreen)
@@ -9404,7 +9408,7 @@ nm_Reset(checkAll:=1, wait:=2000, convert:=1, force:=0){
 		loop, 4 {
 			sleep (250+KeyDelay)
 			pBMScreen := Gdip_BitmapFromScreen(region), s := 0
-			for i, k in ["day", "night", "noshadow", "wing"] {
+			for i, k in ["day", "night", "day-gifted", "night-gifted", "noshadow-gifted", "noshadow-day", "noshadow-night", "wing"] {
 				s := Max(s, Gdip_ImageSearch(pBMScreen, bitmaps["hive"][k], , , , , , 8, , , sconf))
 				if (s >= sconf) {
 					Gdip_DisposeImage(pBMScreen)
