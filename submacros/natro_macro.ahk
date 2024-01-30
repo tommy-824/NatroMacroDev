@@ -15856,11 +15856,7 @@ nm_setSprinkler(field, loc, dist){
 		Send {%SC_1%}
 		return
 	} else {
-		send {%SC_Space% down}
-		DllCall("Sleep",UInt,200)
-		Send {%SC_1%}
-		send {%SC_Space% up}
-		DllCall("Sleep",UInt,900)
+		nm_JumpSprinkler(1)
 	}
 	if(SprinklerType="Silver" || SprinklerType="Golden" || SprinklerType="Diamond") {
 		if(InStr(loc, "Upper")){
@@ -15869,11 +15865,7 @@ nm_setSprinkler(field, loc, dist){
 			nm_Move(1000*MoveSpeedFactor, FwdKey)
 		}
 		DllCall("Sleep",UInt,500)
-		send {%SC_Space% down}
-		DllCall("Sleep",UInt,200)
-		send {%SC_1%}
-		send {%SC_Space% up}
-		DllCall("Sleep",UInt,900)
+		nm_JumpSprinkler()
 	}
 	if(SprinklerType="Silver") {
 		if(InStr(loc, "Upper")){
@@ -15889,11 +15881,7 @@ nm_setSprinkler(field, loc, dist){
 			nm_Move(1000*MoveSpeedFactor, LeftKey)
 		}
 		DllCall("Sleep",UInt,500)
-		send {%SC_Space% down}
-		DllCall("Sleep",UInt,200)
-		Send {%SC_1%}
-		send {%SC_Space% up}
-		DllCall("Sleep",UInt,900)
+		nm_JumpSprinkler()
 	}
 	if(SprinklerType="Golden") {
 		if(InStr(loc, "Upper")){
@@ -15917,17 +15905,42 @@ nm_setSprinkler(field, loc, dist){
 			nm_Move(1000*MoveSpeedFactor, BackKey)
 		}
 		DllCall("Sleep",UInt,500)
-		send {%SC_Space% down}
-		DllCall("Sleep",UInt,200)
-		Send {%SC_1%}
-		send {%SC_Space% up}
-		DllCall("Sleep",UInt,900)
+		nm_JumpSprinkler()
 		if(InStr(loc, "Left")){
 			nm_Move(1000*MoveSpeedFactor, LeftKey)
 		} else {
 			nm_Move(1000*MoveSpeedFactor, RightKey)
 		}
 	}
+}
+nm_JumpSprinkler(resetDelay := 0){
+	global SC_Space, SC_1, bitmaps
+	static JumpDelay := 200
+	if resetDelay
+		JumpDelay := 200
+
+	WinGetClientPos(windowX, windowY, windowWidth, windowHeight, "ahk_id " GetRobloxHWND())
+	success := 0
+	Loop, 3 {
+		Send {%SC_Space% down}
+		Sleep % JumpDelay
+		Send {%SC_1%}{%SC_Space% up}
+		Sleep 500
+		pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth-356 "|" windowY+windowHeight-326 "|340|300")
+		if (Gdip_ImageSearch(pBMScreen, bitmaps["standing"], , , , , , 20) = 1) { ; jumped too high
+			JumpDelay := Max(JumpDelay - 50, 100)
+		} else if (Gdip_ImageSearch(pBMScreen, bitmaps["thisclose"], , , , , , 20) = 1) { ; not high enough
+			JumpDelay := Min(JumpDelay + 50, 500)
+		} else {
+			success := 1
+		}
+		Gdip_DisposeImage(pBMScreen)
+		Sleep % 600 - JumpDelay
+		if (success = 1)
+			break
+	}
+
+	return success
 }
 nm_fieldDriftCompensation(){
 	global FwdKey, LeftKey, BackKey, RightKey, DisableToolUse
