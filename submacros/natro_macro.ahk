@@ -13534,13 +13534,9 @@ nm_Mondo(){
                 send {" SC_E " down}
 				HyperSleep(100)
 				send {" SC_E " up}
-				HyperSleep(2500)
-				" nm_Walk(29, FwdKey) "
-				" nm_Walk(25, RightKey) "
-				" nm_Walk(3, LeftKey) "
-				" nm_Walk(19, BackKey) "
-				HyperSleep(200)
-				send {" RotLeft " 1}
+				Sleep, 2750
+				" nm_Walk(14, RightKey) "
+				send {" RotLeft "}
                 )"
 
                 nm_createWalk(movement)
@@ -13565,7 +13561,7 @@ nm_Mondo(){
 				nm_setStatus("Found")
 			    for index, value in mChick ;Mondo is already dmging itself before we get there 
 			    {
-			        if (v = 100.00) ;Planter detected since mondo will already have taken dmg by the time you come up
+			        if (value = 100.00) ;Planter detected since mondo will already have taken dmg by the time you come up
 			        { 
 			            continue
 			        }
@@ -13624,6 +13620,7 @@ nm_Mondo(){
 			            }
 			        } else if(MondoAction="Kill"){
 			            repeat:=1
+						success:=count:=0
 			            loop 900 { ;15 mins
 			                nm_autoFieldBoost(CurrentField)
 			                if(youDied || VBState=1 || AFBrollingDice || AFBuseGlitter || AFBuseBooster)
@@ -13633,28 +13630,19 @@ nm_Mondo(){
 			                    break
 			                }
 			                ;check for mondo death here
-							loop 60 ; Changed from 5 seconds to 15 seconds for when mondo goes off screen
-							{
-								mondoDead:=nm_HealthDetection()
-								if(mondoDead.Length() > 0)
-									Break
-								if (A_Index=60)
-								{
-									repeat:=0
-									send {%RotRight%}
-			            			;loot mondo after death
-									nm_setStatus("Looting")
-									nm_Move(1500*MoveSpeedFactor, FwdKey)
-									nm_Move(500*MoveSpeedFactor, LeftKey)
-									nm_Move(1400*MoveSpeedFactor, BackKey)
-									nm_Move(100*MoveSpeedFactor, LeftKey)
-									nm_loot(13.5, 6, "left")
-                        			nm_loot(13.5, 6, "right")
-                        			nm_loot(13.5, 6, "left")
-									break 2
+							If (nm_imgSearch("mondo3.png",50,"lowright")[1] = 0) {
+								success := 1
+								break
+							}
+							mondoDead:=nm_HealthDetection()
+							if ((mondoDead.Length() = 0) || (mondoDead.Length() = 1 && mondoDead[1] = 100.00)) {
+								if (++count >= 15) { ; Changed from 5 seconds to 15 seconds for when mondo goes off screen
+									success := 1
+									break
 								}
-								Sleep, 250
-							}	
+							}
+							else ; one health bar < 100 or multiple health bars (assumed Mondo is one of them)
+								count := 0
 							if(A_Index=900)
 							{
 								repeat:=0
@@ -13665,6 +13653,33 @@ nm_Mondo(){
 			                sleep, 1000
 			                FormatTime, utc_min, %A_NowUTC%, m
 			            }
+						if (success != "") {
+							;loot mondo after death
+							Random, dir, 0, 1
+							if (dir = 0)
+								tc := "left", afc := "right"
+							else
+								tc := "right", afc := "left"
+							 
+							nm_setStatus("Looting")
+							movement := "
+							(LTrim Join`r`n
+							send {" RotLeft "}
+							" nm_Walk(7.5, FwdKey, RightKey) "
+							" nm_Walk(7.5, %tc%Key) "
+							)"
+							nm_createWalk(movement)
+							KeyWait, F14, D T5 L
+							KeyWait, F14, T30 L
+							nm_endWalk()
+
+							DllCall("GetSystemTimeAsFileTime","int64p",s)
+							n := s, f := s+600000000 ; 60 seconds loot timeout
+							while ((n < f) && (A_Index <= 12)) {
+								nm_loot(16, 5, Mod(A_Index, 2) = 1 ? afc : tc)
+								DllCall("GetSystemTimeAsFileTime","int64p",n)
+							}
+						}
 			        }
 			    }
 			}
