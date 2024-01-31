@@ -694,6 +694,8 @@ config["Boost"] := {"FieldBoostStacks":0
 	, "StickerStackItem":"Tickets"
 	, "StickerStackMode":0
 	, "StickerStackTimer":900
+	, "StickerStackHive":0
+	, "StickerStackCub":0
 	, "StickerPrinterCheck":0
 	, "LastStickerPrinter":1
 	, "StickerPrinterEgg":"Basic"}
@@ -2642,25 +2644,27 @@ Gui, Font, w700
 Gui, Add, GroupBox, x300 y130 w190 h105, Stickers
 Gui, Font, s8 cDefault Norm, Tahoma
 Gui, Add, Checkbox, x305 yp+16 vStickerStackCheck gnm_StickerStackCheck Checked%StickerStackCheck% Disabled, Sticker Stack
-Gui, Add, Text, xp+6 yp+14 +BackgroundTrans Section, \__
-Gui, Add, Text, x+0 yp+4 w36 +Center +BackgroundTrans, Item:
-Gui, Add, Text, x+12 yp w85 vStickerStackItem +Center +BackgroundTrans, %StickerStackItem%
-Gui, Add, Button, xp-12 yp-1 w12 h16 gnm_StickerStackItem hwndhSSILeft Disabled, <
-Gui, Add, Button, xp+96 yp w12 h16 gnm_StickerStackItem hwndhSSIRight Disabled, >
-Gui, Add, Button, xp+14 yp+1 w12 h14 gnm_StickerStackItemHelp vStickerStackItemHelp Disabled, ?
-Gui, Add, Text, xs yp+14 +BackgroundTrans, \__
-Gui, Add, Text, x+0 yp+4 w36 +Center +BackgroundTrans, Timer:
+Gui, Add, Text, xp+6 yp+13 +BackgroundTrans, \__
+Gui, Add, Text, x+0 yp+4 w36 +Center +BackgroundTrans Section, Timer:
 Gui, Add, Text, % "x+12 yp w" ((StickerStackMode = 0) ? 85 : 68) " vStickerStackModeText gnm_StickerStackModeText +Center +BackgroundTrans", % (StickerStackMode = 0) ? "Detect" : nm_DurationFromSeconds(StickerStackTimer)
 Gui, Add, Button, xp-12 yp-1 w12 h16 gnm_StickerStackMode hwndhSSMLeft Disabled, <
 Gui, Add, Button, xp+96 yp w12 h16 gnm_StickerStackMode hwndhSSMRight Disabled, >
 Gui, Add, UpDown, % "xp-18 yp h16 -16 Range900-86400 vStickerStackTimer gnm_StickerStackTimer Disabled Hidden" (StickerStackMode = 0), %StickerStackTimer%
 Gui, Add, Button, xp+32 yp+1 w12 h14 gnm_StickerStackModeHelp vStickerStackModeHelp Disabled, ?
-Gui, Add, Checkbox, x305 yp+17 vStickerPrinterCheck gnm_StickerPrinterCheck Checked%StickerPrinterCheck% Disabled, Sticker Printer
-Gui, Add, Text, xp+6 yp+14 +BackgroundTrans, \__
-Gui, Add, Text, x+0 yp+4 w36 +Center +BackgroundTrans, Egg:
-Gui, Add, Text, x+12 yp w55 vStickerPrinterEgg +Center +BackgroundTrans, %StickerPrinterEgg%
+Gui, Add, Text, xs yp+17 w36 +Center +BackgroundTrans, Item:
+Gui, Add, Text, x+12 yp w85 vStickerStackItem +Center +BackgroundTrans, %StickerStackItem%
+Gui, Add, Button, xp-12 yp-1 w12 h16 gnm_StickerStackItem hwndhSSILeft Disabled, <
+Gui, Add, Button, xp+96 yp w12 h16 gnm_StickerStackItem hwndhSSIRight Disabled, >
+Gui, Add, Button, xp+14 yp+1 w12 h14 gnm_StickerStackItemHelp vStickerStackItemHelp Disabled, ?
+Gui, Add, Text, xs yp+17 w36 +Center +BackgroundTrans, Skins:
+Gui, Add, CheckBox, x+14 yp vStickerStackHive gnm_StickerStackSkins Checked%StickerStackHive% Disabled, Hive
+Gui, Add, CheckBox, x+2 yp vStickerStackCub gnm_StickerStackSkins Checked%StickerStackCub% Disabled, Cub
+Gui, Add, Button, xs+146 yp w12 h14 gnm_StickerStackSkinsHelp vStickerStackSkinsHelp Disabled, ?
+Gui, Add, Checkbox, x305 yp+19 w86 h13 vStickerPrinterCheck gnm_StickerPrinterCheck Checked%StickerPrinterCheck% Disabled, Sticker Printer
+Gui, Add, Text, x+0 yp w24 +Center +BackgroundTrans, Egg:
+Gui, Add, Text, x+12 yp w48 vStickerPrinterEgg +Center +BackgroundTrans, %StickerPrinterEgg%
 Gui, Add, Button, xp-12 yp-1 w12 h16 gnm_StickerPrinterEgg hwndhSPELeft Disabled, <
-Gui, Add, Button, xp+66 yp w12 h16 gnm_StickerPrinterEgg hwndhSPERight Disabled, >
+Gui, Add, Button, xp+59 yp w12 h16 gnm_StickerPrinterEgg hwndhSPERight Disabled, >
 
 ;QUEST TAB
 ;------------------------
@@ -5431,6 +5435,9 @@ nm_TabBoostLock(){
 	GuiControl, disable, StickerStackTimer
 	GuiControl, disable, StickerStackItemHelp
 	GuiControl, disable, StickerStackModeHelp
+	GuiControl, disable, StickerStackHive
+	GuiControl, disable, StickerStackCub
+	GuiControl, disable, StickerStackSkinsHelp
 	GuiControl, disable, StickerPrinterCheck
 	GuiControl, disable, % hSPELeft
 	GuiControl, disable, % hSPERight
@@ -5480,6 +5487,11 @@ nm_TabBoostUnLock(){
 		GuiControl, enable, StickerStackTimer
 		GuiControl, enable, StickerStackItemHelp
 		GuiControl, enable, StickerStackModeHelp
+		GuiControl, enable, StickerStackSkinsHelp
+		if InStr(StickerStackItem, "Sticker") {
+			GuiControl, enable, StickerStackHive
+			GuiControl, enable, StickerStackCub
+		}
 	}
 	GuiControl, enable, StickerPrinterCheck
 	if (StickerPrinterCheck = 1) {
@@ -5680,7 +5692,7 @@ nm_StickerStackCheck(){
 	global
 	local c
 	GuiControlGet, StickerStackCheck
-	c :=  (StickerStackCheck = 1) ? "Enable" : "Disable"
+	c := (StickerStackCheck = 1) ? "Enable" : "Disable"
 	GuiControl, %c%, % hSSILeft
 	GuiControl, %c%, % hSSIRight
 	GuiControl, %c%, % hSSMLeft
@@ -5688,6 +5700,11 @@ nm_StickerStackCheck(){
 	GuiControl, %c%, StickerStackTimer
 	GuiControl, %c%, StickerStackItemHelp
 	GuiControl, %c%, StickerStackModeHelp
+	GuiControl, %c%, StickerStackSkinsHelp
+	if (((c = "Enable") && InStr(StickerStackItem, "Sticker")) || (c = "Disable")) {
+		GuiControl, %c%, StickerStackHive
+		GuiControl, %c%, StickerStackCub
+	}
 	IniWrite, %StickerStackCheck%, settings\nm_config.ini, Boost, StickerStackCheck
 }
 nm_StickerStackItem(hCtrl){
@@ -5707,6 +5724,9 @@ nm_StickerStackItem(hCtrl){
 		i := (StickerStackItem = "Sticker") ? 2 : 3
 	
 	GuiControl, , StickerStackItem, % (StickerStackItem := val[(hCtrl = hSSIRight) ? (Mod(i, l) + 1) : (Mod(l + i - 2, l) + 1)])
+	c := InStr(StickerStackItem, "Sticker") ? "Enable" : "Disable"
+	GuiControl, %c%, StickerStackHive
+	GuiControl, %c%, StickerStackCub
 	IniWrite, %StickerStackItem%, settings\nm_config.ini, Boost, StickerStackItem
 }
 nm_StickerStackMode(hCtrl:=""){
@@ -5754,11 +5774,26 @@ nm_StickerStackModeText(){
 		}			
 	}
 }
+nm_StickerStackSkins(){
+	global
+	GuiControlGet, %A_GuiControl%
+	if (%A_GuiControl% = 1) {
+		GuiControl, , %A_GuiControl%, % %A_GuiControl% := 0
+		Gui, +OwnDialogs
+		msgbox, 0x40034, WARNING!!, % "You have selected to use " StrReplace(A_GuiControl, "StickerStack") " Skins on the Sticker Stack!`nAre you sure you want to enable this?"
+		IfMsgBox, Yes
+			GuiControl, , %A_GuiControl%, % %A_GuiControl% := 1
+	}
+	IniWrite, % %A_GuiControl%, settings\nm_config.ini, Boost, %A_GuiControl%
+}
 nm_StickerStackItemHelp(){
 	msgbox, 0x40000, Sticker Stack Item, Choose the item you prefer to use for activating the Sticker Stack!`n`n'Tickets' is the default option: it will use the 25 Tickets option to activate the boost.`n`n'Sticker' is an option if you want to stack your Stickers. It will always use your first Sticker if there is one, otherwise it will stop using the Sticker Stack.`n`n'Sticker+Tickets' is an option that uses all of your Stickers first, then uses your Tickets once you have run out of Stickers.
 }
 nm_StickerStackModeHelp(){
 	msgbox, 0x40000, Sticker Stack Timer, Choose how long you want to wait between each Sticker Stack boost!`n`n'Detect' is the default option: it will detect the time each boost lasts and will go back to activate the Sticker Stack when it's over.`n`nThe other option is a custom timer, you can set it to any value between 15 minutes and 24 hours, the macro will activate Sticker Stack at this time interval.`n`nNOTE: If you change from a custom timer to 'Detect', the macro will still use your custom timer for the time until your next visit to the Sticker Stack.
+}
+nm_StickerStackSkinsHelp(){
+	msgbox, 0x40000, Sticker Stack Skins, Choose which Stickers you want to stack on the Sticker Stack.`n`nIf 'Hive' is checked, the macro will donate Hive Skins to the Sticker Stack after all normal Stickers have been used up. Otherwise, these will not be used.`n`nIf 'Cub' is checked, the macro will donate Cub Skins to the Sticker Stack after all normal Stickers and Hive Skins have been used up. Otherwise, these will not be used.
 }
 nm_savequest(){
 	global
@@ -9956,7 +9991,7 @@ nm_StickerPrinter(){
 	}
 }
 nm_StickerStack(){
-	global StickerStackCheck, LastStickerStack, StickerStackItem, StickerStackMode, StickerStackTimer, SC_E, bitmaps
+	global StickerStackCheck, LastStickerStack, StickerStackItem, StickerStackMode, StickerStackTimer, StickerStackHive, StickerStackCub, SC_E, bitmaps
 
 	if (StickerStackCheck && (nowUnix()-LastStickerStack)>StickerStackTimer) {
 		loop, 2 {
@@ -9974,14 +10009,14 @@ nm_StickerStack(){
 				sleep, 500 ;//todo: wait for GUI with timeout instead of fixed time
 
 				; detect stack boost time
-				pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2-275 "|" windowY+4*windowHeight//10 "|550|55")
+				pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2-275 "|" windowY+4*windowHeight//10 "|550|220")
 				Loop, 1 {
-					if (Gdip_ImageSearch(pBMScreen, bitmaps["stickerstackdigits"][")"], pos, 275, , , , 20) = 1) {
+					if (Gdip_ImageSearch(pBMScreen, bitmaps["stickerstackdigits"][")"], pos, 275, , , 25, 20) = 1) {
 						x := SubStr(pos, 1, InStr(pos, ",")-1)
 						digits := {}
 						Loop, 10 {
 							n := 10-A_Index
-							Gdip_ImageSearch(pBMScreen, bitmaps["stickerstackdigits"][n], pos, x, , , , 20, , , 4, , "`n")
+							Gdip_ImageSearch(pBMScreen, bitmaps["stickerstackdigits"][n], pos, x, , , 25, 20, , , 4, , "`n")
 							Loop, Parse, pos, `n
 								if (A_Index & 1)
 									digits[A_LoopField] := n
@@ -10002,13 +10037,15 @@ nm_StickerStack(){
 				}
 
 				; check if sticker is available to donate
-				if (InStr(StickerStackItem, "Sticker") && (Gdip_ImageSearch(pBMScreen, bitmaps["nosticker"], , , , , , 20) = 0)) {
-					nm_setStatus("Stacking", "Sticker")
-					MouseMove, windowX+windowWidth//2-230, windowY+4*windowHeight//10+40 ; select sticker
+				if (InStr(StickerStackItem, "Sticker") && (((Gdip_ImageSearch(pBMScreen, bitmaps["stickernormal"], pos, , , 200, , 10) = 1) && (stack := "Sticker"))
+					|| ((StickerStackHive = 1) && (Gdip_ImageSearch(pBMScreen, bitmaps["stickerhive"], pos, , , 275, , 10) = 1) && (stack := "Hive Skin"))
+					|| ((StickerStackCub = 1) && (Gdip_ImageSearch(pBMScreen, bitmaps["stickercub"], pos, , , 275, , 10) = 1) && (stack := "Cub Skin")))) {
+					nm_setStatus("Stacking", stack)
+					MouseMove, windowX+windowWidth//2-275+SubStr(pos, 1, InStr(pos, ",")-1)+26, windowY+4*windowHeight//10+SubStr(pos, InStr(pos, ",")+1)-10 ; select sticker
 					if (StickerStackMode = 0)
 						StickerStackTimer += 10
 				} else if InStr(StickerStackItem, "Tickets") {
-					nm_setStatus("Stacking", "Tickets")
+					nm_setStatus("Stacking", stack := "Tickets")
 					MouseMove, windowX+windowWidth//2+105, windowY+4*windowHeight//10-78 ; select tickets
 				} else { ; StickerStackItem = "Sticker", and nosticker was found or error
 					nm_setStatus("Error", "No Stickers left to stack!`nSticker Stack has been disabled.")
@@ -10032,7 +10069,15 @@ nm_StickerStack(){
 						sleep 150
 						Click
 						sleep 100
-						i++
+						if ((++i >= 4) && !InStr(stack, "Skin")) { ; Yes/No prompt appeared too many times, assume this is not a regular sticker
+							Gdip_DisposeImage(pBMScreen)
+							nm_setStatus("Error", "Yes/No appeared too many times!")
+							Sleep, 500
+							sendinput {%SC_E% down}
+							Sleep, 100
+							sendinput {%SC_E% up}
+							break 2
+						}
 					} else if (i > 0) {
 						Gdip_DisposeImage(pBMScreen)
 						break
@@ -21646,7 +21691,7 @@ loop, 3 {
 }
 ;Sticker Warning
 if ((StickerStackCheck = 1) && InStr(StickerStackItem, "Sticker")) { ;Warns user about stickers
-	msgbox, 0x1040, Sticker Stack ,% "You have enabled the Sticker option for Sticker Stack!`nConsider trading all of your valuable stickers to alternative account, to ensure that you do not lose any valuable stickers.", 30
+	msgbox, 0x1040, Sticker Stack ,% "You have enabled the Sticker option for Sticker Stack!`nConsider trading all of your valuable stickers to alternative account, to ensure that you do not lose any valuable stickers." ((StickerStackHive + StickerStackCub > 0) ? ("`n`nEXTRA WARNING!!`nYou have enabled the donation of:" ((StickerStackHive = 1) ? "`n- Hive Skins" : "") ((StickerStackCub = 1) ? "`n- Cub Skins" : "") "`nMake sure this is correct because the macro will use them!") : ""), 30
 }
 
 disconnectCheck()
