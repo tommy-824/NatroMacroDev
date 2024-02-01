@@ -356,7 +356,7 @@ config["Settings"] := {"GuiTheme":"MacLion3"
 	, "NewWalk":1
 	, "HiveSlot":6
 	, "HiveBees":50
-	, "ConvertDelay":0
+	, "ConvertDelay":5
 	, "PrivServer":""
 	, "FallbackServer1":""
 	, "FallbackServer2":""
