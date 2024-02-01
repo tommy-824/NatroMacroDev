@@ -15785,14 +15785,30 @@ nm_convert(){
 		nm_setStatus("Converting", "Backpack Emptied`nTime: " duration)
 	}
 	;empty balloon
-	if((ConvertBalloon="always") || (ConvertBalloon="Every" && (nowUnix() - LastConvertBalloon)>(ConvertMins*60)) || (ConvertBalloon="Gather" && (ConvertGatherFlag=1 || (nowUnix() - LastConvertBalloon)>1800))) {
+	if((ConvertBalloon="always") || (ConvertBalloon="Every" && (nowUnix() - LastConvertBalloon)>(ConvertMins*60)) || (ConvertBalloon="Gather" && (ConvertGatherFlag=1 || (nowUnix() - LastConvertBalloon)>2700))) {
 		ConvertGatherFlag := 0
 		;balloon check
 		strikes:=0
 		while ((strikes <= 5) && (A_Index <= 50)) {
 			WinGetClientPos(windowX, windowY, windowWidth, windowHeight, "ahk_id " hwnd)
-			pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2-200 "|" windowY+offsetY+36 "|400|120")
-			if (Gdip_ImageSearch(pBMScreen, bitmaps["e_button"], , , , , , 2, , 6) != 1)
+			pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2-200 "|" windowY+offsetY+36 "|" windowWidth//2+200 "|" windowHeight-offsetY-36)
+			if (Gdip_ImageSearch(pBMScreen, bitmaps["hiveballoon"], , windowWidth//2, windowHeight-offsetY-36-400, , , 40) = 1) {
+				Gdip_DisposeImage(pBMScreen)
+				nm_setStatus("Converting", "Balloon Refreshed")
+				LastConvertBalloon:=nowUnix()
+				IniWrite, %LastConvertBalloon%, settings\nm_config.ini, Settings, LastConvertBalloon
+				Prev_DetectHiddenWindows := A_DetectHiddenWindows
+				Prev_TitleMatchMode := A_TitleMatchMode
+				DetectHiddenWindows On
+				SetTitleMatchMode 2
+				if WinExist("background.ahk ahk_class AutoHotkey"){
+					PostMessage, 0x5554, 7, nowUnix()
+				}
+				DetectHiddenWindows %Prev_DetectHiddenWindows%
+				SetTitleMatchMode %Prev_TitleMatchMode%
+				return
+			}
+			if (Gdip_ImageSearch(pBMScreen, bitmaps["e_button"], , , , 400, 120, 2, , 6) != 1)
 				strikes++
 			Gdip_DisposeImage(pBMScreen)
 			Sleep, 100
