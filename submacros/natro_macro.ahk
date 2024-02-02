@@ -4391,7 +4391,7 @@ nm_testButton(){ ;~~ lines 3464 and 3465 have the same change as 14156
 				sleep 250
 				pBMScreen := Gdip_BitmapFromScreen(region), s := 0
 				for i, k in [""""day"""", """"night"""", """"day-gifted"""", """"night-gifted"""", """"noshadow-gifted"""", """"noshadow-day"""", """"noshadow-night"""", """"wing""""] {
-					s := Max(s, Gdip_ImageSearch(pBMScreen, bitmaps[k], , , , , , InStr(k, """"noshadow"""") ? 4 : 8, , , sconf))
+					s := Max(s, Gdip_ImageSearch(pBMScreen, bitmaps[k], , , , , , 4, , , sconf))
 					if (s >= sconf) {
 						Gdip_DisposeImage(pBMScreen)
 						success := 1
@@ -9498,7 +9498,7 @@ nm_Reset(checkAll:=1, wait:=2000, convert:=1, force:=0){
 			sleep (250+KeyDelay)
 			pBMScreen := Gdip_BitmapFromScreen(region), s := 0
 			for i, k in ["day", "night", "day-gifted", "night-gifted", "noshadow-gifted", "noshadow-day", "noshadow-night", "wing"] {
-				s := Max(s, Gdip_ImageSearch(pBMScreen, bitmaps["hive"][k], , , , , , InStr(k, "noshadow") ? 4 : 8, , , sconf))
+				s := Max(s, Gdip_ImageSearch(pBMScreen, bitmaps["hive"][k], , , , , , 4, , , sconf))
 				if (s >= sconf) {
 					Gdip_DisposeImage(pBMScreen)
 					HiveConfirmed := 1
