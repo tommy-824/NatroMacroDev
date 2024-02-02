@@ -13728,6 +13728,8 @@ nm_Mondo(){
 								repeat:=0
 			                    break
 							}
+			                if(Mod(A_Index, 10)=0)
+			                    nm_OpenMenu()
 			                if(Mod(A_Index, 60)=0)
 			                    click
 			                sleep, 1000
