@@ -41,6 +41,8 @@ pids
 node_modules
 
 # Test output
+/*test.ahk
+submacros/*test.ahk
 lib-cov
 /coverage
 /test/test-apps/*/dist
