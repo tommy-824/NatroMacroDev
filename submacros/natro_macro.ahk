@@ -16270,7 +16270,7 @@ DisconnectCheck(testCheck := 0)
 	; return if not disconnected or crashed
 	WinGetClientPos(windowX, windowY, windowWidth, windowHeight, "ahk_id " GetRobloxHWND())
 	if ((windowWidth > 0) && !WinExist("Roblox Crash")) {
-		pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2-200 "|" windowY+windowHeight//2-160 "|400|320")
+		pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2 "|" windowY+windowHeight//2 "|200|80")
 		if (Gdip_ImageSearch(pBMScreen, bitmaps["disconnected"], , , , , , 2) != 1) {
 			Gdip_DisposeImage(pBMScreen)
 			return 0
