@@ -744,6 +744,7 @@ config["Planters"] := {"LastComfortingField":"None"
 	, "MPuffMode1":0
 	, "MPuffMode2":0
 	, "MPuffMode3":0
+	, "MConvertFullBagHarvest":0
 	, "LastPlanterGatherSlot":3
 	, "PlanterName1":"None"
 	, "PlanterName2":"None"
@@ -2847,48 +2848,49 @@ Loop, 3 {
         Gui, Add, Text, % "xs ys+22 w350 h1 0x7 vMSlot" i "SeparatorLine" (PlanterMode == 1 ? "" : " Hidden")
 }
 
-Gui, Add, Text, % "x378 y62 +BackgroundTrans Section vMCurrentCycle" (PlanterMode == 1 ? "" : " Hidden"), Current Planter Cycle
+Gui, Add, Text, % "x366 y65 +BackgroundTrans Section +center vMCurrentCycle" (PlanterMode == 1 ? "" : " Hidden"), Current`nPlanter`nCycle
 Loop, 3 {
-	Gui, Add, Text, % ((A_Index = 1) ? "x361 y78" : "xs ys+16") "w200 +BackgroundTrans Section vMSlot" A_Index "CycleText" (PlanterMode == 1 ? "" : " Hidden"), % "Slot " A_Index ": Cycle " PlanterManualCycle%A_Index%
-	Gui, Add, Button, % "x461 ys-2 w15 h16 +Center vMSlot" A_Index "Left gmp_Slot" A_Index "ChangeLeft Disabled" (PlanterMode == 1 ? "" : " Hidden"), —
-	Gui, Add, Button, % "x+2 ys-2 w15 h16 +Center vMSlot" A_Index "Right gmp_Slot" A_Index "ChangeRight Disabled" (PlanterMode == 1 ? "" : " Hidden"), +
+	Gui, Add, Text, % ((A_Index = 1) ? "x415 y63" : "x415 ys+16") "w200 +BackgroundTrans Section" (PlanterMode == 1 ? "" : " Hidden"), % "Slot " A_Index ": " 
+	Gui, Add, Text, % ((A_Index = 1) ? "x469 y63" : "x469 ys") "w200 +BackgroundTrans Section vMSlot" A_Index "CycleText" (PlanterMode == 1 ? "" : " Hidden"), % PlanterManualCycle%A_Index%
+	Gui, Add, Button, % "x455 ys w11 h14 +Center vMSlot" A_Index "Left gmp_Slot" A_Index "ChangeLeft Disabled" (PlanterMode == 1 ? "" : " Hidden"), <
+	Gui, Add, Button, % "x477 ys w11 h14 +Center vMSlot" A_Index "Right gmp_Slot" A_Index "ChangeRight Disabled" (PlanterMode == 1 ? "" : " Hidden"), >
 }
 
 Gui, Add, Text, % "x355 y23 h215 w1 0x7 vMSectionSeparatorLine" (PlanterMode == 1 ? "" : " Hidden")
 Gui, Add, Text, % "x355 y58 h1 w150 0x7 vMSliderSeparatorLine" (PlanterMode == 1 ? "" : " Hidden")
 
 ; disable automatic harvest
-Gui, Add, Text, % "x355 y128 h1 w150 0x7 Section vMPuffModeSeparatorLine" (PlanterMode == 1 ? "" : " Hidden")
+Gui, Add, Text, % "x355 y112 h1 w150 0x7 Section vMPuffModeSeparatorLine" (PlanterMode == 1 ? "" : " Hidden")
 Gui, Add, Checkbox, % "xs+5 ys+4 w150 h16 +BackgroundTrans vMPuffModeA gmp_MPuffMode Section Disabled Checked" MPuffModeA ((PlanterMode = 1) ? "" : " Hidden"), Disable Auto-Harvest
 Gui, Add, Text, % "xs+16 ys+16 vMPuffModeText " (PlanterMode == 1 ? "" : " Hidden"), Slots:
 Gui, Add, Checkbox, % "xs+46 yp-1 w24 h16 +BackgroundTrans vMPuffMode1 gmp_SaveConfig Disabled Checked" MPuffMode1 ((PlanterMode = 1) ? "" : " Hidden"), 1
 Gui, Add, Checkbox, % "xs+70 yp w24 h16 +BackgroundTrans vMPuffMode2 gmp_SaveConfig Disabled Checked" MPuffMode2 ((PlanterMode = 1) ? "" : " Hidden"), 2
 Gui, Add, Checkbox, % "xs+95 yp w24 h16 +BackgroundTrans vMPuffMode3 gmp_SaveConfig Disabled Checked" MPuffMode3 ((PlanterMode = 1) ? "" : " Hidden"), 3
-Gui, Add, Button, % "x481 yp+1 w12 h14 gnm_MPuffModeHelp vMPuffModeHelp Disabled" ((PlanterMode = 1) ? "" : " Hidden"), ?
+Gui, Add, Button, % "x484 yp+1 w11 h14 gnm_MPuffModeHelp vMPuffModeHelp Disabled" ((PlanterMode = 1) ? "" : " Hidden"), ?
 
 ; gather in planter field and slots
-Gui, Add, Text, % "x355 y165 h1 w156 0x7 Section vMGatherSeparatorLine" (PlanterMode == 1 ? "" : " Hidden")
+Gui, Add, Text, % "x355 y149 h1 w156 0x7 Section vMGatherSeparatorLine" (PlanterMode == 1 ? "" : " Hidden")
 Gui, Add, Checkbox, % "xs+5 ys+4 w150 h16 +BackgroundTrans vMPlanterGatherA gmp_MPlanterGatherSwitch_ Section Disabled Checked" MPlanterGatherA ((PlanterMode = 1) ? "" : " Hidden"), Gather in Planter Fields
 Gui, Add, Text, % "xs+16 ys+16 vMPlanterGatherText " (PlanterMode == 1 ? "" : " Hidden"), Slots:
 Gui, Add, Checkbox, % "xs+46 yp-1 w24 h16 +BackgroundTrans vMPlanterGather1 gmp_SaveConfig Disabled Checked" MPlanterGather1 ((PlanterMode = 1) ? "" : " Hidden"), 1
 Gui, Add, Checkbox, % "xs+70 yp w24 h16 +BackgroundTrans vMPlanterGather2 gmp_SaveConfig Disabled Checked" MPlanterGather2 ((PlanterMode = 1) ? "" : " Hidden"), 2
 Gui, Add, Checkbox, % "xs+95 yp w24 h16 +BackgroundTrans vMPlanterGather3 gmp_SaveConfig Disabled Checked" MPlanterGather3 ((PlanterMode = 1) ? "" : " Hidden"), 3
-Gui, Add, Button, % "x481 yp+1 w12 h14 gnm_MPlanterGatherHelp vMPlanterGatherHelp Disabled" ((PlanterMode = 1) ? "" : " Hidden"), ?
+Gui, Add, Button, % "x484 yp+1 w11 h14 gnm_MPlanterGatherHelp vMPlanterGatherHelp Disabled" ((PlanterMode = 1) ? "" : " Hidden"), ?
 
 ; harvest every interval
-Gui, Add, Text, % "x355 y202 h1 w150 0x7 Section vMPageSeparatorLine" (PlanterMode == 1 ? "" : " Hidden")
-Gui, Add, Text, % "xs+9 ys+3 vMHarvestText Section" (PlanterMode == 1 ? "" : " Hidden"), Harvest every
-Gui, Add, Text, % "x374 ys+15 w48 vMHarvestInterval +Center +BackgroundTrans " ((PlanterMode = 1) ? "" : " Hidden"),%MHarvestInterval%
-Gui, Add, Button, % "x361 ys+15 w15 h16 gnm_MHarvestInterval hwndhMHILeft Disabled" ((PlanterMode = 1) ? "" : " Hidden"), <
-Gui, Add, Button, % "x420 ys+15 w15 h16 gnm_MHarvestInterval hwndhMHIRight Disabled" ((PlanterMode = 1) ? "" : " Hidden"), >
-;Gui, Add, DropdownList, % "x374 ys+12 w60 vMHarvestInterval gmp_SaveConfig Disabled" (PlanterMode == 1 ? "" : " Hidden"), % StrReplace("30 min|Hour|2 hours|3 hours|4 hours|5 hours|6 hours|", MHarvestInterval, MHarvestInterval "|")
+Gui, Add, Text, % "x355 y186 h1 w150 0x7 Section vMPageSeparatorLine" (PlanterMode == 1 ? "" : " Hidden")
+Gui, Add, Checkbox, % "x360 ys+4 w138 h13 vMConvertFullBagHarvest gmp_SaveConfig Disabled Checked" MConvertFullBagHarvest ((PlanterMode = 1) ? "" : " Hidden"), Convert Full Bag Harvest
+Gui, Add, Text, % "xs+6 ys+19 vMHarvestText Section" (PlanterMode == 1 ? "" : " Hidden"), Harvest every
+Gui, Add, Text, % "xs+65 ys w48 vMHarvestInterval +Center +BackgroundTrans " ((PlanterMode = 1) ? "" : " Hidden"),%MHarvestInterval% 
+Gui, Add, Button, % "x471 ys w11 h14 gnm_MHarvestInterval hwndhMHILeft Disabled" ((PlanterMode = 1) ? "" : " Hidden"), < 
+Gui, Add, Button, % "x484 ys w11 h14 gnm_MHarvestInterval hwndhMHIRight Disabled" ((PlanterMode = 1) ? "" : " Hidden"), >
 
 SetLoadingProgress(99)
 
 ; page movement
-Gui, Add, Text, % "x460 ys vMPageNumberText" (PlanterMode == 1 ? "" : " Hidden"), % "Page " (MPageIndex := 1) ;
-Gui, Add, Button, % "x461 ys+15 w15 h16 hwndMPageLeftHWND vMPageLeft gmp_UpdatePage Disabled" (PlanterMode == 1 ? "" : " Hidden"), <
-Gui, Add, Button, % "x+2 ys+15 w15 h16 hwndMPageRightHWND vMPageRight gmp_UpdatePage Disabled" (PlanterMode == 1 ? "" : " Hidden"), >
+Gui, Add, Text, % "x395 ys+16 vMPageNumberText" (PlanterMode == 1 ? "" : " Hidden"), % "Page " (MPageIndex := 1) 
+Gui, Add, Button, % "xp+36 ys+16 w11 h14 hwndMPageLeftHWND vMPageLeft gmp_UpdatePage Disabled" (PlanterMode == 1 ? "" : " Hidden"), <
+Gui, Add, Button, % "xp+13 ys+16 w11 h14 hwndMPageRightHWND vMPageRight gmp_UpdatePage Disabled" (PlanterMode == 1 ? "" : " Hidden"), >
 
 mp_UpdatePage(hwnd:=0)
 {
@@ -2983,6 +2985,8 @@ mp_SaveConfig() {
 	GuiControlGet, MPlanterGather2
 	GuiControlGet, MPlanterGather3
 
+	GuiControlGet, MConvertFullBagHarvest
+
 	Loop, 3 {
 		i := A_Index
 		Loop, 9 {
@@ -3016,6 +3020,7 @@ mp_SaveConfig() {
 	IniWrite, %MPlanterGather1%, settings\nm_config.ini, Planters, MPlanterGather1
 	IniWrite, %MPlanterGather2%, settings\nm_config.ini, Planters, MPlanterGather2
 	IniWrite, %MPlanterGather3%, settings\nm_config.ini, Planters, MPlanterGather3
+	IniWrite, %MConvertFullBagHarvest%, settings\nm_config.ini, Planters, MConvertFullBagHarvest
 	
 	mp_UpdateControls()
 
@@ -3039,7 +3044,7 @@ mp_UpdateCycles() {
 
 		GuiControl, % (PlanterManualCycle%i% != 1 ? "Enable" : "Disable"), MSlot%i%Left
 		GuiControl, % (PlanterManualCycle%i% < MSlot%i%MaxCycle ? "Enable" : "Disable"), MSlot%i%Right
-		GuiControl,, MSlot%i%CycleText, % "Slot " i ": Cycle " PlanterManualCycle%i%
+		GuiControl,, MSlot%i%CycleText, % PlanterManualCycle%i%
 	}
 }
 
@@ -3588,6 +3593,13 @@ mp_HarvestPlanter(PlanterIndex) {
 		sleep, 1000
 		nm_Move(1500*round(18/MoveSpeedNum, 2), BackKey, RightKey)
 		nm_loot(9, 5, "left")
+		if ((MConvertFullBagHarvest = 1) && (BackpackPercent >= 95))
+			{
+				;nm_setStatus("Holding", "Inside if MConvertFullBagHarvest=1 && BackpackPercent>=95 " (MPlanterName . " (" . MFieldName . ")")) ; //testing
+				nm_walkFrom(MFieldName)
+				DisconnectCheck()
+				nm_findHiveSlot()
+			}
 		return 1
 	}
 }
@@ -8840,7 +8852,7 @@ nm_TabPlantersLock(){
 	GuiControl, disable, % hMHILeft
 	GuiControl, disable, % hMHIRight
 	Static ManualPlantersControls := ["MPageLeft", "MPageRight", "MSlot1Left", "MSlot1Right", "MSlot2Left", "MSlot2Right", "MSlot3Left", "MSlot3Right"
-	, "MPuffModeA", "MPuffMode1", "MPuffMode2", "MPuffMode3", "MPuffModeHelp", "MPlanterGatherA", "MPlanterGather1", "MPlanterGather2", "MPlanterGather3", "MPlanterGatherHelp"
+	, "MPuffModeA", "MPuffMode1", "MPuffMode2", "MPuffMode3", "MPuffModeHelp", "MPlanterGatherA", "MPlanterGather1", "MPlanterGather2", "MPlanterGather3", "MPlanterGatherHelp", "MConvertFullBagHarvest"
 	, "MSlot1Cycle1Planter", "MSlot1Cycle2Planter", "MSlot1Cycle3Planter", "MSlot1Cycle4Planter", "MSlot1Cycle5Planter", "MSlot1Cycle6Planter", "MSlot1Cycle7Planter", "MSlot1Cycle8Planter", "MSlot1Cycle9Planter"
 	, "MSlot1Cycle1Field", "MSlot1Cycle2Field", "MSlot1Cycle3Field", "MSlot1Cycle4Field", "MSlot1Cycle5Field", "MSlot1Cycle6Field", "MSlot1Cycle7Field", "MSlot1Cycle8Field", "MSlot1Cycle9Field"
 	, "MSlot1Cycle1Glitter", "MSlot1Cycle2Glitter", "MSlot1Cycle3Glitter", "MSlot1Cycle4Glitter", "MSlot1Cycle5Glitter", "MSlot1Cycle6Glitter", "MSlot1Cycle7Glitter", "MSlot1Cycle8Glitter", "MSlot1Cycle9Glitter"
@@ -8916,6 +8928,7 @@ nm_TabPlantersUnLock(){
 	GuiControl, enable, MPuffModeHelp
 	GuiControl, enable, MPlanterGatherA
 	GuiControl, enable, MPlanterGatherHelp
+	GuiControl, enable, MConvertFullBagHarvest
 	mp_UpdatePage()
 	mp_UpdateControls()
 }
@@ -19975,7 +19988,7 @@ ba_planterSwitch(){
 	global
 	static PlantersPlusControls := ["N1Priority","N2Priority","N3Priority","N4Priority","N5Priority","N1MinPercent","N2MinPercent","N3MinPercent","N4MinPercent","N5MinPercent","N1MinPercentUpDown","N2MinPercentUpDown","N3MinPercentUpDown","N4MinPercentUpDown","N5MinPercentUpDown","DandelionFieldCheck","SunflowerFieldCheck","MushroomFieldCheck","BlueFlowerFieldCheck","CloverFieldCheck","SpiderFieldCheck","StrawberryFieldCheck","BambooFieldCheck","PineappleFieldCheck","StumpFieldCheck","PumpkinFieldCheck","PineTreeFieldCheck","RoseFieldCheck","MountainTopFieldCheck","CactusFieldCheck","CoconutFieldCheck","PepperFieldCheck","Text1","Text2","Text3","Text4","Text5","TextLine1","TextLine2","TextLine3","TextLine4","TextLine5","TextLine6","TextLine7","TextZone1","TextZone2","TextZone3","TextZone4","TextZone5","TextZone6","NPreset","TextPresets","TextNp","TextMin","PlasticPlanterCheck","CandyPlanterCheck","BlueClayPlanterCheck","RedClayPlanterCheck","TackyPlanterCheck","PesticidePlanterCheck","HeatTreatedPlanterCheck","HydroponicPlanterCheck","PetalPlanterCheck","PlanterOfPlentyCheck","PaperPlanterCheck","TicketPlanterCheck","TextHarvest","HarvestFullGrown","gotoPlanterField","gatherFieldSipping","TextHours","TextMax","MaxAllowedPlanters","MaxAllowedPlantersText","TextAllowedPlanters","TextAllowedFields","TimersButton","AutomaticHarvestInterval","ConvertFullBagHarvest","GatherPlanterLoot","TextBox1"]
 	, PlantersPlusControlsH := ["hNPLeft","hNPRight","hNP1Left","hNP1Right","hNP2Left","hNP2Right","hNP3Left","hNP3Right","hNP4Left","hNP4Right","hNP5Left","hNP5Right"]
-	, ManualPlantersControls := ["MHeader1Text","MHeader2Text","MHeader3Text","MSlot1PlanterText","MSlot1FieldText","MSlot1SettingsText","MSlot1SeparatorLine","MSlot2PlanterText","MSlot2FieldText","MSlot2SettingsText","MSlot2SeparatorLine","MSlot3PlanterText","MSlot3FieldText","MSlot3SettingsText","MSectionSeparatorLine","MSliderSeparatorLine","MSlot1CycleText","MSlot1LocationText","MSlot1Left","MSlot1ChangeText","MSlot1Right","MSlot2CycleText","MSlot2LocationText","MSlot2Left","MSlot2ChangeText","MSlot2Right","MSlot3CycleText","MSlot3LocationText","MSlot3Left","MSlot3ChangeText","MSlot3Right","MCurrentCycle","MHarvestText","MHarvestInterval","MPageSeparatorLine","MPageLeft","MPageNumberText","MPageRight", "MPuffModeSeparatorLine", "MPuffModeHelp", "MPuffModeText", "MPuffModeA", "MPuffMode1", "MPuffMode2", "MPuffMode3", "MGatherSeparatorLine", "MPlanterGatherHelp", "MPlanterGatherText", "MPlanterGatherA", "MPlanterGather1", "MPlanterGather2", "MPlanterGather3"]
+	, ManualPlantersControls := ["MHeader1Text","MHeader2Text","MHeader3Text","MSlot1PlanterText","MSlot1FieldText","MSlot1SettingsText","MSlot1SeparatorLine","MSlot2PlanterText","MSlot2FieldText","MSlot2SettingsText","MSlot2SeparatorLine","MSlot3PlanterText","MSlot3FieldText","MSlot3SettingsText","MSectionSeparatorLine","MSliderSeparatorLine","MSlot1CycleText","MSlot1LocationText","MSlot1Left","MSlot1ChangeText","MSlot1Right","MSlot2CycleText","MSlot2LocationText","MSlot2Left","MSlot2ChangeText","MSlot2Right","MSlot3CycleText","MSlot3LocationText","MSlot3Left","MSlot3ChangeText","MSlot3Right","MCurrentCycle","MHarvestText","MHarvestInterval","MPageSeparatorLine","MPageLeft","MPageNumberText","MPageRight", "MPuffModeSeparatorLine", "MPuffModeHelp", "MPuffModeText", "MPuffModeA", "MPuffMode1", "MPuffMode2", "MPuffMode3", "MGatherSeparatorLine", "MPlanterGatherHelp", "MPlanterGatherText", "MPlanterGatherA", "MPlanterGather1", "MPlanterGather2", "MPlanterGather3", "MConvertFullBagHarvest"]
 	, ManualPlantersControlsH := ["hMHILeft","hMHIRight"]
 	, ManualPlantersOptions := ["Planter","Field","Glitter","AutoFull"]
 	local i, c, k, v, Prev_DetectHiddenWindows, Prev_TitleMatchMode
