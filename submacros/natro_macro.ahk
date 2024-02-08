@@ -3160,11 +3160,11 @@ nm_planterSS(){
 			sendinput {%ZoomIn% 2}
 
 			; fields where the view is initially obstructed
-			If (PlanterField%A_Index% = "Rose") {
+			If ((PlanterField%A_Index% = "Rose") || (PlanterField%A_Index% = "Mountain Top")) {
 				sleep, 200
 				sendinput {%RotRight% 3}
 			}
-			If (PlanterField%A_Index% = "Bamboo") || (PlanterField%A_Index% = "Rose") || (PlanterField%A_Index% = "Cactus") {
+			If ((PlanterField%A_Index% = "Bamboo") || (PlanterField%A_Index% = "Rose") || (PlanterField%A_Index% = "Cactus") || (PlanterField%A_Index% = "Mountain Top")) {
 				loop, 3 {
 					sleep, 200
 					sendinput {%ZoomOut% 2}
@@ -3636,6 +3636,12 @@ mp_HarvestPlanter(PlanterIndex) {
 		nm_loot(9, 5, "left")
 		if ((MConvertFullBagHarvest = 1) && (BackpackPercent >= 95))
 			{
+				; loot path end location for some fields prevents successful return to hive
+				If (MFieldName = "Cactus") || (MFieldName = "Sunflower") {
+					sleep, 200
+					nm_Move(1500*round(18/MoveSpeedNum, 6), RightKey)
+					sleep, 200
+				}
 				;nm_setStatus("Holding", "Inside if MConvertFullBagHarvest=1 && BackpackPercent>=95 " (MPlanterName . " (" . MFieldName . ")")) ; //testing
 				nm_walkFrom(MFieldName)
 				DisconnectCheck()
@@ -20400,6 +20406,7 @@ ba_planter(){
 	global SunflowerFieldCheck
 	global VBState
 	global MondoBuffCheck, PMondoGuid, LastGuid, MondoAction, LastMondoBuff
+	global PlanterSS1, PlanterSS1, PlanterSS1
 	global MPlanterHold1, MPlanterHold2, MPlanterHold3
 	global MPlanterSmoking1, MPlanterSmoking2, MPlanterSmoking3
 	loop, 3 {
@@ -21409,7 +21416,7 @@ ba_placePlanter(fieldName, planter, planterNum, atField:=0){
 	return 1
 }
 ba_harvestPlanter(planterNum){
-	global PlanterName1, PlanterName2, PlanterName3, PlanterField1, PlanterField2, PlanterField3, PlanterHarvestTime1, PlanterHarvestTime2, PlanterHarvestTime3, PlanterNectar1, PlanterNectar2, PlanterNectar3, PlanterEstPercent1, PlanterEstPercent2, PlanterEstPercent3, BackKey, RightKey, objective, TotalPlantersCollected, SessionPlantersCollected, HarvestFullGrown, ConvertFullBagHarvest, GatherPlanterLoot, BackpackPercent, bitmaps, SC_E, HiveBees, PlanterHarvestNow1, PlanterHarvestNow2, PlanterHarvestNow3
+	global PlanterName1, PlanterName2, PlanterName3, PlanterField1, PlanterField2, PlanterField3, PlanterHarvestTime1, PlanterHarvestTime2, PlanterHarvestTime3, PlanterNectar1, PlanterNectar2, PlanterNectar3, PlanterEstPercent1, PlanterEstPercent2, PlanterEstPercent3, BackKey, RightKey, objective, TotalPlantersCollected, SessionPlantersCollected, HarvestFullGrown, ConvertFullBagHarvest, GatherPlanterLoot, BackpackPercent, bitmaps, SC_E, HiveBees, MoveSpeedNum, PlanterHarvestNow1, PlanterHarvestNow2, PlanterHarvestNow3
 
 	if(CurrentAction!="Planters"){
 		PreviousAction:=CurrentAction
@@ -21556,6 +21563,14 @@ ba_harvestPlanter(planterNum){
 		}
 		if ((ConvertFullBagHarvest = 1) && (BackpackPercent >= 95))
 		{
+			; loot path end location for some fields prevents successful return to hive
+			If (GatherPlanterLoot = 1) {
+				If (fieldname = "Cactus") || (fieldname = "Sunflower") {
+					sleep, 200
+					nm_Move(1500*round(18/MoveSpeedNum, 8), RightKey)
+					sleep, 200
+				}
+			}
 			nm_walkFrom(fieldName)
 			DisconnectCheck()
 			nm_findHiveSlot()
