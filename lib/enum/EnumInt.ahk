@@ -246,9 +246,9 @@
 	, "MPlanterGather3"
 	, "MPuffModeA"
 	, "MPuffMode1"
-	, "MPuffMode2"]
-arr2 := arr.Push("MPuffMode3" ; 250
-	, "BlueFlowerBoosterCheck" ; 251
+	, "MPuffMode2"
+	, "MPuffMode3"
+	, "BlueFlowerBoosterCheck"
 	, "BambooBoosterCheck"
 	, "PineTreeBoosterCheck"
 	, "DandelionBoosterCheck"
@@ -276,4 +276,4 @@ arr2 := arr.Push("MPuffMode3" ; 250
 	, "StickerStackHive"
 	, "StickerStackCub"
 	, "QuestBoostCheck"
-	, "MConvertFullBagHarvest")
+	, "MConvertFullBagHarvest"]
