@@ -661,7 +661,7 @@ nm_honey()
 
 	if HoneyUpdate
 	{
-		payload_json := '{"embeds": [{"color": "' HoneyUpdate '", "image": {"url": "attachment://honey.png"}}], "attachments": []}'
+		payload_json := '{"embeds": [{"description": "[' A_Hour ':' A_Min ':' A_Sec '] Current Honey/Pollen", "color": "' HoneyUpdate '", "image": {"url": "attachment://honey.png"}}], "attachments": []}'
 		discord.CreateFormData(&postdata, &contentType
 			, [Map("name","payload_json", "content-type","application/json", "content",payload_json)
 			, Map("name","files[0]", "filename","honey.png", "content-type","image/png", "pBitmap",pBM:=CreateHoneyBitmap())])
