@@ -2377,7 +2377,7 @@ SetLoadingProgress(26)
 ; CREDITS TAB
 ; ------------------------
 TabCtrl.UseTab("Credits")
-MainGui.Add("Picture", "+BackgroundTrans vContributorsDevImage x5 y24 AltSubmit").OnEvent("Click", nm_ContributorsDiscordLink)
+MainGui.Add("Picture", "+BackgroundTrans vContributorsDevImage x5 y24 AltSubmit")
 MainGui.Add("Picture", "+BackgroundTrans vContributorsImage x253 y24 AltSubmit")
 
 MainGui.SetFont("w700")
@@ -2385,7 +2385,7 @@ MainGui.Add("Text", "x15 y28 w225 +wrap +backgroundtrans cWhite", "Development")
 MainGui.Add("Text", "x261 y28 w225 +wrap +backgroundtrans cWhite", "Supporters")
 
 MainGui.SetFont("s8 cDefault Norm", "Tahoma")
-MainGui.Add("Text", "x18 y43 w225 +wrap +backgroundtrans cWhite", "Special Thanks to the developers and testers!")
+MainGui.Add("Text", "x18 y43 w225 +wrap +backgroundtrans cWhite", "Special Thanks to the developers and testers!`nClick the names to view their Discord profiles!")
 MainGui.Add("Text", "x264 y43 w180 +wrap +backgroundtrans cWhite", "Thank you for your donations and contributions to this project!")
 
 MainGui.Add("Button", "x440 y46 w18 h18 vContributorsLeft Disabled", "<").OnEvent("Click", nm_ContributorsPageButton)
@@ -8247,34 +8247,35 @@ nm_ContributorsImage(page:=1, contributors:=""){
 		, colorArr := Map("blue", [0xff83c6e2, 0xff2779d8, 0xff83c6e2]
 			, "gold", [0xfff0ca8f, 0xffd48d22, 0xfff0ca8f]
 			, "red", [0xffA82428, 0xffA82428, 0xffA82428])
-	global hContributorsDevImage, hContributorsImage, hcleft, hcright, MainGui
 	local pBM1, pBM2, pBM3, pBM4, pBM5, pBM6, pBM7, pBM8, pBM9, pBM10
 	, pBM11, pBM12, pBM13, pBM14, pBM15, pBM16, pBM17, pBM18, pBM19, pBM20 ; 20 pages max
 
 	if !IsSet(hBM1)
 	{
-		devs := [["bastianauryn",0xffa202c0]
-			, ["zez_",0xff7df9ff]
-			, ["ScriptingNoob",0xfffa01c5]
-			, ["zaappiix",0xffa2a4a3]
-			, ["xspx",0xfffc6600]
-			, ["BlackBeard6#2691",0xff8780ff]
-			, ["baguetto",0xff3d85c6]
-			, ["raychal71",0xffb7c9e2]]
+		devs := [["bastianauryn",0xffa202c0,"779430642043191307"]
+			, ["zez_",0xff7df9ff,"253742141124116481"]
+			, ["ScriptingNoob",0xfffa01c5,"245481556355973121"]
+			, ["zaappiix",0xffa2a4a3,"747945550888042537"]
+			, ["xspx",0xfffc6600,"240431161191432193"]
+			, ["SuperDadof6 ❤",0xff8780ff,"278608676296589313"]
+			, ["baguetto",0xff3d85c6,"323507959957028874"]
+			, ["raychal71",0xffb7c9e2,"259441167068954624"]
+			, ["axetar",0xffec8fd0,"487989990937198602"]
+			, ["mis.c",0xffa174fe,"996025853286817815"]]
 
-		testers := [["fhl09",0xffff00ff]
-			, ["ziz_jake",0xffa45ee9]
-			, ["nick9",0xffdfdfdf]
-			, ["heatsky",0xff3f8d4d]
-			, ["valibreaz",0xff7aa22c]
-			, ["randomuserhere",0xff2bc016]
-			, ["crazyrocketman_",0xffffdc64]
-			, ["chaxe",0xff794044]
-			, ["_phucduc_",0xffffde48]
-			, ["anniespony",0xff0096ff]
-			, ["idote",0xfff47fff]
-			, ["axetar",0xffec8fd0]
-			, ["mahirishere",0xffa3bded]]
+		testers := [["fhl09",0xffff00ff,"334634052361650177"]
+			, ["ziz_jake",0xffa45ee9,"227604929806729217"]
+			, ["nick9",0xffdfdfdf,"700353887512690759"]
+			, ["heatsky",0xff3f8d4d,"725444258835726407"]
+			, ["valibreaz",0xff7aa22c,"244504077579452417"]
+			, ["randomuserhere",0xff2bc016,"744072472890179665"]
+			, ["crazyrocketman_",0xffffdc64,"720088699475591180"]
+			, ["chaxe",0xff794044,"529089693749608468"]
+			, ["_phucduc_",0xffffde48,"710486399744475136"]
+			, ["anniespony",0xff0096ff,"217700684835979265"]
+			, ["idote",0xfff47fff,"350433227380621322"]
+			, ["mahirishere",0xffa3bded,"724740667158429747"]
+			, ["Pinwheel",0xfff49fbc,"849962858774003712"]]
 
 		pBM := Gdip_CreateBitmap(244,212)
 		G := Gdip_GraphicsFromImage(pBM)
@@ -8285,33 +8286,48 @@ nm_ContributorsImage(page:=1, contributors:=""){
 		Gdip_FillRoundedRectangle(G, pBrush, 0, 0, 242, 210, 5)
 		Gdip_DeleteBrush(pBrush)
 
-		pos := Gdip_TextToGraphics(G, "Dev Team", "s12 x6 y35 Bold cff000000", "Tahoma", , , 1)
-		pBrush := Gdip_CreateLinearGrBrushFromRect(6, 35, SubStr(pos, InStr(pos, "|", , , 2)+1, InStr(pos, "|", , , 3)-InStr(pos, "|", , , 2)-1)+2, 14, 0x00000000, 0x00000000, 2)
+		x := 5, y := 50
+		pos := Gdip_TextToGraphics(G, "Developers", "s12 x" x + 1 " y" y " Bold cff000000", "Tahoma", , , 1)
+		pBrush := Gdip_CreateLinearGrBrushFromRect(x + 1, y, SubStr(pos, InStr(pos, "|", , , 2)+1, InStr(pos, "|", , , 3)-InStr(pos, "|", , , 2)-1)+2, 14, 0x00000000, 0x00000000, 2)
 		Gdip_SetLinearGrBrushPresetBlend(pBrush, [0.0, 0.5, 1], [0xfff0ca8f, 0xffd48d22, 0xfff0ca8f])
-		Gdip_FillRoundedRectangle(G, pBrush, 6, 35, SubStr(pos, InStr(pos, "|", , , 2)+1, InStr(pos, "|", , , 3)-InStr(pos, "|", , , 2)-1), 14, 4)
+		Gdip_FillRoundedRectangle(G, pBrush, x + 1, y, SubStr(pos, InStr(pos, "|", , , 2)+1, InStr(pos, "|", , , 3)-InStr(pos, "|", , , 2)-1), 14, 4)
 		Gdip_DeleteBrush(pBrush)
-		Gdip_TextToGraphics(G, "Dev Team", "s12 x7 y35 r4 Bold cff000000", "Tahoma")
+		Gdip_TextToGraphics(G, "Developers", "s12 x" x + 2 " y" y " r4 Bold cff000000", "Tahoma")
 
-		pos := Gdip_TextToGraphics(G, "Testers", "s12 x126 y35 Bold cff000000", "Tahoma", , , 1)
-		pBrush := Gdip_CreateLinearGrBrushFromRect(126, 35, SubStr(pos, InStr(pos, "|", , , 2)+1, InStr(pos, "|", , , 3)-InStr(pos, "|", , , 2)-1), 14, 0x00000000, 0x00000000, 2)
-		Gdip_SetLinearGrBrushPresetBlend(pBrush, [0.0, 0.5, 1], [0xfff0ca8f, 0xffd48d22, 0xfff0ca8f])
-		Gdip_FillRoundedRectangle(G, pBrush, 126, 35, SubStr(pos, InStr(pos, "|", , , 2)+1, InStr(pos, "|", , , 3)-InStr(pos, "|", , , 2)-1)+1, 14, 4)
-		Gdip_DeleteBrush(pBrush)
-		Gdip_TextToGraphics(G, "Testers", "s12 x127 y35 r4 Bold cff000000", "Tahoma")
-
-		for k,v in devs
+		y += 16
+		for v in devs
 		{
-			pBrush := Gdip_CreateLinearGrBrushFromRect(0, 52+(k-1)*12, 242, 12, 0xff000000 + (Min(Round(Gdip_RFromARGB(v[2])*1.2), 255) << 16) + (Min(Round(Gdip_GFromARGB(v[2])*1.2), 255) << 8) + Min(Round(Gdip_BFromARGB(v[2])*1,2), 255)
+			pos := Gdip_TextToGraphics(G, v[1], "s11", "Tahoma", , , 1)
+			if (x + (w := Number(SubStr(pos, InStr(pos, "|", , , 2)+1, InStr(pos, "|", , , 3)-InStr(pos, "|", , , 2)-1))) > 239)
+				x := 5, y += 13
+			pBrush := Gdip_CreateLinearGrBrushFromRect(0, y + 1, 242, 12, 0xff000000 + (Min(Round(Gdip_RFromARGB(v[2])*1.2), 255) << 16) + (Min(Round(Gdip_GFromARGB(v[2])*1.2), 255) << 8) + Min(Round(Gdip_BFromARGB(v[2])*1,2), 255)
 				, 0xff000000 + (Min(Round(Gdip_RFromARGB(v[2])*0.9), 255) << 16) + (Min(Round(Gdip_GFromARGB(v[2])*0.9), 255) << 8) + Min(Round(Gdip_BFromARGB(v[2])*0.9), 255)), pPen := Gdip_CreatePenFromBrush(pBrush,1)
-			Gdip_DrawOrientedString(G, v[1], "Tahoma", 11, 0, 5, 51+(k-1)*12, 130, 10, 0, pBrush, pPen)
+			Gdip_DrawOrientedString(G, v[1], "Tahoma", 11, 0, x, y, 130, 10, 0, pBrush, pPen)
 			Gdip_DeletePen(pPen), Gdip_DeleteBrush(pBrush)
+			v.Push([x, y, x + w, y + 12])
+			x += w + 4
 		}
-		for k,v in testers
+
+		x := 5, y += 19
+		pos := Gdip_TextToGraphics(G, "Testers", "s12 x" x + 1 " y" y " Bold cff000000", "Tahoma", , , 1)
+		pBrush := Gdip_CreateLinearGrBrushFromRect(x + 1, y, SubStr(pos, InStr(pos, "|", , , 2)+1, InStr(pos, "|", , , 3)-InStr(pos, "|", , , 2)-1), 14, 0x00000000, 0x00000000, 2)
+		Gdip_SetLinearGrBrushPresetBlend(pBrush, [0.0, 0.5, 1], [0xfff0ca8f, 0xffd48d22, 0xfff0ca8f])
+		Gdip_FillRoundedRectangle(G, pBrush, x + 1, y, SubStr(pos, InStr(pos, "|", , , 2)+1, InStr(pos, "|", , , 3)-InStr(pos, "|", , , 2)-1)+1, 14, 4)
+		Gdip_DeleteBrush(pBrush)
+		Gdip_TextToGraphics(G, "Testers", "s12 x" x + 2 " y" y " r4 Bold cff000000", "Tahoma")
+
+		y += 16
+		for v in testers
 		{
-			pBrush := Gdip_CreateLinearGrBrushFromRect(0, 52+(k-1)*12, 242, 12, 0xff000000 + (Min(Round(Gdip_RFromARGB(v[2])*1.2), 255) << 16) + (Min(Round(Gdip_GFromARGB(v[2])*1.2), 255) << 8) + Min(Round(Gdip_BFromARGB(v[2])*1.2), 255)
+			pos := Gdip_TextToGraphics(G, v[1], "s11", "Tahoma", , , 1)
+			if (x + (w := Number(SubStr(pos, InStr(pos, "|", , , 2)+1, InStr(pos, "|", , , 3)-InStr(pos, "|", , , 2)-1))) > 239)
+				x := 5, y += 13
+			pBrush := Gdip_CreateLinearGrBrushFromRect(0, y + 1, 242, 12, 0xff000000 + (Min(Round(Gdip_RFromARGB(v[2])*1.2), 255) << 16) + (Min(Round(Gdip_GFromARGB(v[2])*1.2), 255) << 8) + Min(Round(Gdip_BFromARGB(v[2])*1.2), 255)
 				, 0xff000000 + (Min(Round(Gdip_RFromARGB(v[2])*0.9), 255) << 16) + (Min(Round(Gdip_GFromARGB(v[2])*0.9), 255) << 8) + Min(Round(Gdip_BFromARGB(v[2])*0.9), 255)), pPen := Gdip_CreatePenFromBrush(pBrush,1)
-			Gdip_DrawOrientedString(G, v[1], "Tahoma", 11, 0, 125, 51+(k-1)*12, 130, 10, 0, pBrush, pPen)
+			Gdip_DrawOrientedString(G, v[1], "Tahoma", 11, 0, x, y, 130, 10, 0, pBrush, pPen)
 			Gdip_DeletePen(pPen), Gdip_DeleteBrush(pBrush)
+			v.Push([x, y, x + w, y + 12])
+			x += w + 4
 		}
 
 		Gdip_DeleteGraphics(G)
@@ -8319,6 +8335,21 @@ nm_ContributorsImage(page:=1, contributors:=""){
 		hBM := Gdip_CreateHBITMAPFromBitmap(pBM)
 		Gdip_DisposeImage(pBM)
 		MainGui["ContributorsDevImage"].Value := "HBITMAP:*" hBM
+		MainGui["ContributorsDevImage"].OnEvent("Click", nm_ContributorsDiscordLink)
+		nm_ContributorsDiscordLink(GuiCtrl, *){
+			static users := (users := devs.Clone(), users.Push(testers*), users)
+			MouseGetPos &mouse_x, &mouse_y
+			try WinGetClientPos &ctrl_x, &ctrl_y, , , "ahk_id " GuiCtrl.Hwnd
+			x := mouse_x - ctrl_x, y := mouse_y - ctrl_y
+			for v in users
+			{
+				if ((x >= v[4][1]) && (x <= v[4][3]) && (y >= v[4][2]) && (y <= v[4][4]))
+				{
+					nm_RunDiscord("users/" v[3])
+					break
+				}
+			}
+		}
 		DllCall("DeleteObject", "ptr", hBM)
 
 		i := 0
@@ -8385,40 +8416,6 @@ nm_ContributorsImage(page:=1, contributors:=""){
 
 	MainGui["ContributorsLeft"].Enabled := (page != 1)
 	MainGui["ContributorsRight"].Enabled := IsSet(hBM%i%)
-}
-nm_ContributorsDiscordLink(GuiCtrl, *){
-	static id_list := Map("779430642043191307", [6,52,70,62] ;DEV TEAM
-		, "253742141124116481", [6,64,29,74]
-		, "245481556355973121", [6,76,74,86]
-		, "747945550888042537", [6,88,46,98]
-		, "240431161191432193", [6,100,29,110]
-		, "278608676296589313", [6,112,100,122]
-		, "323507959957028874", [6,124,50,134]
-		, "259441167068954624", [6,136,54,146]
-		, "334634052361650177", [126,52,151,62] ;TESTERS || 134 HERE <====================================
-		, "227604929806729217", [126,64,166,74] ;x, y, w, h
-		, "700353887512690759", [126,76,153,86]
-		, "725444258835726407", [126,88,165,98]
-		, "244504077579452417", [126,100,171,110]
-		, "744072472890179665", [126,112,209,122]
-		, "720088699475591180", [126,124,211,134]
-		, "529089693749608468", [126,136,156,146]
-		, "710486399744475136", [126,148,181,158]
-		, "217700684835979265", [126,160,183,170]
-		, "350433227380621322", [126,172,152,182]
-		, "487989990937198602", [126,184,158,194]
-		, "724740667158429747", [126,196,186,206])
-	MouseGetPos &mouse_x, &mouse_y
-	try WinGetClientPos &ctrl_x, &ctrl_y, , , "ahk_id " GuiCtrl.Hwnd
-	x := mouse_x - ctrl_x, y := mouse_y - ctrl_y
-	for k,v in id_list
-	{
-		if ((x >= v[1]) && (x <= v[3]) && (y >= v[2]) && (y <= v[4]))
-		{
-			nm_RunDiscord("users/" k)
-			break
-		}
-	}
 }
 nm_ContributorsPageButton(GuiCtrl, *){
 	static p := 1
