@@ -1959,6 +1959,7 @@ hBitmapsSBT := Map(), hBitmapsSBT.CaseSense := 0
 #Include "sprinkler\bitmaps.ahk"
 #Include "stickerstack\bitmaps.ahk"
 #Include "stickerprinter\bitmaps.ahk"
+#Include OAC\bitmaps.ahk
 
 hBitmapsSB := Map()
 for x,y in hBitmapsSBT
