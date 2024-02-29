@@ -8585,6 +8585,13 @@ nm_Start(){
 	global serverStart := nowUnix()
 	Loop {
 		DisconnectCheck()
+
+
+nm_MemoryMatchOAC(0, 1) ; Normal     Here for testing
+nm_MemoryMatchOAC(0, 2) ; Mega
+nm_MemoryMatchOAC(0, 3) ; Extreme
+
+
 		;vicious/stingers
 		nm_locateVB()
 		;mondo
@@ -20861,13 +20868,13 @@ nm_UpdateGUIVar(var)
 
 nm_MemoryMatchOAC(PriorityItemOAC:=0, MMValue:=0) { ; PriorityItem can be set to a numeric value to prioritize certain bitmap. It will ignore all other pairs until it finds and claims PriorityItem if PriorityItem>0.
 
-	global bitmaps
+	global
+	static MMGameArr:=["Normal", "Mega", "Extreme"]
 
-		MMGameArr:=["Normal", "Mega", "Extreme"]
-		MemoryMatchGame := MMGameArr[MMValue]
+	MemoryMatchGame := MMGameArr[MMValue]
 
-		if (MemoryMatchGame = "Skip") ;This isn't currently used, but needs to be implemented.
-			return
+	if (MemoryMatchGame = "Skip") ;This isn't currently used, but needs to be implemented.
+		return
 
 	loop 2 {
 		nm_reset()
@@ -20881,9 +20888,9 @@ nm_MemoryMatchOAC(PriorityItemOAC:=0, MMValue:=0) { ; PriorityItem can be set to
                 	nm_setStatus("Mem Match", "Found!")
                 	MMFound:=1
                 	sleep 1000
-                	send {e}
+                	send "{e}"
                 	sleep 1000
-                	send {e}
+                	send "{e}"
                 	sleep 1500
                 	Break
                 	} else {
@@ -20901,13 +20908,14 @@ nm_MemoryMatchOAC(PriorityItemOAC:=0, MMValue:=0) { ; PriorityItem can be set to
 	}
 	StoreItemValOAC:=[]
 	loop 20 {
-		StoreItemOAC.push(0)
+		StoreItemValOAC.push(0)
 	}
 
 	Xoffset := (MemoryMatchGame = "Extreme") ? 40 : 0
 	Tiles := (MemoryMatchGame = "Extreme") ? 20 : 16
 
-	WinGetClientPos(windowX, windowY, windowWidth, windowHeight, "ahk_id " GetRobloxHWND())
+	WinGetClientPos &windowX, &windowY, &windowWidth, &windowHeight, GetRobloxHWND()
+
 	middleX := windowX+(windowWidth/2)
 	middleY := windowY+(windowHeight/2)
 
@@ -20924,27 +20932,26 @@ nm_MemoryMatchOAC(PriorityItemOAC:=0, MMValue:=0) { ; PriorityItem can be set to
                 	GridOAC.push(row) 
         	}        
     	}	
-
 	Tile:=0
 	PriorityClaimedOAC:=0
 	MMTempTile1OAC:=0
 	MMTempTile2OAC:=0
 	PairFoundOAC:=0
 	MatchFoundOAC:=0
-	Click:=0
-	Click1:=0
-	Click2:=0
+	ClickNum:=0
+	Chances:=8
 
 	pBMScreen := Gdip_BitmapFromScreen(middleX-275-Xoffset "|" middleY-146 "|100|100") ; Detect Number of Chances
 	Loop 8 {
-    		bitmap:="Chances" . A_Index 
-        	if (Gdip_ImageSearch(pBMScreen, bitmaps[bitmap], pos, , , , , 10, , 2) = 1) {
+    		bitmap:="Chance" . A_Index 
+        	if (Gdip_ImageSearch(pBMScreen, bitmaps[bitmap], &pos, , , , , 10, , 2) = 1) {
         		Chances:=A_Index
         		Break      
         	}
 	}
-	Gdip_DisposeImage(pBMScreen)
 
+	Gdip_DisposeImage(pBMScreen)
+MMfound:=1
 	Loop Chances { ; Numer of available Chances. 
 
 		if(MMFound=0) 
@@ -20965,7 +20972,7 @@ nm_MemoryMatchOAC(PriorityItemOAC:=0, MMValue:=0) { ; PriorityItem can be set to
 		        			Item2 := StoreitemValOAC[j]			
 								
 		        			; Check if either variable is Null or Priority			
-		       			 	if(StoreitemOAC[i] = "" || StoreitemOAC[j] = "" || (PriorityClaimedOAC=0 && PriorityItemOAC>0 && (Item1!=PriorityItemOAC || Item2!=PriorityItemOAC)))		
+		       			 	if(StoreitemOAC[i] = 0 || StoreitemOAC[j] = 0 || StoreitemOAC[i] = "" || StoreitemOAC[j] = "" || (PriorityClaimedOAC=0 && PriorityItemOAC>0 && (Item1!=PriorityItemOAC || Item2!=PriorityItemOAC)))		
 		            			continue ; Skip the comparison if either Item is Null or Not Priority		
 								
 		        			; Check variables are Priority			
@@ -20973,11 +20980,11 @@ nm_MemoryMatchOAC(PriorityItemOAC:=0, MMValue:=0) { ; PriorityItem can be set to
 		            				PriorityClaimedOAC:=1		
 								
 		        			; Check if variables have the same value		        			
-						if (Gdip_ImageSearch(StoreitemOAC[i], StoreitemOAC[j], pos, , , , , 10, , 2)=1) {						
+						if (Gdip_ImageSearch(StoreitemOAC[i], StoreitemOAC[j], &pos, , , , , 10, , 2)=1) {						
 							MMTempTile1OAC:=i	
-							MMTempTile2OAC:=j	
-							StoreitemOAC[i]:="claimed"	
-							StoreitemOAC[j]:="claimed"	
+							MMTempTile2OAC:=j
+							StoreitemOAC[i]:=0	;claimed
+							StoreitemOAC[j]:=0	;claimed
 							PairFoundOAC:=1	
 							Break 2	
 		       					} else {	
@@ -20991,7 +20998,7 @@ nm_MemoryMatchOAC(PriorityItemOAC:=0, MMValue:=0) { ; PriorityItem can be set to
 					Tile:=MMTempTile1OAC ;-1
 				}			
 			} else {
-				;if(PairFoundOAC=0 || Click=Chances*2-1) {
+				;if(PairFoundOAC=0 || ClickNum=Chances*2-1) {
 				if(PairFoundOAC=0) {
 					; Compare all other tiles to click 1								
 					j:=Tile			
@@ -21006,7 +21013,7 @@ nm_MemoryMatchOAC(PriorityItemOAC:=0, MMValue:=0) { ; PriorityItem can be set to
 			    			Item2 := StoreitemValOAC[i]		
 								
 			    			; Check if either variable is Null or Priority		
-			    			if (StoreitemOAC[i] = "" || StoreitemOAC[j] = "" || (PriorityClaimedOAC=0 && PriorityItemOAC>0 && (Item1!=PriorityItemOAC || Item2!=PriorityItemOAC)))		
+			    			if (StoreitemOAC[i] = 0 || StoreitemOAC[j] = 0 || StoreitemOAC[i] = "" || StoreitemOAC[j] = "" || (PriorityClaimedOAC=0 && PriorityItemOAC>0 && (Item1!=PriorityItemOAC || Item2!=PriorityItemOAC)))		
 			        			continue ; Skip the comparison if either Item is Null or Not Priority		
 								
 			        		; Check Items are Priority			
@@ -21014,10 +21021,10 @@ nm_MemoryMatchOAC(PriorityItemOAC:=0, MMValue:=0) { ; PriorityItem can be set to
 			            			PriorityClaimedOAC:=1		
 								
 			    			; Check if Items are the same.		
-						if (Gdip_ImageSearch(StoreitemOAC[j], StoreitemOAC[i], pos, , , , , 10, , 2)=1) {								
+						if (Gdip_ImageSearch(StoreitemOAC[j], StoreitemOAC[i], &pos, , , , , 10, , 2)=1) {								
 							MMTempTile2OAC:=i	
-							StoreitemOAC[i]:="claimed"	
-							StoreitemOAC[j]:="claimed"	
+							StoreitemOAC[i]:=0 ;"claimed"	
+							StoreitemOAC[j]:=0 ;"claimed"	
 							MatchFoundOAC:=1	
 							Break	
 			       				} else {	
@@ -21034,31 +21041,30 @@ nm_MemoryMatchOAC(PriorityItemOAC:=0, MMValue:=0) { ; PriorityItem can be set to
 					Tile:=MMTempTile2OAC				
 			}			
 	
-			Click%A_Index%:=0
 			if(!MatchFoundOAC && !PairFoundOAC) {
 				Loop 20 {
-					Random, Tile, 1, Tiles
+					Tile := Random(1, Tiles)
 					If(StoreItemOAC[Tile]="")
 						break
 				}
 			}
 
-        		TileXCordOAC:=GridOAC[Tile,1]-Xoffset ; Determine click coordinates
-        		TileYCordOAC:=GridOAC[Tile,2]
-			Click++
+        		TileXCordOAC:=GridOAC[Tile][1]-Xoffset ; Determine click coordinates
+        		TileYCordOAC:=GridOAC[Tile][2]
+			ClickNum++
 			MMItemOAC:=0
 
-			MouseMove, TileXCordOAC, TileYCordOAC 
-				sleep 400
-				click, down
+			MouseMove TileXCordOAC, TileYCordOAC 
+				sleep 400 ; I know this looks excessive, but it is to compensate for lag.
+				sendinput "{click down}"
 				sleep 100
-				click, up
+				sendinput "{click up}"
 				sleep 500				
 			
 			Loop 20 {
 				pBMScreen := Gdip_BitmapFromScreen(TileXCordOAC-35 "|" TileYCordOAC-20 "|8|20") ; Detect Clicked Item
 				Gdip_SaveBitmapToFile(pBMScreen, "Border.png")
-				if (Gdip_ImageSearch(pBMScreen, bitmaps["MMBorder"], pos, , , , , 1, , 2) = 1) {
+				if (Gdip_ImageSearch(pBMScreen, bitmaps["MMBorder"], &pos, , , , , 1, , 2) = 1) {
 					break
 				}
 				sleep 50
@@ -21073,24 +21079,22 @@ nm_MemoryMatchOAC(PriorityItemOAC:=0, MMValue:=0) { ; PriorityItem can be set to
 
 				Loop 25 {
     					bitmap:="MM" . A_Index 
-        				if (Gdip_ImageSearch(StoreItemOAC[Tile], bitmaps[bitmap], pos, , , , , 10, , 2) = 1) {
+        				if (Gdip_ImageSearch(StoreItemOAC[Tile], bitmaps[bitmap], &pos, , , , , 10, , 2) = 1) {
         					StoreItemValOAC[Tile]:=A_Index
         					Break      
         				} 
 				}
 			}
 
-			Click%A_Index%:=StoreItemOAC[Tile]
-
 			if(A_Index=1) {
 				Click1Tile:=Tile
 				if(PairFoundOAC) {
-					Tile:=MMTile2OAC 
+					Tile:=MMTempTile2OAC 
 				}
 			} else {
-				if((Gdip_ImageSearch(Click1, Click2, pos, , , , , 1, , 2) = 1) && PairFoundOAC!=1 && MatchFoundOAC!=1) {
-					StoreitemOAC[Click1Tile]:="claimed"
-					StoreitemOAC[Tile]:="claimed"
+				if((Gdip_ImageSearch(StoreitemOAC[Click1Tile], StoreitemOAC[Tile], &pos, , , , , 1, , 2) = 1) && PairFoundOAC!=1 && MatchFoundOAC!=1) {
+					StoreitemOAC[Click1Tile]:=0 ;"claimed"
+					StoreitemOAC[Tile]:=0 ;"claimed"
 					Continue
 				}
 				if(PairFoundOAC || MatchFoundOAC) {
