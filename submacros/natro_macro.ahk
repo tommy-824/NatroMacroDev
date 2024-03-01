@@ -1050,6 +1050,10 @@ SunflowerPlanters:=[["PetalPlanter", 1.5, 1.3415, 10.44] ; 2.01225
 	, ["TicketPlanter", 2, 1, 2]] ; 2
 
 ;quest data
+QuestBarGapSize := 10
+QuestBarSize := 50
+QuestBarInset := 16
+
 ;map: quest name, [objective array]
 PolarBear := Map("Aromatic Pie",
 		[[3,"Kill","Mantis"]
@@ -16522,47 +16526,6 @@ nm_HoneyQuest(){
 			MsgBox "Folder location cannot be found:`n" A_WorkingDir "\nm_image_assets\"
 		}
 		HoneyStart:=(result = 1) ? [0, FoundX-windowX, FoundY-windowY] : [1, 0, 0]
-		;determine quest bar sizes and spacing
-		if(QuestBarGapSize=0 || QuestBarSize=0 || QuestBarInset=0) {
-			Loop 3 {
-				xi := windowX
-				yi := windowY+HoneyStart[3]+15
-				ww := windowX+306
-				wh := windowY+HoneyStart[3]+100
-				if(ImageSearch(&FoundX, &FoundY, xi, yi, ww, wh, "*5 nm_image_assets\questbargap.png") = 1) {
-					QuestBarSize:=FoundY-windowY-HoneyStart[3]
-					QuestBarGapSize:=3
-					QuestBarInset:=3
-					NextY:=FoundY+1
-					NextX:=FoundX+1
-					loop 20 {
-						if(ImageSearch(&FoundX, &FoundY, FoundX, NextY, ww, wh, "*5 nm_image_assets\questbargap.png") = 1) {
-							NextY:=FoundY+1
-							QuestBarGapSize:=QuestBarGapSize+1
-						} else {
-							break
-						}
-					}
-					wh := windowY+HoneyStart[3]+200
-					loop 20 {
-						if(ImageSearch(&FoundX, &FoundY, NextX, yi, ww, wh, "*5 nm_image_assets\questbarinset.png") = 1) {
-							NextX:=FoundX+1
-							QuestBarInset:=QuestBarInset+1
-						} else {
-							break
-						}
-					}
-					break
-				} else {
-					MouseMove windowX+30, windowY+offsetY+225
-					Sleep 50
-					Send "{WheelDown 1}"
-					Sleep 50
-					HoneyStart[3]-=150
-					Sleep 500
-				}
-			}
-		}
 		;Update Honey quest progress in GUI
 		honeyProgress:=""
 		;also set next steps
@@ -16686,47 +16649,6 @@ nm_PolarQuestProg(){
 			MsgBox "Folder location cannot be found:`n" A_WorkingDir "\nm_image_assets\"
 		}
 		PolarStart:=(result = 1) ? [0, FoundX-windowX, FoundY-windowY] : [1, 0, 0]
-		;determine quest bar sizes and spacing
-		if(QuestBarGapSize=0 || QuestBarSize=0 || QuestBarInset=0) {
-			Loop 3 {
-				xi := windowX
-				yi := windowY+PolarStart[3]+15
-				ww := windowX+306
-				wh := windowY+PolarStart[3]+100
-				if(ImageSearch(&FoundX, &FoundY, xi, yi, ww, wh, "*5 nm_image_assets\questbargap.png") = 1) {
-					QuestBarSize:=FoundY-windowY-PolarStart[3]
-					QuestBarGapSize:=3
-					QuestBarInset:=3
-					NextY:=FoundY+1
-					NextX:=FoundX+1
-					loop 20 {
-						if(ImageSearch(&FoundX, &FoundY, FoundX, NextY, ww, wh, "*5 nm_image_assets\questbargap.png") = 1) {
-							NextY:=FoundY+1
-							QuestBarGapSize:=QuestBarGapSize+1
-						} else {
-							break
-						}
-					}
-					wh := windowY+PolarStart[3]+200
-					loop 20 {
-						if(ImageSearch(&FoundX, &FoundY, NextX, yi, ww, wh, "*5 nm_image_assets\questbarinset.png") = 1) {
-							NextX:=FoundX+1
-							QuestBarInset:=QuestBarInset+1
-						} else {
-							break
-						}
-					}
-					break
-				} else {
-					MouseMove windowX+30, windowY+offsetY+225
-					Sleep 50
-					Send "{WheelDown 1}"
-					Sleep 50
-					PolarStart[3]-=150
-					Sleep 500
-				}
-			}
-		}
 		;determine Quest name
 		xi := windowX
 		yi := windowY+PolarStart[3]-30
@@ -16940,47 +16862,6 @@ nm_RileyQuestProg(){
 			MsgBox "Folder location cannot be found:`n" A_WorkingDir "\nm_image_assets\"
 		}
 		RileyStart:=(result = 1) ? [0, FoundX-windowX, FoundY-windowY] : [1, 0, 0]
-		;determine quest bar sizes and spacing
-		if(QuestBarGapSize=0 || QuestBarSize=0 || QuestBarInset=0) {
-			Loop 3 {
-				xi := windowX
-				yi := windowY+RileyStart[3]+15
-				ww := windowX+306
-				wh := windowY+RileyStart[3]+100
-				if(ImageSearch(&FoundX, &FoundY, xi, yi, ww, wh, "*5 nm_image_assets\questbargap.png") = 1) {
-					QuestBarSize:=FoundY-windowY-RileyStart[3]
-					QuestBarGapSize:=3
-					QuestBarInset:=3
-					NextY:=FoundY+1
-					NextX:=FoundX+1
-					loop 20 {
-						if(ImageSearch(&FoundX, &FoundY, FoundX, NextY, ww, wh, "*5 nm_image_assets\questbargap.png") = 1) {
-							NextY:=FoundY+1
-							QuestBarGapSize:=QuestBarGapSize+1
-						} else {
-							break
-						}
-					}
-					wh := windowY+RileyStart[3]+200
-					loop 20 {
-						if(ImageSearch(&FoundX, &FoundY, NextX, yi, ww, wh, "*5 nm_image_assets\questbarinset.png") = 1) {
-							NextX:=FoundX+1
-							QuestBarInset:=QuestBarInset+1
-						} else {
-							break
-						}
-					}
-					break
-				} else {
-					MouseMove windowX+30, windowY+offsetY+225
-					Sleep 50
-					Send "{WheelDown 1}"
-					Sleep 50
-					RileyStart[3]-=150
-					Sleep 500
-				}
-			}
-		}
 		;determine Quest name
 		xi := windowX
 		yi := windowY+RileyStart[3]-30
@@ -17249,47 +17130,6 @@ nm_BuckoQuestProg(){
 			MsgBox "Folder location cannot be found:`n" A_WorkingDir "\nm_image_assets\"
 		}
 		BuckoStart:=(result = 1) ? [0, FoundX-windowX, FoundY-windowY] : [1, 0, 0]
-		;determine quest bar sizes and spacing
-		if(QuestBarGapSize=0 || QuestBarSize=0 || QuestBarInset=0) {
-			Loop 3 {
-				xi := windowX
-				yi := windowY+BuckoStart[3]+15
-				ww := windowX+306
-				wh := windowY+BuckoStart[3]+100
-				if(ImageSearch(&FoundX, &FoundY, xi, yi, ww, wh, "*5 nm_image_assets\questbargap.png") = 1) {
-					QuestBarSize:=FoundY-windowY-BuckoStart[3]
-					QuestBarGapSize:=3
-					QuestBarInset:=3
-					NextY:=FoundY+1
-					NextX:=FoundX+1
-					loop 20 {
-						if(ImageSearch(&FoundX, &FoundY, FoundX, NextY, ww, wh, "*5 nm_image_assets\questbargap.png") = 1) {
-							NextY:=FoundY+1
-							QuestBarGapSize:=QuestBarGapSize+1
-						} else {
-							break
-						}
-					}
-					wh := windowY+BuckoStart[3]+200
-					loop 20 {
-						if(ImageSearch(&FoundX, &FoundY, NextX, yi, ww, wh, "*5 nm_image_assets\questbarinset.png") = 1) {
-							NextX:=FoundX+1
-							QuestBarInset:=QuestBarInset+1
-						} else {
-							break
-						}
-					}
-					break
-				} else {
-					MouseMove windowX+30, windowY+offsetY+225
-					Sleep 50
-					Send "{WheelDown 1}"
-					Sleep 50
-					BuckoStart[3]-=150
-					Sleep 500
-				}
-			}
-		}
 		;determine Quest name
 		xi := windowX
 		yi := windowY+BuckoStart[3]-30
@@ -17568,47 +17408,6 @@ nm_BlackQuestProg(){
 			MsgBox "Folder location cannot be found:`n" A_WorkingDir "\nm_image_assets\"
 		}
 		BlackStart:=(result = 1) ? [0, FoundX-windowX, FoundY-windowY] : [1, 0, 0]
-		;determine quest bar sizes and spacing
-		if(QuestBarGapSize=0 || QuestBarSize=0 || QuestBarInset=0) {
-			Loop 3 {
-				xi := windowX
-				yi := windowY+BlackStart[3]+15
-				ww := windowX+306
-				wh := windowY+BlackStart[3]+100
-				if(ImageSearch(&FoundX, &FoundY, xi, yi, ww, wh, "*5 nm_image_assets\questbargap.png") = 1) {
-					QuestBarSize:=FoundY-windowY-BlackStart[3]
-					QuestBarGapSize:=3
-					QuestBarInset:=3
-					NextY:=FoundY+1
-					NextX:=FoundX+1
-					loop 20 {
-						if(ImageSearch(&FoundX, &FoundY, FoundX, NextY, ww, wh, "*5 nm_image_assets\questbargap.png") = 1) {
-							NextY:=FoundY+1
-							QuestBarGapSize:=QuestBarGapSize+1
-						} else {
-							break
-						}
-					}
-					wh := windowY+BlackStart[3]+200
-					loop 20 {
-						if(ImageSearch(&FoundX, &FoundY, NextX, yi, ww, wh, "*5 nm_image_assets\questbarinset.png") = 1) {
-							NextX:=FoundX+1
-							QuestBarInset:=QuestBarInset+1
-						} else {
-							break
-						}
-					}
-					break
-				} else {
-					MouseMove windowX+30, windowY+offsetY+225
-					Sleep 50
-					Send "{WheelDown 1}"
-					Sleep 50
-					BlackStart[3]-=150
-					Sleep 500
-				}
-			}
-		}
 		;determine Quest name
 		xi := windowX
 		yi := windowY+BlackStart[3]-30
@@ -17843,47 +17642,6 @@ nm_BrownQuestProg(){
 				MsgBox "Folder location cannot be found:`n" A_WorkingDir "\nm_image_assets\"
 			}
 			BrownStart:=(result = 1) ? [0, FoundX-windowX, FoundY-windowY] : [1, 0, 0]
-			;determine quest bar sizes and spacing
-			if(QuestBarGapSize=0 || QuestBarSize=0 || QuestBarInset=0) {
-				Loop 3 {
-					xi := windowX
-					yi := windowY+BrownStart[3]+15
-					ww := windowX+306
-					wh := windowY+BrownStart[3]+100
-					if(ImageSearch(&FoundX, &FoundY, xi, yi, ww, wh, "*5 nm_image_assets\questbargap.png") = 1) {
-						QuestBarSize:=FoundY-windowY-BrownStart[3]
-						QuestBarGapSize:=3
-						QuestBarInset:=3
-						NextY:=FoundY+1
-						NextX:=FoundX+1
-						loop 20 {
-							if(ImageSearch(&FoundX, &FoundY, FoundX, NextY, ww, wh, "*5 nm_image_assets\questbargap.png") = 1) {
-								NextY:=FoundY+1
-								QuestBarGapSize:=QuestBarGapSize+1
-							} else {
-								break
-							}
-						}
-						wh := windowY+BrownStart[3]+200
-						loop 20 {
-							if(ImageSearch(&FoundX, &FoundY, NextX, yi, ww, wh, "*5 nm_image_assets\questbarinset.png") = 1) {
-								NextX:=FoundX+1
-								QuestBarInset:=QuestBarInset+1
-							} else {
-								break
-							}
-						}
-						break
-					} else {
-						MouseMove windowX+30, windowY+offsetY+225
-						Sleep 50
-						Send "{WheelDown 1}"
-						Sleep 50
-						BrownStart[3]-=150
-						Sleep 500
-					}
-				}
-			}
 			;determine Quest objecives
 			static objectiveList := Map("dandelion","Dand", "sunflower","Sunf", "mushroom","Mush", "blueflower","Bluf", "clover","Clove"
 				, "strawberry","Straw", "spider","Spide", "bamboo","Bamb", "pineapple","Pinap", "stump","Stump"
@@ -20396,9 +20154,6 @@ start(*){
 	global QuestMantis:=0
 	global QuestScorpions:=0
 	global QuestWerewolf:=0
-	global QuestBarSize:=0
-	global QuestBarGapSize:=0
-	global QuestBarInset:=0
 	global BuckoRhinoBeetles:=0
 	global BuckoMantis:=0
 	global RileyLadybugs:=0
