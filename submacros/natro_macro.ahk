@@ -20034,7 +20034,7 @@ mp_PlantPlanter(PlanterIndex) {
 			}
 		}
 	} else {
-		PlanterHarvestTime%PlanterIndex% := nowUnix() + 3600 * MHarvestIntervalValue[MHarvestInterval]
+		PlanterHarvestTime%PlanterIndex% := nowUnix() + Integer(3600 * MHarvestIntervalValue[MHarvestInterval])
 		Loop 3
 			If (PlanterHarvestTime%A_Index% < PlanterHarvestTime%PlanterIndex% && PlanterHarvestTime%A_Index% > PlanterHarvestTime%PlanterIndex% - 300)
 				PlanterHarvestTime%PlanterIndex% := PlanterHarvestTime%A_Index%
@@ -20129,7 +20129,7 @@ mp_UseGlitter(PlanterIndex, atField:=0) {
 	LastGlitter:=nowUnix()
 	IniWrite LastGlitter, "settings\nm_config.ini", "Boost", "LastGlitter"
 	PlanterGlitter%PlanterIndex% := LastGlitter
-	PlanterHarvestTime%PlanterIndex% := nowUnix() + (PlanterHarvestTime%PlanterIndex% - nowUnix()) * 0.75
+	PlanterHarvestTime%PlanterIndex% := nowUnix() + Integer((PlanterHarvestTime%PlanterIndex% - nowUnix()) * 0.75)
 	IniWrite PlanterGlitter%PlanterIndex%, "settings\nm_config.ini", "Planters", "PlanterGlitter" PlanterIndex
 	IniWrite PlanterHarvestTime%PlanterIndex%, "settings\nm_config.ini", "Planters", "PlanterHarvestTime" PlanterIndex
 }

@@ -343,8 +343,8 @@ ba_setPlanterTimer(GuiCtrl, *){
 	PlanterName%i% := IniRead("settings\nm_config.ini", "Planters", "PlanterName" i)
 	if (PlanterName%i% != "None") {
         PlanterHarvestTime%i% := IniRead("settings\nm_config.ini", "Planters", "PlanterHarvestTime" i)
-        UpdateInt("PlanterHarvestTime" i, PlanterHarvestTime%i% := (c = "Sub") ? Max(nowUnix(), PlanterHarvestTime%i%-3600) : Max(nowUnix(), PlanterHarvestTime%i%)+3600)
-        UpdateInt("PlanterEstPercent" i, Min(Max((PlanterHarvestTime%i% - nowUnix())//864, 0), 100))
+        UpdateInt("PlanterHarvestTime" i, PlanterHarvestTime%i% := (c = "Sub") ? Max(nowUnix(), Integer(PlanterHarvestTime%i%-3600)) : Max(nowUnix(), Integer(PlanterHarvestTime%i%))+3600)
+        UpdateInt("PlanterEstPercent" i, Min(Max((Integer(PlanterHarvestTime%i%) - nowUnix())//864, 0), 100))
 	}
 }
 ba_setPlanterData(GuiCtrl, *){
