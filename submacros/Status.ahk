@@ -610,7 +610,7 @@ nm_status(status)
 	; write to debug log
 	global logsize
 	if (DebugLogEnabled = 1)
-		log := FileOpen("settings\debug_log.txt", "a-d"), log.WriteLine(StrReplace(status, "`n", " - ")), logsize := log.Length, log.Close()
+		try log := FileOpen("settings\debug_log.txt", "a-d"), log.WriteLine(StrReplace(status, "`n", " - ")), logsize := log.Length, log.Close()
 
 	; send to discord
 	if (discordCheck = 1)
@@ -1734,7 +1734,8 @@ nm_command(command)
 
 		case "get":
 		k := StrReplace(Trim(SubStr(command.content, InStr(command.content, name)+StrLen(name))), " ")
-		ini := FileOpen("settings\nm_config.ini", "r"), str := ini.Read(), ini.Close()
+		str := ""
+		try ini := FileOpen("settings\nm_config.ini", "r"), str := ini.Read(), ini.Close()
 		Loop Parse str, "`n", "`r" A_Space A_Tab
 		{
 			switch (c := SubStr(A_LoopField, 1, 1))
@@ -2334,11 +2335,14 @@ class discord
 
 			if field.Has("pBitmap")
 			{
-				pFileStream := Gdip_SaveBitmapToStream(field["pBitmap"])
-				DllCall("shlwapi\IStream_Size", "Ptr", pFileStream, "UInt64P", &size:=0, "UInt")
-				DllCall("shlwapi\IStream_Reset", "Ptr", pFileStream, "UInt")
-				DllCall("shlwapi\IStream_Copy", "Ptr", pFileStream, "Ptr", pStream, "UInt", size, "UInt")
-				ObjRelease(pFileStream)
+				try
+				{
+					pFileStream := Gdip_SaveBitmapToStream(field["pBitmap"])
+					DllCall("shlwapi\IStream_Size", "Ptr", pFileStream, "UInt64P", &size:=0, "UInt")
+					DllCall("shlwapi\IStream_Reset", "Ptr", pFileStream, "UInt")
+					DllCall("shlwapi\IStream_Copy", "Ptr", pFileStream, "Ptr", pStream, "UInt", size, "UInt")
+					ObjRelease(pFileStream)
+				}
 			}
 
 			if field.Has("file")
@@ -2378,8 +2382,11 @@ class discord
 nm_TrimLog(size)
 {
 	global logsize
-	log := FileOpen("settings\debug_log.txt", "r-d"), log.Seek(-((log.Length < size) ? (f := log.Length) : size), 2), txt := log.Read(), log.Close()
-	log := FileOpen("settings\debug_log.txt", "w-d"), log.Write(SubStr(txt, f ? 1 : InStr(txt, "`n")+1)), logsize := log.Length, log.Close()
+	try
+	{
+		log := FileOpen("settings\debug_log.txt", "r-d"), log.Seek(-((log.Length < size) ? (f := log.Length) : size), 2), txt := log.Read(), log.Close()
+		log := FileOpen("settings\debug_log.txt", "w-d"), log.Write(SubStr(txt, f ? 1 : InStr(txt, "`n")+1)), logsize := log.Length, log.Close()
+	}
 }
 
 nm_setStatus(wParam, lParam, *)
