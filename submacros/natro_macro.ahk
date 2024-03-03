@@ -10747,7 +10747,7 @@ nm_MemoryMatch(MemoryMatchGame) {
 			sleep 1500
 			Break
 		} else if (A_Index = 2) {
-			(deaths = 0) && UpdateConfig()
+			(MemoryMatchGame != "Night") && UpdateConfig()
 			return
 		}
 	} ;  close Try twice to find MM
@@ -10912,7 +10912,7 @@ nm_SolveMemoryMatch(MemoryMatchGame:="", PriorityItemOAC:=0) { ; PriorityItem ca
 			sleep 100
 			sendinput "{click up}"
 			sleep 100
-			MouseMove middleX, windowY+offsetY+100		
+			MouseMove middleX, windowY+offsetY+100
 			sleep 350
 
 			Loop 20 {
@@ -14520,7 +14520,7 @@ nm_GoGather(){
 					break
 				}
 				if (VBState=1) {
-					interruptReason := "Vicious Bee"
+					interruptReason := "Night"
 					break
 				}
 			}
@@ -14611,7 +14611,7 @@ nm_GoGather(){
 
 		Click "Up"
 		if interruptReason {
-			bypass := (interruptReason ~= "i)Disconnect|You Died!|Vicious Bee|Inactive Honey")
+			bypass := (interruptReason ~= "i)Disconnect|You Died!|Night|Inactive Honey")
 			if (!bypass && InStr(patterns[FieldPattern], ";@NoInterrupt"))
 				KeyWait "F14", "T180 L"
 			break
