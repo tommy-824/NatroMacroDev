@@ -1919,6 +1919,7 @@ QuestAnt := 0
 QuestBlueBoost := 0
 QuestRedBoost := 0
 HiveConfirmed := 0
+ShiftLockEnabled := 0
 
 ;ensure Gui will be visible
 if (GuiX && GuiY)

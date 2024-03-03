@@ -1096,7 +1096,11 @@ nm_command(command)
 		DetectHiddenWindows 1
 		if WinExist("natro_macro ahk_class AutoHotkey")
 		{
-			switch SendMessage(0x5558, 1, , , , , , , 2000)
+			try
+				result := SendMessage(0x5558, 1, , , , , , , 2000)
+			catch
+				result := -1
+			switch result
 			{
 				case 2:
 				discord.SendEmbed("No Roblox window found!", 16711731, , , , id)
@@ -1106,6 +1110,9 @@ nm_command(command)
 
 				case 0:
 				discord.SendEmbed("No Keep/Replace prompt found!", 16711731, , , , id)
+
+				default:
+				discord.SendEmbed("Error: SendMessage Timeout!", 16711731, , , , id)
 			}
 		}
 		else
@@ -1116,8 +1123,11 @@ nm_command(command)
 		DetectHiddenWindows 1
 		if WinExist("natro_macro ahk_class AutoHotkey")
 		{
-
-			switch SendMessage(0x5558, 2, , , , , , , 2000)
+			try
+				result := SendMessage(0x5558, 2, , , , , , , 2000)
+			catch
+				result := -1
+			switch result
 			{
 				case 2:
 				discord.SendEmbed("No Roblox window found!", 16711731, , , , id)
@@ -1127,6 +1137,9 @@ nm_command(command)
 
 				case 0:
 				discord.SendEmbed("No Keep/Replace prompt found!", 16711731, , , , id)
+
+				default:
+				discord.SendEmbed("Error: SendMessage Timeout!", 16711731, , , , id)
 			}
 		}
 		else
@@ -1865,7 +1878,23 @@ nm_command(command)
 			state := (params[2] = "on") ? 1 : (params[2] = "off") ? 0 : params[2]
 			DetectHiddenWindows 1
 			if WinExist("natro_macro ahk_class AutoHotkey")
-				(SendMessage(0x5551, state, , , , , , , 2000) = 2) ? discord.SendEmbed("No Roblox window found!", 16711731, , , , id) : discord.SendEmbed(((state = 1) ? "Enabled" : "Disabled") " Shift Lock!", 5066239, , , , id)
+			{
+				try
+					result := SendMessage(0x5551, state, , , , , , , 2000)
+				catch
+					result := -1
+				switch result
+				{
+					case 2:
+					discord.SendEmbed("No Roblox window found!", 16711731, , , , id)
+
+					case -1:
+					discord.SendEmbed("Error: SendMessage Timeout!", 16711731, , , , id)
+
+					default:
+					discord.SendEmbed(((state = 1) ? "Enabled" : "Disabled") " Shift Lock!", 5066239, , , , id)
+				}
+			}
 			else
 				discord.SendEmbed("Error: Macro not found!", 16711731, , , , id)
 
@@ -1991,7 +2020,6 @@ nm_command(command)
                 IniWrite n, "settings\nm_config.ini", "Blender", "BlenderRot"
 				DetectHiddenWindows 1
 				if WinExist("natro_macro ahk_class AutoHotkey") {
-					msgbox
                     PostMessage 0x5552, 232+n, 0 ; BlenderAmount
                     PostMessage 0x5552, 238+n, 0 ; BlenderTime
                     PostMessage 0x5553, 58+n, 9 ; BlenderIndex
