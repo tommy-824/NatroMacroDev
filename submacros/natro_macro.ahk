@@ -238,7 +238,7 @@ nm_importPaths()
 		"gtb", ["blue", "mountain", "red"], ; go to (field) booster
 		"gtc", ["clock", "antpass", "robopass", "honeydis", "treatdis", "blueberrydis", "strawberrydis", "coconutdis", "gluedis", "royaljellydis", "blender", "windshrine", ; go to collect (machine)
 				"stockings", "wreath", "feast", "gingerbread", "snowmachine", "candles", "samovar", "lidart", "gummybeacon", "rbpdelevel", ; beesmas
-				"honeylb", "honeystorm", "stickerstack", "stickerprinter", "normalmm", "megamm", "extrememm"], ; other
+				"honeylb", "honeystorm", "stickerstack", "stickerprinter", "normalmm", "megamm", "nightmm", "extrememm", "wintermm"], ; other
 		"gtf", ["bamboo", "blueflower", "cactus", "clover", "coconut", "dandelion", "mountaintop", "mushroom", "pepper", "pinetree", "pineapple", "pumpkin",
 				"rose", "spider", "strawberry", "stump", "sunflower"], ; go to field
 		"gtp", ["bamboo", "blueflower", "cactus", "clover", "coconut", "dandelion", "mountaintop", "mushroom", "pepper", "pinetree", "pineapple", "pumpkin",
@@ -590,7 +590,37 @@ nm_importConfig()
 		, "NightMemoryMatchCheck", 0
 		, "LastNightMemoryMatch", 1
 		, "WinterMemoryMatchCheck", 0
-		, "LastWinterMemoryMatch", 1)
+		, "LastWinterMemoryMatch", 1
+		, "MicroConverterMatchIgnoreCheck", 0
+		, "SunflowerSeedMatchIgnoreCheck", 0
+		, "JellyBeanMatchIgnoreCheck", 0
+		, "RoyalJellyMatchIgnoreCheck", 0
+		, "TicketMatchIgnoreCheck", 0
+		, "CyanTrimMatchIgnoreCheck", 0
+		, "OilMatchIgnoreCheck", 0
+		, "StrawberryMatchIgnoreCheck", 0
+		, "CoconutMatchIgnoreCheck", 0
+		, "TropicalDrinkMatchIgnoreCheck", 0
+		, "RedExtractMatchIgnoreCheck", 0
+		, "MagicBeanMatchIgnoreCheck", 0
+		, "PineappleMatchIgnoreCheck", 0
+		, "StarJellyMatchIgnoreCheck", 0
+		, "EnzymeMatchIgnoreCheck", 0
+		, "BlueExtractMatchIgnoreCheck", 0
+		, "GumdropMatchIgnoreCheck", 0
+		, "FieldDiceMatchIgnoreCheck", 0
+		, "MoonCharmMatchIgnoreCheck", 0
+		, "BlueberryMatchIgnoreCheck", 0
+		, "GlitterMatchIgnoreCheck", 0
+		, "StingerMatchIgnoreCheck", 0
+		, "TreatMatchIgnoreCheck", 0
+		, "GlueMatchIgnoreCheck", 0
+		, "CloudVialMatchIgnoreCheck", 0
+		, "PineappleMatchIgnoreCheck", 0
+		, "MemoryMatchInterruptCheck", 0
+		, "StickerPrinterCheck", 0
+		, "LastStickerPrinter", 1
+		, "StickerPrinterEgg", "Basic")
 
 	config["Shrine"] := Map("ShrineCheck", 0
 		, "LastShrine", 1
@@ -695,10 +725,7 @@ nm_importConfig()
 		, "StickerStackMode", 0
 		, "StickerStackTimer", 900
 		, "StickerStackHive", 0
-		, "StickerStackCub", 0
-		, "StickerPrinterCheck", 0
-		, "LastStickerPrinter", 1
-		, "StickerPrinterEgg", "Basic")
+		, "StickerStackCub", 0)
 
 	config["Quests"] := Map("QuestGatherMins", 5
 		, "QuestGatherReturnBy", "Walk"
@@ -1403,6 +1430,11 @@ CommandoChickHealth := Map(3, 150
 	, 17, 2500000
 	, 18, 5000000
 	, 19, 7500000)
+
+;Memory Match Items (variable names)
+;for use as %item%MatchIgnoreCheck, change order to reorder loop
+MemoryMatchItems := ["MicroConverter", "SunflowerSeed", "JellyBean", "RoyalJelly", "Ticket", "CyanTrim", "Oil", "Strawberry", "Coconut", "TropicalDrink", "RedExtract", "MagicBean"
+	, "Pineapple", "StarJelly", "Enzyme", "BlueExtract", "Gumdrop", "FieldDice", "MoonCharm", "Blueberry", "Glitter", "Stinger", "Treat", "Glue", "CloudVial", "Pineapple"]
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; FIELD DEFAULT OVERRIDES
@@ -2609,9 +2641,11 @@ MainGui.Add("CheckBox", "x+4 yp+5 vAntPassBuyCheck Disabled Checked" AntPassBuyC
 MainGui.SetFont("w700")
 MainGui.Add("GroupBox", "x5 y168 w125 h68 vMemoryMatchGroupBox", "Memory Match")
 MainGui.SetFont("s8 cDefault Norm", "Tahoma")
-(GuiCtrl := MainGui.Add("CheckBox", "x10 yp+15 vNormalMemoryMatchCheck Disabled Checked" NormalMemoryMatchCheck, "Normal")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
-(GuiCtrl := MainGui.Add("CheckBox", "x10 yp+18 vMegaMemoryMatchCheck Disabled Checked" MegaMemoryMatchCheck, "Mega")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
-(GuiCtrl := MainGui.Add("CheckBox", "xp+56 yp-18 vExtremeMemoryMatchCheck Disabled Checked" ExtremeMemoryMatchCheck, "Extreme")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
+(GuiCtrl := MainGui.Add("CheckBox", "x10 yp+15 w58 vNormalMemoryMatchCheck Disabled Checked" NormalMemoryMatchCheck, "Normal")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
+MainGui.Add("CheckBox", "xp yp+18 wp vNightMemoryMatchCheck Disabled Checked" NightMemoryMatchCheck, "Night").OnEvent("Click", nm_NightMemoryMatchCheck)
+(GuiCtrl := MainGui.Add("CheckBox", "xp+58 yp-18 wp vMegaMemoryMatchCheck Disabled Checked" MegaMemoryMatchCheck, "Mega")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
+(GuiCtrl := MainGui.Add("CheckBox", "xp yp+18 wp vExtremeMemoryMatchCheck Disabled Checked" ExtremeMemoryMatchCheck, "Extreme")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
+MainGui.Add("Button", "x43 yp+16 w49 h16 vMemoryMatchOptions Disabled", "Options").OnEvent("Click", nm_MemoryMatchOptions)
 ;dispensers
 MainGui.SetFont("w700")
 MainGui.Add("GroupBox", "x135 y42 w165 h105 vDispensersGroupBox", "Dispensers")
@@ -2633,15 +2667,16 @@ hBM := Gdip_CreateHBITMAPFromBitmap(bitmaps["warninggui"])
 MainGui.Add("Picture", "+BackgroundTrans x261 yp w14 h14 vBeesmasFailImage", "HBITMAP:*" hBM).OnEvent("Click", BeesmasActiveFail)
 DllCall("DeleteObject", "ptr", hBM)
 MainGui.Add("Picture", "+BackgroundTrans x247 yp-3 w20 h20 vBeesmasImage")
-(GuiCtrl := MainGui.Add("CheckBox", "x335 yp+4 vBeesmasGatherInterruptCheck Disabled", "Allow Gather Interrupt")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
+(GuiCtrl := MainGui.Add("CheckBox", "x350 yp+4 vBeesmasGatherInterruptCheck Disabled", "Allow Gather Interrupt")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
 (GuiCtrl := MainGui.Add("CheckBox", "x140 yp+14 Section vStockingsCheck Disabled", "Stockings")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
 (GuiCtrl := MainGui.Add("CheckBox", "xp yp+18 vWreathCheck Disabled", "Honey Wreath")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
 (GuiCtrl := MainGui.Add("CheckBox", "xp yp+18 vFeastCheck Disabled", "Feast")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
 (GuiCtrl := MainGui.Add("CheckBox", "xp yp+18 vRBPDelevelCheck Disabled", "Robo Party De-level")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
-(GuiCtrl := MainGui.Add("CheckBox", "xp+125 ys+6 vGingerbreadCheck Disabled", "Gingerbread")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
+(GuiCtrl := MainGui.Add("CheckBox", "xp+120 ys vGingerbreadCheck Disabled", "Gingerbread")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
 (GuiCtrl := MainGui.Add("CheckBox", "xp yp+18 vSnowMachineCheck Disabled", "Snow Machine")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
 (GuiCtrl := MainGui.Add("CheckBox", "xp yp+18 vCandlesCheck Disabled", "Candles")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
-(GuiCtrl := MainGui.Add("CheckBox", "xp+125 ys+6 vSamovarCheck Disabled", "Samovar")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
+(GuiCtrl := MainGui.Add("CheckBox", "xp yp+18 vWinterMemoryMatchCheck Disabled", "Winter Memory Match")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
+(GuiCtrl := MainGui.Add("CheckBox", "xp+130 ys+6 vSamovarCheck Disabled", "Samovar")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
 (GuiCtrl := MainGui.Add("CheckBox", "xp yp+18 vLidArtCheck Disabled", "Lid Art")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
 (GuiCtrl := MainGui.Add("CheckBox", "xp yp+18 vGummyBeaconCheck Disabled", "Gummy Beacon")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
 try AsyncHttpRequest("GET", "https://raw.githubusercontent.com/NatroTeam/.github/main/data/beesmas.txt", nm_BeesmasHandler, Map("accept", "application/vnd.github.v3.raw"))
@@ -3415,12 +3450,15 @@ nm_TabCollectLock(){
 	MainGui["GingerbreadCheck"].Enabled := 0
 	MainGui["SnowMachineCheck"].Enabled := 0
 	MainGui["CandlesCheck"].Enabled := 0
+	MainGui["WinterMemoryMatchCheck"].Enabled := 0
 	MainGui["SamovarCheck"].Enabled := 0
 	MainGui["LidArtCheck"].Enabled := 0
 	MainGui["GummyBeaconCheck"].Enabled := 0
 	MainGui["NormalMemoryMatchCheck"].Enabled := 0
 	MainGui["MegaMemoryMatchCheck"].Enabled := 0
+	MainGui["NightMemoryMatchCheck"].Enabled := 0
 	MainGui["ExtremeMemoryMatchCheck"].Enabled := 0
+	MainGui["MemoryMatchOptions"].Enabled := 0
 	;kill
 	MainGui["BugRunCheck"].Enabled := 0
 	MainGui["MonsterRespawnTime"].Enabled := 0
@@ -3504,13 +3542,16 @@ nm_TabCollectUnLock(){
 		MainGui["GingerbreadCheck"].Enabled := 1
 		MainGui["SnowMachineCheck"].Enabled := 1
 		MainGui["CandlesCheck"].Enabled := 1
+		MainGui["WinterMemoryMatchCheck"].Enabled := 1
 		MainGui["SamovarCheck"].Enabled := 1
 		MainGui["LidArtCheck"].Enabled := 1
 		MainGui["GummyBeaconCheck"].Enabled := 1
 	}
 	MainGui["NormalMemoryMatchCheck"].Enabled := 1
 	MainGui["MegaMemoryMatchCheck"].Enabled := 1
+	MainGui["NightMemoryMatchCheck"].Enabled := 1
 	MainGui["ExtremeMemoryMatchCheck"].Enabled := 1
+	MainGui["MemoryMatchOptions"].Enabled := 1
 	;kill
 	MainGui["BugRunCheck"].Enabled := 1
 	MainGui["MonsterRespawnTime"].Enabled := 1
@@ -4545,8 +4586,8 @@ nm_CollectKillButton(GuiCtrl, *){
 		,"ClockCheck","MondoBuffCheck","MondoAction","AntPassCheck","AntPassPointText","AntPassBuyCheck","AntPassAction","RoboPassCheck","HoneystormCheck"
 		,"HoneyDisCheck","TreatDisCheck","BlueberryDisCheck","StrawberryDisCheck","CoconutDisCheck","RoyalJellyDisCheck","GlueDisCheck"
 		,"MALeft","MARight","APALeft","APARight"
-		,"BeesmasGatherInterruptCheck","StockingsCheck","WreathCheck","FeastCheck","RBPDelevelCheck","GingerbreadCheck","SnowMachineCheck","CandlesCheck","SamovarCheck","LidArtCheck","GummyBeaconCheck"
-		,"MemoryMatchGroupBox","NormalMemoryMatchCheck","MegaMemoryMatchCheck","ExtremeMemoryMatchCheck"]
+		,"BeesmasGatherInterruptCheck","StockingsCheck","WreathCheck","FeastCheck","RBPDelevelCheck","GingerbreadCheck","SnowMachineCheck","CandlesCheck","WinterMemoryMatchCheck","SamovarCheck","LidArtCheck","GummyBeaconCheck"
+		,"MemoryMatchGroupBox","NormalMemoryMatchCheck","MegaMemoryMatchCheck","NightMemoryMatchCheck","ExtremeMemoryMatchCheck","MemoryMatchOptions"]
 	, KillControls := ["BugRunGroupBox","BugRunCheck","MonsterRespawnTime","TextMonsterRespawnPercent","TextMonsterRespawn","MonsterRespawnTimeHelp"
 		,"BugrunInterruptCheck","TextLoot","TextKill","TextLineBugRun1","TextLineBugRun2"
 		,"BugrunLadybugsLoot","BugrunRhinoBeetlesLoot","BugrunSpiderLoot","BugrunMantisLoot","BugrunScorpionsLoot","BugrunWerewolfLoot"
@@ -4756,7 +4797,7 @@ nm_BeesmasHandler(req)
 			MainGui["BeesmasImage"].Value := "HBITMAP:*" hBM
 			DllCall("DeleteObject", "ptr", hBM)
 
-			for ctrl in ["BeesmasGatherInterruptCheck","StockingsCheck","WreathCheck","FeastCheck","RBPDelevelCheck","GingerbreadCheck","SnowMachineCheck","CandlesCheck","SamovarCheck","LidArtCheck","GummyBeaconCheck"]
+			for ctrl in ["BeesmasGatherInterruptCheck","StockingsCheck","WreathCheck","FeastCheck","RBPDelevelCheck","GingerbreadCheck","SnowMachineCheck","CandlesCheck","WinterMemoryMatchCheck","SamovarCheck","LidArtCheck","GummyBeaconCheck"]
 				MainGui[ctrl].Enabled := 1, MainGui[ctrl].Value := %ctrl%
 
 			sprinklerImages.Push("saturatorWS")
@@ -4769,6 +4810,66 @@ nm_BeesmasHandler(req)
 }
 BeesmasActiveFail(*){
 	MsgBox "Could not fetch Beesmas data from GitHub!`r`nTo use Beesmas features, make sure you have a working internet connection and then reload the macro!", "Error", 0x1030 " Owner" MainGui.Hwnd
+}
+nm_NightMemoryMatchCheck(*){
+	global NightMemoryMatchCheck
+	PostSubmacroMessage("background", 0x5554, 7, NightMemoryMatchCheck := MainGui["NightMemoryMatchCheck"].Value)
+	IniWrite NightMemoryMatchCheck, "settings\nm_config.ini", "Collect", "NightMemoryMatchCheck"
+}
+nm_MemoryMatchOptions(*){
+	static vars := Map(
+		"MicroConverter", "Micro-Converters",
+		"SunflowerSeed", "Sunflower Seeds",
+		"JellyBean", "Jelly Beans",
+		"RoyalJelly", "Royal Jellies",
+		"Ticket", "Tickets",
+		"CyanTrim", "Cyan Sticker",
+		"Oil", "Oils",
+		"Strawberry", "Strawberries",
+		"Coconut", "Coconuts",
+		"TropicalDrink", "Tropical Drinks",
+		"RedExtract", "Red Extracts",
+		"MagicBean", "Magic Beans",
+		"Pineapple", "Pineapples",
+		"StarJelly", "Star Jellies",
+		"Enzyme", "Enzymes",
+		"BlueExtract", "Blue Extracts",
+		"Gumdrop", "Gumdrops",
+		"FieldDice", "Field Dice",
+		"MoonCharm", "Moon Charms",
+		"Blueberry", "Blueberries",
+		"Glitter", "Glitter",
+		"Stinger", "Stingers",
+		"Treat", "Treats",
+		"Glue", "Glue",
+		"CloudVial", "Cloud Vials",
+		"Pineapple", "Pineapples"
+	)
+
+	global MMGui, MicroConverterMatchIgnoreCheck, SunflowerSeedMatchIgnoreCheck, JellyBeanMatchIgnoreCheck, RoyalJellyMatchIgnoreCheck, TicketMatchIgnoreCheck
+		, CyanTrimMatchIgnoreCheck, OilMatchIgnoreCheck, StrawberryMatchIgnoreCheck, CoconutMatchIgnoreCheck, TropicalDrinkMatchIgnoreCheck, RedExtractMatchIgnoreCheck
+		, MagicBeanMatchIgnoreCheck, PineappleMatchIgnoreCheck, StarJellyMatchIgnoreCheck, EnzymeMatchIgnoreCheck, BlueExtractMatchIgnoreCheck, GumdropMatchIgnoreCheck
+		, FieldDiceMatchIgnoreCheck, MoonCharmMatchIgnoreCheck, BlueberryMatchIgnoreCheck, GlitterMatchIgnoreCheck, StingerMatchIgnoreCheck, TreatMatchIgnoreCheck, GlueMatchIgnoreCheck
+		, CloudVialMatchIgnoreCheck, PineappleMatchIgnoreCheck
+
+	GuiClose(*){
+		if (IsSet(MMGui) && IsObject(MMGui))
+			MMGui.Destroy(), MMGui := ""
+	}
+	GuiClose()
+	MMGui := Gui("+AlwaysOnTop -MinimizeBox +Owner" MainGui.Hwnd, "Memory Match Options")
+	MMGui.OnEvent("Close", GuiClose)
+	MMGui.SetFont("s8 cDefault Norm", "Tahoma")
+	(GuiCtrl := MMGui.Add("CheckBox", "x122 y4 vMemoryMatchInterruptCheck Checked" MemoryMatchInterruptCheck, "Allow Gather Interrupt")).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
+	MMGui.Add("Text", "x6 y+4 w360 Center Section", "
+	(
+	Pick the items you do NOT want to match in Memory Match games below!
+	The macro will IGNORE these items and look for every other item.
+	Rare items like Mythic Egg that aren't on this list will always be looked for.
+	)")
+	for var, item in vars
+		(GuiCtrl := MMGui.Add("CheckBox", "xs+" 10+(A_Index-1)//10*120 " ys+" 46+Mod(A_Index-1,10)*15 " v" var "MatchIgnoreCheck Checked" %var%MatchIgnoreCheck, item)).Section := "Collect", GuiCtrl.OnEvent("Click", nm_saveConfig)
+	MMGui.Show("w360 h210")
 }
 ;kill
 nm_BugrunCheck(*){
@@ -5319,7 +5420,7 @@ nm_StickerPrinterCheck(*){
 	global
 	StickerPrinterCheck := MainGui["StickerPrinterCheck"].Value
 	MainGui["SPELeft"].Enabled := MainGui["SPERight"].Enabled := (StickerPrinterCheck = 1)
-	IniWrite StickerPrinterCheck, "settings\nm_config.ini", "Boost", "StickerPrinterCheck"
+	IniWrite StickerPrinterCheck, "settings\nm_config.ini", "Collect", "StickerPrinterCheck"
 }
 nm_StickerPrinterEgg(GuiCtrl, *){
 	global StickerPrinterEgg
@@ -5340,7 +5441,7 @@ nm_StickerPrinterEgg(GuiCtrl, *){
 	}
 
 	MainGui["StickerPrinterEgg"].Text := StickerPrinterEgg := val[(GuiCtrl.Name = "SPERight") ? (Mod(i, l) + 1) : (Mod(l + i - 2, l) + 1)]
-	IniWrite StickerPrinterEgg, "settings\nm_config.ini", "Boost", "StickerPrinterEgg"
+	IniWrite StickerPrinterEgg, "settings\nm_config.ini", "Collect", "StickerPrinterEgg"
 }
 nm_BoostChaserCheck(*){
 	global BoostChaserCheck, AutoFieldBoostActive
@@ -8570,7 +8671,7 @@ nm_testButton(*){
 	{
 		if (Test%A_Index%Check = 1)
 		{
-			if (SubStr(Test%A_Index%Path, -4) = ".ahk")
+			if (IsSet(Test%A_Index%Path) && (SubStr(Test%A_Index%Path, -4) = ".ahk"))
 				file := FileOpen(Test%A_Index%Path, "r"), Test%A_Index% := file.Read(), file.Close()
 			else
 			{
@@ -8618,8 +8719,8 @@ nm_Start(){
 	global serverStart := nowUnix()
 	Loop {
 		DisconnectCheck()
-		;vicious/stingers
-		nm_locateVB()
+		;night
+		nm_Night()
 		;mondo
 		nm_Mondo()
 		;planters
@@ -8646,11 +8747,11 @@ nm_Start(){
 #Include "nm_InventorySearch.ahk"
 ;interrupts
 nm_MondoInterrupt() => (utc_min := FormatTime(A_NowUTC, "m"), now := nowUnix(),
-	((MondoBuffCheck = 1) && (utc_min<14 && (now-LastMondoBuff)>960 && MondoAction="Kill")
+	((MondoBuffCheck = 1) && ((utc_min<14 && (now-LastMondoBuff)>960 && MondoAction="Kill")
 		|| (!nm_GatherBoostInterrupt()
 			&& ((utc_min<14 && (now-LastMondoBuff)>960 && MondoAction="Buff")
 			|| (utc_min<12 && (now-LastGuid)<60 && PMondoGuid && MondoAction="Guid")
-			|| (utc_min<=8 && (now-LastMondoBuff)>960 && PMondoGuid && MondoAction="Tag"))
+			|| (utc_min<=8 && (now-LastMondoBuff)>960 && PMondoGuid && MondoAction="Tag")))
 		)
 	)
 )
@@ -8666,7 +8767,8 @@ nm_BeesmasInterrupt() {
 		|| (CandlesCheck && (now-LastCandles)>14400)
 		|| (SamovarCheck && (now-LastSamovar)>21600)
 		|| (LidArtCheck && (now-LastLidArt)>28800)
-		|| (GummyBeaconCheck && (now-LastGummyBeacon)>28800))
+		|| (GummyBeaconCheck && (now-LastGummyBeacon)>28800)
+		|| (WinterMemoryMatchCheck && (now-LastWinterMemoryMatch)>14400))
 	)
 }
 nm_BugrunInterrupt() {
@@ -8701,6 +8803,16 @@ nm_BugrunInterrupt() {
 			&& ((now-LastBugrunWerewolf)>floor(3600*multiplier))))
 }
 nm_GatherBoostInterrupt() => (now := nowUnix(), ((now-GatherFieldBoostedStart<900) || (now-LastGlitter<900) || nm_boostBypassCheck()))
+nm_MemoryMatchInterrupt() {
+	global MemoryMatchInterruptCheck
+	now := nowUnix()
+	return ((MemoryMatchInterruptCheck = 1)
+		&& ((NormalMemoryMatchCheck && (now-LastNormalMemoryMatch)>7200)
+		|| (MegaMemoryMatchCheck && (now-LastMegaMemoryMatch)>14400)
+		|| (ExtremeMemoryMatchCheck && (now-LastExtremeMemoryMatch)>28800)
+		|| ((beesmasActive = 1) && WinterMemoryMatchCheck && (now-LastWinterMemoryMatch)>14400))
+	)
+}
 
 ;stats/status
 nm_setStats(){
@@ -9572,6 +9684,7 @@ nm_Collect(){
 		nm_LidArt()
 		nm_GummyBeacon()
 		nm_RBPDelevel()
+		nm_MemoryMatch("Winter")
 	}
 
 	;MEMORY MATCH
@@ -10628,13 +10741,19 @@ nm_MemoryMatch(MemoryMatchGame) {
 	if !(%MemoryMatchGame%MemoryMatchCheck && (nowUnix()-Last%MemoryMatchGame%MemoryMatch)>cooldowns[MemoryMatchGame])
 		return
 
+	success := deaths := 0
 	loop 2 {
-		nm_reset()
+		nm_reset(0, 0, 0)
 		nm_SetStatus("Traveling", MemoryMatchGame " Memory Match" ((A_Index > 1) ? " (Attempt 2)" : "" ))
-		nm_GoToCollect(MemoryMatchGame "mm")
+		nm_GoToCollect(MemoryMatchGame "mm", 0)
+		loop 720 { ; 3 min timeout
+			Sleep 250
+			if ((!GetKeyState("F14") && success := 1) || (youDied && ++deaths))
+				break
+		}
+		nm_endWalk()
 
-		searchRet := nm_imgSearch("e_button.png",30,"high")
-		If (searchRet[1] = 0) {
+		If ((success = 1) && nm_imgSearch("e_button.png",30,"high")[1] = 0) {
 			nm_setStatus("Found", MemoryMatchGame " Memory Match")
 			sendinput "{" SC_E " down}"
 			Sleep 100
@@ -10643,7 +10762,7 @@ nm_MemoryMatch(MemoryMatchGame) {
 			sleep 1500
 			Break
 		} else if (A_Index = 2) {
-			UpdateConfig()
+			(MemoryMatchGame != "Night") && UpdateConfig()
 			return
 		}
 	} ;  close Try twice to find MM
@@ -10654,7 +10773,7 @@ nm_MemoryMatch(MemoryMatchGame) {
 		IniWrite Last%MemoryMatchGame%MemoryMatch:=nowUnix(), "settings\nm_config.ini", "Collect", "Last" MemoryMatchGame "MemoryMatch"
 	}
 }
-nm_SolveMemoryMatch(MemoryMatchGame:="", PriorityItemOAC:=0) { ; PriorityItem can be set to a numeric value to prioritize certain bitmap. It will ignore all other pairs until it finds and claims PriorityItem if PriorityItem>0.
+nm_SolveMemoryMatch(MemoryMatchGame:="") {
 
 	; initialize variables
 	GetRobloxClientPos()
@@ -10682,7 +10801,6 @@ nm_SolveMemoryMatch(MemoryMatchGame:="", PriorityItemOAC:=0) { ; PriorityItem ca
 	}
 
 	StoreItemOAC := [], StoreItemOAC.Default := "", StoreItemOAC.Length := 20
-	StoreItemValOAC := [], StoreItemValOAC.Default := 0, StoreItemValOAC.Length := 20
 
 	GridOAC:= [] ;Define MM Tile Coordinates
 	Loop 5 {
@@ -10714,6 +10832,7 @@ nm_SolveMemoryMatch(MemoryMatchGame:="", PriorityItemOAC:=0) { ; PriorityItem ca
 			Break
 		}
 	}
+
 	Gdip_DisposeImage(pBMScreen)
 
 	Loop Chances { ; Numer of available Chances.
@@ -10728,16 +10847,9 @@ nm_SolveMemoryMatch(MemoryMatchGame:="", PriorityItemOAC:=0) { ; PriorityItem ca
 						if (i = j)
 							continue ; Skip self-comparison
 
-						Item1 := StoreitemValOAC[i]
-						Item2 := StoreitemValOAC[j]
-
 						; Check if either variable is Null or Priority
-						if(StoreitemOAC[i] = 0 || StoreitemOAC[j] = 0 || StoreitemOAC[i] = "" || StoreitemOAC[j] = "" || (PriorityClaimedOAC=0 && PriorityItemOAC>0 && (Item1!=PriorityItemOAC || Item2!=PriorityItemOAC)))
+						if(StoreitemOAC[i] = 0 || StoreitemOAC[j] = 0 || StoreitemOAC[i] = "" || StoreitemOAC[j] = "")
 							continue ; Skip the comparison if either Item is Null or Not Priority
-
-						; Check variables are Priority
-						if(Item1 = PriorityItemOAC && Item2 = PriorityItemOAC)
-							PriorityClaimedOAC:=1
 
 						; Check if variables have the same value
 						if (Gdip_ImageSearch(StoreitemOAC[i], StoreitemOAC[j], , , , , , 10, , 2)=1) {
@@ -10762,7 +10874,6 @@ nm_SolveMemoryMatch(MemoryMatchGame:="", PriorityItemOAC:=0) { ; PriorityItem ca
 				if(PairFoundOAC=0) {
 					; Compare all other tiles to click 1
 					j:=Tile
-					Item1 := StoreitemValOAC[j]
 
 					loop Tiles {
 						i:=A_index
@@ -10770,15 +10881,9 @@ nm_SolveMemoryMatch(MemoryMatchGame:="", PriorityItemOAC:=0) { ; PriorityItem ca
 						if (i = Tile)
 							continue ; Skip self-comparison
 
-						Item2 := StoreitemValOAC[i]
-
 						; Check if either variable is Null or Priority
-						if (StoreitemOAC[i] = 0 || StoreitemOAC[j] = 0 || StoreitemOAC[i] = "" || StoreitemOAC[j] = "" || (PriorityClaimedOAC=0 && PriorityItemOAC>0 && (Item1!=PriorityItemOAC || Item2!=PriorityItemOAC)))
+						if(StoreitemOAC[i] = 0 || StoreitemOAC[j] = 0 || StoreitemOAC[i] = "" || StoreitemOAC[j] = "")
 							continue ; Skip the comparison if either Item is Null or Not Priority
-
-						; Check Items are Priority
-						if(Item1 = PriorityItemOAC && Item2 = PriorityItemOAC)
-							PriorityClaimedOAC:=1
 
 						; Check if Items are the same.
 						if (Gdip_ImageSearch(StoreitemOAC[j], StoreitemOAC[i], , , , , , 10, , 2)=1) {
@@ -10819,7 +10924,9 @@ nm_SolveMemoryMatch(MemoryMatchGame:="", PriorityItemOAC:=0) { ; PriorityItem ca
 			sendinput "{click down}"
 			sleep 100
 			sendinput "{click up}"
-			sleep 500
+			sleep 100
+			MouseMove middleX, middleY-190
+			sleep 350
 
 			Loop 20 {
 				pBMScreen := Gdip_BitmapFromScreen(TileXCordOAC-5 "|" TileYCordOAC+10 "|8|20") ; Detect Clicked Item
@@ -10838,13 +10945,18 @@ nm_SolveMemoryMatch(MemoryMatchGame:="", PriorityItemOAC:=0) { ; PriorityItem ca
 				;path:=A_ScriptDir "\..\MMScreenshots\"
 				;Gdip_SaveBitmapToFile(StoreItemOAC[Tile], path "image" Tile ".png")
 
-				Loop 25 {
-					bitmap:="MM" . A_Index
-					if (Gdip_ImageSearch(StoreItemOAC[Tile], bitmaps[bitmap], , , , , , 10, , 2) = 1) {
-						StoreItemValOAC[Tile]:=A_Index
-						Break
+				for item in MemoryMatchItems {
+  					if %item%MatchIgnoreCheck {
+						loop 2 {
+							bitmap:="MM" . item . A_index
+							if (Gdip_ImageSearch(StoreItemOAC[Tile], bitmaps[bitmap], , , , , , 10, , 2) = 1) {
+								Gdip_DisposeImage(StoreitemOAC[Tile]), StoreitemOAC[Tile]:=0	;Non Priority
+								Break 2
+							}
+						}
 					}
 				}
+
 			}
 
 			if(A_Index=1) {
@@ -10873,7 +10985,8 @@ nm_SolveMemoryMatch(MemoryMatchGame:="", PriorityItemOAC:=0) { ; PriorityItem ca
 	for pBM in StoreitemOAC
 		IsSet(pBM) && IsInteger(pBM) && (pBM > 0) && Gdip_DisposeImage(pBM)
 
-	Sleep 1000
+	MouseMove windowX+350, windowY+GetYOffset()+100
+	Sleep 1500
 	nm_setStatus("Collected", (MemoryMatchGame ? (MemoryMatchGame " ") : "") "Memory Match")
 
 	; wait for window to close
@@ -11062,7 +11175,7 @@ nm_StickerPrinter(){
 		}
 		if (StickerPrinterCheck = 1) {
 			LastStickerPrinter:=nowUnix()
-			IniWrite LastStickerPrinter, "settings\nm_config.ini", "Boost", "LastStickerPrinter"
+			IniWrite LastStickerPrinter, "settings\nm_config.ini", "Collect", "LastStickerPrinter"
 		}
 	}
 }
@@ -11665,7 +11778,7 @@ nm_Bugrun(){
 		, KingBeetleAmuletMode, ShellAmuletMode
 
 	;interrupts
-	if ((VBState=1) || nm_MondoInterrupt() || nm_GatherBoostInterrupt() || nm_BeesmasInterrupt())
+	if ((VBState=1) || nm_MondoInterrupt() || nm_GatherBoostInterrupt() || nm_BeesmasInterrupt() || nm_MemoryMatchInterrupt())
 		return
 
 	nm_setShiftLock(0)
@@ -14039,6 +14152,9 @@ nm_GoGather(){
 		;BEESMAS GatherInterruptCheck
 		if nm_BeesmasInterrupt()
 			return
+		;Memory Match
+		if nm_MemoryMatchInterrupt()
+			return
 	}
 	utc_min := FormatTime(A_NowUTC, "m")
 	if(CurrentField="mountain top" && (utc_min>=0 && utc_min<15)) ;mondo dangerzone! skip over this field if possible
@@ -14421,7 +14537,7 @@ nm_GoGather(){
 					break
 				}
 				if (VBState=1) {
-					interruptReason := "Vicious Bee"
+					interruptReason := "Night"
 					break
 				}
 			}
@@ -14506,13 +14622,17 @@ nm_GoGather(){
 					interruptReason := "Beesmas Machine"
 					break
 				}
+				if nm_MemoryMatchInterrupt() {
+					interruptReason := "Memory Match"
+					break
+				}
 			}
 			Sleep 50
 		}
 
 		Click "Up"
 		if interruptReason {
-			bypass := (interruptReason ~= "i)Disconnect|You Died!|Vicious Bee|Inactive Honey")
+			bypass := (interruptReason ~= "i)Disconnect|You Died!|Night|Inactive Honey")
 			if (!bypass && InStr(patterns[FieldPattern], ";@NoInterrupt"))
 				KeyWait "F14", "T180 L"
 			break
@@ -16228,12 +16348,49 @@ nm_ViciousCheck(){
 	}
 	return killed
 }
+nm_Night(){
+	nm_NightMemoryMatch()
+	nm_locateVB()
+}
+nm_confirmNight(){
+	nm_setStatus("Confirming", "Night")
+	nm_Reset(0, 2000, 0)
+	sendinput "{" RotDown " 5}"
+	loop 10 {
+		SendInput "{" ZoomOut "}"
+		Sleep 100
+		if ((findImg := nm_imgSearch("nightsky.png", 50, "abovebuff"))[1] = 0)
+			break
+	}
+	sendinput "{" RotUp " 5}"
+	send "{" ZoomOut " 8}"
+	return (findImg[1]=0)
+}
+nm_NightMemoryMatch(){
+	global VBState, NightLastDetected
+
+	if (!(NightMemoryMatchCheck && (nowUnix()-LastNightMemoryMatch)>28800) || (VBState = 0))
+		return
+
+	if !nm_confirmNight(){
+		;false positive, ABORT!
+		VBState:=0
+		PostSubmacroMessage("background", 0x5554, 3, VBState)
+		NightLastDetected:=nowUnix()-300-1 ;make NightLastDetected older than 5 minutes
+		IniWrite NightLastDetected, "settings\nm_config.ini", "Collect", "NightLastDetected"
+		nm_setStatus("Aborting", "Night Memory Match - Not Night")
+		return
+	}
+
+	nm_MemoryMatch("Night")
+	PostSubmacroMessage("background", 0x5554, 8, LastNightMemoryMatch)
+}
 nm_locateVB(){
 	global VBState, StingerCheck, StingerDailyBonusCheck, StingerPepperCheck, StingerMountainTopCheck, StingerRoseCheck, StingerCactusCheck, StingerSpiderCheck, StingerCloverCheck, NightLastDetected, VBLastKilled, FwdKey, LeftKey, BackKey, RightKey, RotLeft, RotRight, RotDown, RotUp, ZoomOut, MoveMethod, objective, DisableToolUse, dayorNight
 
 	time := nowUnix()
 	; don't run if stinger check Disabled", VB last killed less than 5m ago, night last detected more than 5m ago
-	if ((StingerCheck=0) || (time-VBLastKilled)<300 || ((time-NightLastDetected)>300 || (time-NightLastDetected)<0) || (VBState = 0)) {
+	if ((StingerCheck=0) || (StingerDailyBonusCheck=1 && (time-VBLastKilled)<79200) || (time-VBLastKilled)<300 || ((time-NightLastDetected)>300 || (time-NightLastDetected)<0) || (VBState = 0)) {
 		VBState:=0
 		;send VBState to background.ahk
 		PostSubmacroMessage("background", 0x5554, 3, VBState)
@@ -16284,20 +16441,9 @@ nm_locateVB(){
 
 	; confirm night time
 	if(VBState=1){
-		nm_setStatus("Confirming", "Night")
-		nm_Reset(0, 2000, 0)
-		sendinput "{" RotDown " 5}"
-		loop 10 {
-			SendInput "{" ZoomOut "}"
-			Sleep 100
-			if ((findImg := nm_imgSearch("nightsky.png", 50, "abovebuff"))[1] = 0)
-				break
-		}
-		if(findImg[1]=0){
+		if(nm_confirmNight()){
 			;night confirmed, proceed!
 			nm_setStatus("Starting", "Vicious Bee Cycle")
-			sendinput "{" RotUp " 5}"
-			send "{" ZoomOut " 8}"
 		} else {
 			;false positive, ABORT!
 			VBState:=0
@@ -16305,8 +16451,6 @@ nm_locateVB(){
 			NightLastDetected:=nowUnix()-300-1 ;make NightLastDetected older than 5 minutes
 			IniWrite NightLastDetected, "settings\nm_config.ini", "Collect", "NightLastDetected"
 			nm_setStatus("Aborting", "Vicious Bee - Not Night")
-			sendinput "{" RotUp " 5}"
-			send "{" ZoomOut " 8}"
 			return
 		}
 	}
@@ -20567,7 +20711,7 @@ start(*){
 	try run
 	(
 	'"' exe_path32 '" /script "' A_WorkingDir '\submacros\background.ahk" "' NightLastDetected '" "' VBLastKilled '" "' StingerCheck '" "' StingerDailyBonusCheck '" '
-	'"' AnnounceGuidingStar '" "' ReconnectInterval '" "' ReconnectHour '" "' ReconnectMin '" "' EmergencyBalloonPingCheck '" "' ConvertBalloon '"'
+	'"' AnnounceGuidingStar '" "' ReconnectInterval '" "' ReconnectHour '" "' ReconnectMin '" "' EmergencyBalloonPingCheck '" "' ConvertBalloon '" "' NightMemoryMatchCheck '" "' LastNightMemoryMatch '"'
 	)
 	;(re)start stat monitor
 	global SessionTotalHoney, HoneyAverage

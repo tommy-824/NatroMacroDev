@@ -44,6 +44,8 @@ ReconnectHour := A_Args[7]
 ReconnectMin := A_Args[8]
 EmergencyBalloonPingCheck := A_Args[9]
 ConvertBalloon := A_Args[10]
+NightMemoryMatchCheck := A_Args[11]
+LastNightMemoryMatch := A_Args[12]
 
 pToken := Gdip_Startup()
 bitmaps := Map(), bitmaps.CaseSense := 0
@@ -75,8 +77,8 @@ loop {
 
 nm_setGlobalNum(wParam, lParam, *){
 	Critical
-	global resetTime, NightLastDetected, VBState, StingerCheck, VBLastKilled, LastConvertBalloon
-	static arr:=["resetTime", "NightLastDetected", "VBState", "StingerCheck", "VBLastKilled", "LastConvertBalloon"]
+	global resetTime, NightLastDetected, VBState, StingerCheck, VBLastKilled, LastConvertBalloon, NightMemoryMatchCheck, LastNightMemoryMatch
+	static arr:=["resetTime", "NightLastDetected", "VBState", "StingerCheck", "VBLastKilled", "LastConvertBalloon", "NightMemoryMatchCheck", "LastNightMemoryMatch"]
 
 	var := arr[wParam], %var% := lParam
 	return 0
@@ -173,11 +175,10 @@ nm_popStarCheck(){
 }
 
 nm_dayOrNight(){
-	disableDayorNight:=0
 	;VBState 0=no VB, 1=searching for VB, 2=VB found
 	global NightLastDetected, StingerCheck, StingerDailyBonusCheck, VBLastKilled, VBState
 	static confirm:=0
-	if (disableDayorNight || StingerCheck=0)
+	if (StingerCheck=0 && NightMemoryMatchCheck=0)
 		return
 	if(((VBState=1) && ((nowUnix()-NightLastDetected)>400 || (nowUnix()-NightLastDetected)<0)) || ((VBState=2) && ((nowUnix()-VBLastKilled)>(600) || (nowUnix()-VBLastKilled)<0))) {
 		VBState:=0
@@ -185,6 +186,14 @@ nm_dayOrNight(){
 			PostMessage 0x5555, 3, 0
 		}
 	}
+	;return if pollen text is not visible (darkened background)
+	pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2 "|" windowY "|60|100")
+	if (Gdip_ImageSearch(pBMScreen, bitmaps["toppollen"], , , , , , 8) != 1) {
+		Gdip_DisposeImage(pBMScreen)
+		return
+	}
+	Gdip_DisposeImage(pBMScreen)
+
 	try
 		result := ImageSearch(&FoundX, &FoundY, windowX, windowY + windowHeight//2, windowX + windowWidth, windowY + windowHeight, "*5 nm_image_assets\grassD.png")
 	catch
@@ -216,7 +225,7 @@ nm_dayOrNight(){
 				PostMessage 0x5555, 2, NightLastDetected
 				Send_WM_COPYDATA("Detected: Night", "natro_macro ahk_class AutoHotkey")
 			}
-			if((StingerCheck=1) && ((StingerDailyBonusCheck=0) || (nowUnix()-VBLastKilled)>79200) && VBState=0) {
+			if(((StingerCheck=1) && ((StingerDailyBonusCheck=0) || (nowUnix()-VBLastKilled)>79200) && VBState=0) || ((NightMemoryMatchCheck=1) && (nowUnix()-LastNightMemoryMatch)>28800)) {
 				VBState:=1 ;0=no VB, 1=searching for VB, 2=VB found
 				if WinExist("natro_macro ahk_class AutoHotkey") {
 					PostMessage 0x5555, 3, 1
