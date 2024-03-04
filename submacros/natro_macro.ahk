@@ -10986,7 +10986,7 @@ nm_SolveMemoryMatch(MemoryMatchGame:="") {
 		IsSet(pBM) && IsInteger(pBM) && (pBM > 0) && Gdip_DisposeImage(pBM)
 
 	MouseMove windowX+350, windowY+GetYOffset()+100
-	Sleep 1500
+	Sleep 1200
 	nm_setStatus("Collected", (MemoryMatchGame ? (MemoryMatchGame " ") : "") "Memory Match")
 
 	; wait for window to close
