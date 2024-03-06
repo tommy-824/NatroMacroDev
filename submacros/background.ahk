@@ -440,7 +440,7 @@ nm_dailyReconnect(){
 			break
 		}
 	}
-	if((ReconnectMin=RCminUTC) && HourReady && (MacroState = 2)) {
+	if((Number(ReconnectMin)=RCminUTC) && HourReady && (MacroState = 2)) {
 		LastDailyReconnect := nowUnix()
 		if WinExist("natro_macro ahk_class AutoHotkey") {
 			Send_WM_COPYDATA("Closing: Roblox, Daily Reconnect", "natro_macro ahk_class AutoHotkey")
