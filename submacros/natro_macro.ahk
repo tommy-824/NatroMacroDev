@@ -10980,7 +10980,7 @@ nm_SolveMemoryMatch(MemoryMatchGame:="") {
 				Gdip_DisposeImage(pBMScreen)
 				sleep 10
 			}
-			Sleep 100
+			Sleep 300
 
 			if(MMItemOAC=1 && PairFoundOAC!=1 && (A_Index=1 || (A_Index=2 && MatchFoundOAC!=1))) {
 				StoreItemOAC[Tile] := Gdip_BitmapFromScreen(TileXCordOAC-25 "|" TileYCordOAC-25 "|50|50") ; Detect Clicked Item
