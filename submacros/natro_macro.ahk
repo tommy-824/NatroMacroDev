@@ -10856,8 +10856,6 @@ nm_SolveMemoryMatch(MemoryMatchGame:="") {
 	Chances:=8
 	LastChance:=0
 
-	Gdip_DisposeImage(pBMScreen)
-
 	Loop 10 { ; Numer of available Chances.
 		if(Chances=2) {
 			Loop 1000 {
