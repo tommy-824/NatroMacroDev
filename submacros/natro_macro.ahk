@@ -10831,6 +10831,7 @@ nm_SolveMemoryMatch(MemoryMatchGame:="") {
 	}
 
 	StoreItemOAC := [], StoreItemOAC.Default := "", StoreItemOAC.Length := 20
+	IgnoreItemOAC := [], IgnoreItemOAC.Default := 0, IgnoreItemOAC.Length := 20
 
 	GridOAC:= [] ;Define MM Tile Coordinates
 	Loop 5 {
@@ -10853,19 +10854,23 @@ nm_SolveMemoryMatch(MemoryMatchGame:="") {
 	MatchFoundOAC:=0
 	ClickNum:=0
 	Chances:=8
-
-	pBMScreen := Gdip_BitmapFromScreen(middleX-275-Xoffset "|" middleY-146 "|100|100") ; Detect Number of Chances
-	Loop 8 {
-		bitmap:="Chances" . A_Index
-		if (Gdip_ImageSearch(pBMScreen, bitmaps[bitmap], , , , , , 10, , 2) = 1) {
-			Chances:=A_Index
-			Break
-		}
-	}
+	LastChance:=0
 
 	Gdip_DisposeImage(pBMScreen)
 
-	Loop Chances { ; Numer of available Chances.
+	Loop 10 { ; Numer of available Chances.
+		if(Chances=2) {
+			Loop 1000 {
+				pBMScreen := Gdip_BitmapFromScreen(middleX-275-Xoffset "|" middleY-146 "|100|100") ; Detect Number of Chances
+				if(Gdip_ImageSearch(pBMScreen, bitmaps["Chances1"], , , , , , 10, , 2) = 1)  {
+					LastChance := 1
+					Gdip_DisposeImage(pBMScreen)
+					break
+				}
+				Gdip_DisposeImage(pBMScreen)
+				sleep 10
+			}
+		}
 		loop 2 { ;Click tile, store item and compare
 			if(A_Index=1) {
 				; Compare Tiles before Click 1
@@ -10877,8 +10882,8 @@ nm_SolveMemoryMatch(MemoryMatchGame:="") {
 						if (i = j)
 							continue ; Skip self-comparison
 
-						; Check if either variable is Null or Priority
-						if(StoreitemOAC[i] = 0 || StoreitemOAC[j] = 0 || StoreitemOAC[i] = "" || StoreitemOAC[j] = "")
+						; Check if either variable is Null or Ignored
+						if(StoreitemOAC[i] = 0 || StoreitemOAC[j] = 0 || IgnoreitemOAC[i] = 1 || IgnoreitemOAC[j] = 1 || StoreitemOAC[i] = "" || StoreitemOAC[j] = "")
 							continue ; Skip the comparison if either Item is Null or Not Priority
 
 						; Check if variables have the same value
@@ -10900,8 +10905,7 @@ nm_SolveMemoryMatch(MemoryMatchGame:="") {
 					Tile:=MMTempTile1OAC ;-1
 				}
 			} else {
-				;if(PairFoundOAC=0 || ClickNum=Chances*2-1) {
-				if(PairFoundOAC=0) {
+				if(PairFoundOAC=0 || LastChance=1) {
 					; Compare all other tiles to click 1
 					j:=Tile
 
@@ -10911,8 +10915,8 @@ nm_SolveMemoryMatch(MemoryMatchGame:="") {
 						if (i = Tile)
 							continue ; Skip self-comparison
 
-						; Check if either variable is Null or Priority
-						if(StoreitemOAC[i] = 0 || StoreitemOAC[j] = 0 || StoreitemOAC[i] = "" || StoreitemOAC[j] = "")
+						; Check if either variable is Null or Ignored
+						if(StoreitemOAC[i] = 0 || StoreitemOAC[j] = 0 || (IgnoreitemOAC[i] = 1 && LastChance!=1) || StoreitemOAC[i] = "" || StoreitemOAC[j] = "")
 							continue ; Skip the comparison if either Item is Null or Not Priority
 
 						; Check if Items are the same.
@@ -10982,13 +10986,20 @@ nm_SolveMemoryMatch(MemoryMatchGame:="") {
   					if ((MemoryMatchGame && (%item%MatchIgnore & MemoryMatchGames[MemoryMatchGame].bit)) || (!MemoryMatchGame && (%item%MatchIgnore = data.games))) {
 						loop 2 {
 							bitmap:="MM" . item . A_index
-							if (Gdip_ImageSearch(StoreItemOAC[Tile], bitmaps[bitmap], , , , , , 10, , 2) = 1) {
-								Gdip_DisposeImage(StoreitemOAC[Tile]), StoreitemOAC[Tile]:=0	;Non Priority
+							if (Gdip_ImageSearch(StoreItemOAC[Tile], bitmaps[bitmap], , , , , , 10, , 2) = 1 && LastChance!=1) {
+								IgnoreitemOAC[Tile]:=1
 								Break 2
 							}
 						}
 					}
 				}
+			}
+
+			if(A_index=1) {
+				pBMScreen := Gdip_BitmapFromScreen(middleX-275-Xoffset "|" middleY-146 "|100|100") ; Detect Number of Chances
+				if (Gdip_ImageSearch(pBMScreen, bitmaps["Chances2"], , , , , , 10, , 2) = 1)
+				Chances:=2
+				Gdip_DisposeImage(pBMScreen)
 			}
 
 			if(A_Index=1) {
@@ -11010,6 +11021,9 @@ nm_SolveMemoryMatch(MemoryMatchGame:="") {
 						MatchFoundOAC:=0
 				}
 			}
+
+			if(A_Index=2 && LastChance=1)
+				break 2
 		} ;Close loop 2 Click tile, store item, and compare
 	} ;close Chances Loop
 
