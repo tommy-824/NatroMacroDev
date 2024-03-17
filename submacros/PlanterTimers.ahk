@@ -318,7 +318,7 @@ Loop {
 	}
 
     TimersGui["dayOrNight"].Text := IniRead("settings\nm_config.ini", "Planters", "dayOrNight") " Detected"
-    TimersGui["pstatus"].Text := ControlGetText("Static4", "Natro ahk_class AutoHotkeyGUI")
+    try TimersGui["pstatus"].Text := ControlGetText("Static4", "Natro ahk_class AutoHotkeyGUI")
 
 	Sleep (1100 - A_MSec)
 }
