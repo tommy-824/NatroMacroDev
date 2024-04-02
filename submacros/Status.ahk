@@ -714,7 +714,7 @@ nm_status(status)
 		}
 
 		status_buffer.RemoveAt(1)
-		discord.SendEmbed(message, color, content, pBM?, channel?), IsSet(pBM) && Gdip_DisposeImage(pBM)
+		discord.SendEmbed(message, color, content, pBM?, channel?), IsSet(pBM) && pBM > 0 && Gdip_DisposeImage(pBM)
 
 		; extra: honey update
 		if (ssCheck = 1)
@@ -766,6 +766,8 @@ nm_honey()
 		discord.CreateFormData(&postdata, &contentType
 			, [Map("name","payload_json", "content-type","application/json", "content",payload_json)
 			, Map("name","files[0]", "filename","honey.png", "content-type","image/png", "pBitmap",pBM:=CreateHoneyBitmap())])
+		if pBM <= 0
+			return
 		Gdip_DisposeImage(pBM)
 		try id ? discord.EditMessageAPI(id, postdata, contentType) : ((message := JSON.parse(discord.SendMessageAPI(postdata, contentType))).Has("id") && (id := message["id"]))
 	}
@@ -776,10 +778,10 @@ nm_honey()
 CreateHoneyBitmap(honey := 1, backpack := 1)
 {
 	if (!honey && !backpack)
-		return 0
+		return -1
 	hwnd := GetRobloxHWND(), GetRobloxClientPos(hwnd), offsetY := GetYOffset(hwnd)
 	if (windowWidth <= 500)
-		return 0
+		return -2
 	pBM := Gdip_CreateBitmap(294, (!!honey)*36 + (!!backpack)*35), G := Gdip_GraphicsFromImage(pBM)
 	(honey) && (pBMHoney := Gdip_BitmapFromScreen(windowX + windowWidth//2 - 300 "|" windowY + offsetY "|294|36"), Gdip_DrawImage(G, pBMHoney), Gdip_DisposeImage(pBMHoney))
 	(backpack) && (pBMBackpack := Gdip_BitmapFromScreen(windowX + windowWidth//2 "|" windowY + offsetY "|294|35"), Gdip_DrawImage(G, pBMBackpack, , (!!honey)*36), Gdip_DisposeImage(pBMBackpack))
