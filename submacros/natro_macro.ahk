@@ -180,8 +180,8 @@ nm_importPatterns()
 	Loop Files A_WorkingDir "\patterns\*.ahk"
 	{
 		file := FileOpen(A_LoopFilePath, "r"), pattern := file.Read(), file.Close()
-		if !!RegexMatch(pattern, "im)patterns\[")
-    			MsgBox
+		if RegexMatch(pattern, "im)patterns\[")
+    		MsgBox
 			(
 			"Pattern '" A_LoopFileName "' seems to be deprecated!
 			This means the pattern will NOT work!
@@ -266,8 +266,8 @@ nm_importPaths()
 		{
 			try {
 				file := FileOpen(A_WorkingDir "\paths\" k "-" v ".ahk", "r"), paths[k][v] := file.Read(), file.Close()
-				if !!regexMatch(paths[k][v], "im)paths\[")
-    					MsgBox
+				if regexMatch(paths[k][v], "im)paths\[")
+    				MsgBox
 					(
 					"Path '" k '-' v "' seems to be deprecated!
 					This means the macro will NOT work correctly!
