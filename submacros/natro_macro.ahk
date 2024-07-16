@@ -14356,17 +14356,17 @@ nm_GoGather(){
 				; find next eligible field and slot
 				if 		((eligible.Has(1)) && (((LastPlanterGatherSlot=1) && (!eligible.Has(2)) && (!eligible.Has(3))) || ((LastPlanterGatherSlot=2) && (!eligible.Has(3))) || (LastPlanterGatherSlot=3)))
 						{
-						slot:= 1
+						LastPlanterGatherSlot:= 1
 						field := PlanterField1
 						}
 				else if ((eligible.Has(2)) && (((LastPlanterGatherSlot=2) && (!eligible.Has(3)) && (!eligible.Has(1))) || ((LastPlanterGatherSlot=3) && (!eligible.Has(1))) || (LastPlanterGatherSlot=1)))
 						{
-						slot:= 2
+						LastPlanterGatherSlot:= 2
 						field := PlanterField2
 						}
 				else if ((eligible.Has(3)) && (((LastPlanterGatherSlot=3) && (!eligible.Has(1)) && (!eligible.Has(2))) || ((LastPlanterGatherSlot=1) && (!eligible.Has(2))) || (LastPlanterGatherSlot=2)))
 						{
-						slot:= 3
+						LastPlanterGatherSlot:= 3
 						field := PlanterField3
 						}
 
@@ -14390,7 +14390,7 @@ nm_GoGather(){
 				MPlanterGatherDetectionTime:=0
 
 				; write currentfield to file as LastPlanterGatherSlot, to read on next loop
-				IniWrite slot, "settings\nm_config.ini", "Planters", "LastPlanterGatherSlot"
+				IniWrite LastPlanterGatherSlot, "settings\nm_config.ini", "Planters", "LastPlanterGatherSlot"
 
 				break
 			}
