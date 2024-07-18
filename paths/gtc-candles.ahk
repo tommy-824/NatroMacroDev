@@ -28,4 +28,5 @@ send "{space}{" RightKey " up}"
 HyperSleep(1000)
 nm_Walk(4, RightKey)
 nm_Walk(14, FwdKey)
-Sleep 500
+nm_Walk(8, RightKey)
+nm_Walk(5, LeftKey)
