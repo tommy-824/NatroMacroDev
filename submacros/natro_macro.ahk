@@ -2631,7 +2631,7 @@ MainGui.Add("Text", "x345 y170 w110 +BackgroundTrans", "Multiple Reset:")
 (GuiCtrl := MainGui.Add("Slider", "x415 y168 w78 h16 vMultiReset Thick16 Disabled ToolTipTop Range0-3 Page1 TickInterval1", MultiReset)).Section := "Settings", GuiCtrl.OnEvent("Change", nm_saveConfig)
 (GuiCtrl := MainGui.Add("CheckBox", "x345 y186 vGatherDoubleReset Disabled Checked" GatherDoubleReset, "Gather Double Reset")).Section := "Settings", GuiCtrl.OnEvent("Click", nm_saveConfig)
 (GuiCtrl := MainGui.Add("CheckBox", "x345 y201 vDisableToolUse Disabled Checked" DisableToolUse, "Disable Tool Use")).Section := "Settings", GuiCtrl.OnEvent("Click", nm_saveConfig)
-(GuiCtrl := MainGui.Add("CheckBox", "x345 y216 vAnnounceGuidingStar Disabled Checked" AnnounceGuidingStar, "Announce Guiding Star")).Section := "Settings", GuiCtrl.OnEvent("Click", nm_saveConfig)
+GuiCtrl := MainGui.Add("CheckBox", "x345 y216 vAnnounceGuidingStar Disabled Checked" AnnounceGuidingStar, "Announce Guiding Star").OnEvent("Click", nm_AnnounceGuidWarn)
 SetLoadingProgress(30)
 
 ;COLLECT/Kill TAB
@@ -7195,6 +7195,23 @@ nm_HiveBeesHelp(*){
 	Lowering this number will increase the time your character waits at hive after converting or before going to battle.
 	If you notice that your bees don't finish converting or haven't recovered to fight mobs, reduce this value but keep it above 35 to enable access to all areas in the map.
 	)", "Hive Bees", 0x40000
+}
+nm_AnnounceGuidWarn(GuiCtrl, *){
+	if GuiCtrl.Value = 0
+		IniWrite (GuiCtrl.Value := 0), "settings\nm_config.ini", "Settings", "AnnounceGuidingStar"
+	else {
+		if (MsgBox("
+		(
+		WARNING:
+		There have been reports of players getting warned on Roblox for using this feature. It is recommended to only enable when using private servers.
+		There is still a chance of being warned, or potentially banned, even in private servers. Use at your own risk.
+
+		DESCRIPTION:
+		When enabled, the macro will send a message to the Roblox chat reading <<Guiding Star in (field) until __:mm>> when the "Guiding star in (field)" text is detected on the bottom right of your screen.
+		)", "Announce Guiding Star", 0x40031)="Ok"){
+			IniWrite (GuiCtrl.Value := 1), "settings\nm_config.ini", "Settings", "AnnounceGuidingStar"
+		} else IniWrite (GuiCtrl.Value := 0), "settings\nm_config.ini", "Settings", "AnnounceGuidingStar"
+	}
 }
 nm_ResetConfig(*){
 	if (MsgBox("
