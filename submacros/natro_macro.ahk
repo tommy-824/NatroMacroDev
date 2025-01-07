@@ -9160,7 +9160,7 @@ nm_PlanterTimeUpdate(FieldName, SetStatus := 1)
 }
 ;syspalk if you're reading this hi
 ;(+) Keep this in for the final
-nm_HealthDetection()
+nm_HealthDetection(w:=0)
 {
 	static pBMHealth, pBMDamage
 	HealthBars := []
@@ -9173,7 +9173,10 @@ nm_HealthDetection()
 	}
 	ActivateRoblox()
 	GetRobloxClientPos()
-	pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth "|" windowHeight)
+	if w = 1 ; king beetle, right half search only to avoid false detections
+		pBMScreen := Gdip_BitmapFromScreen((windowX + windowWidth//2) "|" windowY "|" windowWidth//2 "|" windowHeight)
+	else
+		pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth "|" windowHeight)	
 	G := Gdip_GraphicsFromImage(pBMScreen)
 	pBrush := Gdip_BrushCreateSolid(0xff000000)
 	while ((Gdip_ImageSearch(pBMScreen, pBMHealth, &HPStart, , , , , , , 5) > 0) || (Gdip_ImageSearch(pBMScreen, pBMDamage, &HPStart, , , , , , , 5) > 0))
@@ -13431,7 +13434,7 @@ nm_Bugrun(){
 				;(+) Update health detection
 				loop 20
 				{
-					kBeetle:= nm_HealthDetection()
+					kBeetle:= nm_HealthDetection(1)
 					if(kBeetle.Length > 0)
 					{
 						found:=1
