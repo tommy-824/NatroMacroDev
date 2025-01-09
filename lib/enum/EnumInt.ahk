@@ -361,4 +361,5 @@
 	, "StumpBoosterCheck"
 	, "PepperBoosterCheck"
   , "HoneyUpdateSSCheck"
-	, "StickerStackVoucher"]
+	, "StickerStackVoucher"
+  , "MGatherPlanterLoot"]
