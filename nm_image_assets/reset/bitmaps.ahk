@@ -10,4 +10,4 @@ bitmaps["hive"]["noshadow-day"] := Gdip_CreateBitmap(16, 4), G := Gdip_GraphicsF
 bitmaps["hive"]["noshadow-night"] := Gdip_CreateBitmap(16, 4), G := Gdip_GraphicsFromImage(bitmaps["hive"]["noshadow-night"]), Gdip_GraphicsClear(G, 0xff694a00), Gdip_DeleteGraphics(G)
 bitmaps["hive"]["noshadow-gifted"] := Gdip_CreateBitmap(16, 4), G := Gdip_GraphicsFromImage(bitmaps["hive"]["noshadow-gifted"]), Gdip_GraphicsClear(G, 0xffe39d1f), Gdip_DeleteGraphics(G)
 bitmaps["hive"]["wing"] := Gdip_CreateBitmap(16, 4), G := Gdip_GraphicsFromImage(bitmaps["hive"]["wing"]), Gdip_GraphicsClear(G, 0xffa28645), Gdip_DeleteGraphics(G)
-bitmaps["hive"]["gifted-border"] := Gdip_CreateBitmap(16, 4), G := Gdip_GraphicsFromImage(bitmaps["hive"]["gifted-border"]), Gdip_GraphicsClear(G, 0xffffff00), Gdip_DeleteGraphics(G)
+bitmaps["hive"]["gifted-border"] := Gdip_CreateBitmap(64, 32), G := Gdip_GraphicsFromImage(bitmaps["hive"]["gifted-border"]), Gdip_GraphicsClear(G, 0xffffff00), Gdip_DeleteGraphics(G)
