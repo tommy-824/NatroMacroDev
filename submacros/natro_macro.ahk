@@ -11137,7 +11137,7 @@ nm_SolveMemoryMatch(MemoryMatchGame:="") {
 					Tile:=MMTempTile2OAC
 				}
 			} else {
-				if((Gdip_ImageSearch(StoreitemOAC[Click1Tile], StoreitemOAC[Tile], , , , , , 1, , 2) = 1) && PairFoundOAC!=1 && MatchFoundOAC!=1) {
+				if((Gdip_ImageSearch(StoreitemOAC[Click1Tile], StoreitemOAC[Tile], , , , , , 10, , 2) = 1) && PairFoundOAC!=1 && MatchFoundOAC!=1) {
 					Gdip_DisposeImage(StoreitemOAC[Click1Tile]), StoreitemOAC[Click1Tile]:=0 ;"claimed"
 					Gdip_DisposeImage(StoreitemOAC[Tile]), StoreitemOAC[Tile]:=0 ;"claimed"
 					Continue
