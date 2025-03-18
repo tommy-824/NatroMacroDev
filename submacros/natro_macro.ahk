@@ -109,7 +109,7 @@ OnMessage(0x5558, nm_AmuletPrompt)
 OnMessage(0x5559, nm_FindItem)
 
 ; set version identifier
-VersionID := "1.0.0.3"
+VersionID := "1.0.1"
 
 ;initial load warnings
 if (A_ScreenDPI != 96)
