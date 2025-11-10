@@ -10991,8 +10991,6 @@ nm_Reset(checkAll:=1, wait:=2000, convert:=1, force:=0){
 		success := (Gdip_ImageSearch(pBMScreen, bitmaps["colhey"],,,,,,5) = 1)
 		Gdip_DisposeImage(pBMScreen)
 
-		tooltip "success: " success
-
 		return success
 	}
 }
