@@ -19477,7 +19477,7 @@ nm_BuckoQuestProg(){
 	}
 }
 nm_BuckoQuest(){
-	global BuckoQuestCheck, BuckoQuestComplete, BuckoQuest, RotateQuest, QuestGatherField, QuestAnt, QuestBlueBoost, QuestFeed, LastBugrunLadybugs, LastBugrunRhinoBeetles, LastBugrunSpider, LastBugrunMantis, LastBugrunScorpions, LastBugrunWerewolf, MonsterRespawnTime, BuckoRhinoBeetles, BuckoMantis, TotalQuestsComplete, SessionQuestsComplete
+	global BuckoQuestCheck, BuckoQuestComplete, BuckoQuest, RotateQuest, QuestGatherField, QuestAnt, QuestBlueBoost, QuestFeed, LastBugrunLadybugs, LastBugrunRhinoBeetles, LastBugrunSpider, LastBugrunMantis, LastBugrunScorpions, LastBugrunWerewolf, MonsterRespawnTime, BuckoRhinoBeetles, BuckoMantis, TotalQuestsComplete, SessionQuestsComplete, QuestPetal, QuestPetalField
 	if(!BuckoQuestCheck)
 		return
 	RotateQuest:="Bucko"
@@ -19509,6 +19509,9 @@ nm_BuckoQuest(){
 		}
 		if nm_NightInterrupt()
 			return
+		if not (QuestPetal="None"){
+			nm_PetalRun()
+		}
 		nm_BuckoQuestProg()
 		if(BuckoQuestComplete=1) {
 			nm_gotoQuestgiver("Bucko")
