@@ -1411,9 +1411,9 @@ BuckoBee := Map("Abilities",
 		,[3,"Collect","Pine Tree"]]
 
 	, "Petals",
-		[[1,"Collect","Clover"]
-		,[2,"Collect","Pineapple"]
-		,[3,"Collect","Pine Tree"]])
+		[[1,"Petal","Clover"]
+		,[2,"Petal","Pineapple"]
+		,[3,"Petal","Any"]])
 
 
 RileyBee := Map("Abilities",
