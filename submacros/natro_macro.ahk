@@ -1411,9 +1411,9 @@ BuckoBee := Map("Abilities",
 		,[3,"Collect","Pine Tree"]]
 
 	, "Petals",
-		[[1,"Petal","Clover"]
-		,[2,"Petal","Pineapple"]
-		,[3,"Petal","Any"]])
+		[[1,"Petals","Clover"]
+		,[2,"Petals","Pineapple"]
+		,[3,"Petals","Any"]])
 
 
 RileyBee := Map("Abilities",
@@ -16221,16 +16221,11 @@ nm_Mondo(){
 	}
 }
 nm_PetalRun(){
-	global FwdKey, LeftKey, BackKey, RightKey, RotLeft, RotRight
-	global QuestPetal, QuestPetalField
 	nm_Reset(2)
 	nm_setStatus("Traveling", QuestPetalField)
 	nm_gotoField(QuestPetalField)
 	nm_setStatus("Petal Farming", FieldToSearch)
 	Send "{" RotUp " 4}{" RotLeft " 2}{" SC_1 "}"
-	CoordMode("Pixel", "Screen")
-	CoordMode("Mouse", "Screen")
-	Sleep(1000)
 	FoundX := 0
 	FoundY := 0
 	TileSize := A_ScreenWidth / 40
@@ -16238,11 +16233,7 @@ nm_PetalRun(){
 	MiddleY := A_ScreenHeight / 2
 	Loop {
 		try {
-			PixelSearch(&FoundX, &FoundY, 0, 0, A_ScreenWidth, A_ScreenHeight, 0xFFDB80, 0)
-
-			if (FoundX > 0 && FoundY > 0) {
-				MouseMove FoundX, FoundY, 0
-
+			if PixelSearch(&FoundX, &FoundY, 0, 0, A_ScreenWidth, A_ScreenHeight, 0xFFDB80, 0) {
 				MoveX := 0
 				MoveY := 0
 
@@ -16260,30 +16251,23 @@ nm_PetalRun(){
 				TilesY := Floor(Abs(FoundY - MiddleY) / TileSize)
 
 				movement := ""
-
 				if (MoveX = 1)
 					movement .= nm_Walk(TilesX, RightKey)
 				else if (MoveX = 2)
 					movement .= nm_Walk(TilesX, LeftKey)
-				
 				nm_createWalk(movement)
-				movement := ""
 
+				movement := ""
 				if (MoveY = 1)
 					movement .= nm_Walk(TilesY, BackKey)
 				else if (MoveY = 2)
 					movement .= nm_Walk(TilesY, FwdKey)
-
 				nm_createWalk(movement)
-
-				MsgBox "X: " TilesX " Y: " TilesY
 			}
 			Sleep 300
 		} catch {
-			ToolTip
 			Sleep 300
 		}
-
 		Sleep 200
 	}
 }
@@ -19509,7 +19493,7 @@ nm_BuckoQuestProg(){
 				else if(action="feed"){ ;Blueberries
 					QuestFeed:=where
 				}
-				else if(action="Petal"){ ;Blooms
+				else if(action="Petals"){ ;Blooms
 					if(where="Any"){
 						QuestPetal:="Blue"
 						QuestPetalField:="Pine Tree"
@@ -19544,7 +19528,7 @@ nm_BuckoQuestProg(){
 	}
 }
 nm_BuckoQuest(){
-	global BuckoQuestCheck, BuckoQuestComplete, BuckoQuest, RotateQuest, QuestGatherField, QuestAnt, QuestBlueBoost, QuestFeed, LastBugrunLadybugs, LastBugrunRhinoBeetles, LastBugrunSpider, LastBugrunMantis, LastBugrunScorpions, LastBugrunWerewolf, MonsterRespawnTime, BuckoRhinoBeetles, BuckoMantis, TotalQuestsComplete, SessionQuestsComplete, QuestPetal, QuestPetalField
+	global BuckoQuestCheck, BuckoQuestComplete, BuckoQuest, RotateQuest, QuestGatherField, QuestAnt, QuestBlueBoost, QuestFeed, LastBugrunLadybugs, LastBugrunRhinoBeetles, LastBugrunSpider, LastBugrunMantis, LastBugrunScorpions, LastBugrunWerewolf, MonsterRespawnTime, BuckoRhinoBeetles, BuckoMantis, TotalQuestsComplete, SessionQuestsComplete
 	if(!BuckoQuestCheck)
 		return
 	RotateQuest:="Bucko"
