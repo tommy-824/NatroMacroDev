@@ -16220,6 +16220,73 @@ nm_Mondo(){
 		IniWrite LastMondoBuff, "settings\nm_config.ini", "Collect", "LastMondoBuff"
 	}
 }
+nm_PetalRun(){
+	global FwdKey, LeftKey, BackKey, RightKey, RotLeft, RotRight
+	global QuestPetal, QuestPetalField
+	nm_Reset(2)
+	nm_setStatus("Traveling", QuestPetalField)
+	nm_gotoField(QuestPetalField)
+	nm_setStatus("Petal Farming", FieldToSearch)
+	Send "{" RotUp " 4}{" RotLeft " 2}{" SC_1 "}"
+	CoordMode("Pixel", "Screen")
+	CoordMode("Mouse", "Screen")
+	Sleep(1000)
+	FoundX := 0
+	FoundY := 0
+	TileSize := A_ScreenWidth / 40
+	MiddleX := A_ScreenWidth / 2
+	MiddleY := A_ScreenHeight / 2
+	Loop {
+		try {
+			PixelSearch(&FoundX, &FoundY, 0, 0, A_ScreenWidth, A_ScreenHeight, 0xFFDB80, 0)
+
+			if (FoundX > 0 && FoundY > 0) {
+				MouseMove FoundX, FoundY, 0
+
+				MoveX := 0
+				MoveY := 0
+
+				if (FoundX > MiddleX)
+					MoveX := 1
+				else if (FoundX < MiddleX)
+					MoveX := 2
+
+				if (FoundY > MiddleY)
+					MoveY := 1
+				else if (FoundY < MiddleY)
+					MoveY := 2
+
+				TilesX := Floor(Abs(FoundX - MiddleX) / TileSize)
+				TilesY := Floor(Abs(FoundY - MiddleY) / TileSize)
+
+				movement := ""
+
+				if (MoveX = 1)
+					movement .= nm_Walk(TilesX, RightKey)
+				else if (MoveX = 2)
+					movement .= nm_Walk(TilesX, LeftKey)
+				
+				nm_createWalk(movement)
+				movement := ""
+
+				if (MoveY = 1)
+					movement .= nm_Walk(TilesY, BackKey)
+				else if (MoveY = 2)
+					movement .= nm_Walk(TilesY, FwdKey)
+
+				nm_createWalk(movement)
+
+				MsgBox "X: " TilesX " Y: " TilesY
+			}
+			Sleep 300
+		} catch {
+			ToolTip
+			Sleep 300
+		}
+
+		Sleep 200
+	}
+}
 nm_GoGather(){
 	global youDied
 		, TCFBKey, AFCFBKey, TCLRKey, AFCLRKey, FwdKey, LeftKey, BackKey, RightKey, RotLeft, RotRight, SC_E, KeyDelay
