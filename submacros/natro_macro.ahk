@@ -19239,6 +19239,8 @@ nm_RileyQuest(){
 }
 nm_BuckoQuestProg(){
 	global BuckoQuestCheck, BuckoBee, BuckoQuest, BuckoStart, HiveBees, FieldName1, LastAntPass, LastBlueBoost, BuckoRhinoBeetles, BuckoMantis
+	global QuestPetal:="None"
+	global QuestPetalField:="None"
 	global QuestGatherField:="None"
 	global QuestGatherFieldSlot:=0
 	global BuckoQuestComplete:=1
@@ -19440,6 +19442,15 @@ nm_BuckoQuestProg(){
 				else if(action="feed"){ ;Blueberries
 					QuestFeed:=where
 				}
+				else if(action="Petal"){ ;Blooms
+					if(where="Any"){
+						QuestPetal:="Blue"
+						QuestPetalField:="Pine Tree"
+					} else {
+						QuestPetal:="Blue"
+						QuestPetalField:=where
+					}
+				}
 			}
 			;border color, white (titlebar), black (text)
 			else if((questbarColor!=0x96C3DE) && (questbarColor!=0xE5F0F7) && (questbarColor!=0x1B2A35)) {
@@ -19454,10 +19465,10 @@ nm_BuckoQuestProg(){
 		}
 		IniWrite buckoProgress, "settings\nm_config.ini", "Quests", "BuckoQuestProgress"
 		MainGui["BuckoQuestProgress"].Text := StrReplace(buckoProgress, "|", "`n")
-		if(BuckoRhinoBeetles=0 && BuckoMantis=0 && QuestGatherField="None" && QuestAnt=0 && QuestBlueBoost=0 && QuestFeed="None" && QuestBlueAnyField=0) {
+		if(BuckoRhinoBeetles=0 && BuckoMantis=0 && QuestGatherField="None" && QuestPetalField="None" && QuestAnt=0 && QuestBlueBoost=0 && QuestFeed="None" && QuestBlueAnyField=0) {
 				BuckoQuestComplete:=1
 			} else { ;check if all doable things are done and everything else is on cooldown
-				if(QuestGatherField!="None" || (QuestAnt && (nowUnix()-LastAntPass)<7200) || (BuckoRhinoBeetles && (nowUnix()-LastBugrunRhinoBeetles)<floor(330*(1-(MonsterRespawnTime?MonsterRespawnTime:0)*0.01))) || (BuckoMantis && (nowUnix()-LastBugrunMantis)<floor(1230*(1-(MonsterRespawnTime?MonsterRespawnTime:0)*0.01)))) { ;there is at least one thing no longer on cooldown
+				if(QuestGatherField!="None" || QuestPetalField!="None" || (QuestAnt && (nowUnix()-LastAntPass)<7200) || (BuckoRhinoBeetles && (nowUnix()-LastBugrunRhinoBeetles)<floor(330*(1-(MonsterRespawnTime?MonsterRespawnTime:0)*0.01))) || (BuckoMantis && (nowUnix()-LastBugrunMantis)<floor(1230*(1-(MonsterRespawnTime?MonsterRespawnTime:0)*0.01)))) { ;there is at least one thing no longer on cooldown
 					BuckoQuestComplete:=0
 				} else {
 					BuckoQuestComplete:=2
